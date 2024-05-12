@@ -1,0 +1,15 @@
+c:\Users\luciano\repos\6502\Console\bin\Debug\net8.0\6502Console.exe
+c:\Users\luciano\repos\6502\Console\bin\Debug\net8.0\6502Console.deps.json
+c:\Users\luciano\repos\6502\Console\bin\Debug\net8.0\6502Console.runtimeconfig.json
+c:\Users\luciano\repos\6502\Console\bin\Debug\net8.0\6502Console.dll
+c:\Users\luciano\repos\6502\Console\bin\Debug\net8.0\6502Console.pdb
+c:\Users\luciano\repos\6502\Console\obj\Debug\net8.0\6502Console.GeneratedMSBuildEditorConfig.editorconfig
+c:\Users\luciano\repos\6502\Console\obj\Debug\net8.0\6502Console.AssemblyInfoInputs.cache
+c:\Users\luciano\repos\6502\Console\obj\Debug\net8.0\6502Console.AssemblyInfo.cs
+c:\Users\luciano\repos\6502\Console\obj\Debug\net8.0\6502Console.csproj.CoreCompileInputs.cache
+c:\Users\luciano\repos\6502\Console\obj\Debug\net8.0\6502Console.sourcelink.json
+c:\Users\luciano\repos\6502\Console\obj\Debug\net8.0\6502Console.dll
+c:\Users\luciano\repos\6502\Console\obj\Debug\net8.0\refint\6502Console.dll
+c:\Users\luciano\repos\6502\Console\obj\Debug\net8.0\6502Console.pdb
+c:\Users\luciano\repos\6502\Console\obj\Debug\net8.0\6502Console.genruntimeconfig.cache
+c:\Users\luciano\repos\6502\Console\obj\Debug\net8.0\ref\6502Console.dll

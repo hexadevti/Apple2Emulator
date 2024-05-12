@@ -1,0 +1,12 @@
+C:\Users\luciano\repos\6502\Runtime\obj\release\net8.0\Runtime.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\luciano\repos\6502\Runtime\obj\release\net8.0\Runtime.AssemblyInfoInputs.cache
+C:\Users\luciano\repos\6502\Runtime\obj\release\net8.0\Runtime.AssemblyInfo.cs
+C:\Users\luciano\repos\6502\Runtime\obj\release\net8.0\Runtime.csproj.CoreCompileInputs.cache
+C:\Users\luciano\repos\6502\Runtime\obj\release\net8.0\Runtime.sourcelink.json
+C:\Users\luciano\repos\6502\Runtime\bin\release\net8.0\Runtime.deps.json
+C:\Users\luciano\repos\6502\Runtime\bin\release\net8.0\Runtime.dll
+C:\Users\luciano\repos\6502\Runtime\bin\release\net8.0\Runtime.pdb
+C:\Users\luciano\repos\6502\Runtime\obj\release\net8.0\Runtime.dll
+C:\Users\luciano\repos\6502\Runtime\obj\release\net8.0\refint\Runtime.dll
+C:\Users\luciano\repos\6502\Runtime\obj\release\net8.0\Runtime.pdb
+C:\Users\luciano\repos\6502\Runtime\obj\release\net8.0\ref\Runtime.dll
