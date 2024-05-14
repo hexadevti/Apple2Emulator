@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "K6jamvVmLHOLjkGSPSd5cEjtj2jOv3oKK5/QHdfGVyhcRpdj+sjYxLldKZnKLoZmYzP56tj1VppqEJCVmH4Lvw==",
+  "dgSpecHash": "zXg27M18UfpAVlL7qQVWYEOW44KkoUguwVfKPdUMVdV7k2l5SjPWE9qglv0nXGdeOp2EdUHmsdByz61TzmxG7A==",
   "success": true,
-  "projectFilePath": "c:\\Users\\luciano\\repos\\6502\\Runtime\\Runtime.csproj",
+  "projectFilePath": "/Users/lucianofaria/Desktop/Projects/6502/Runtime/Runtime.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

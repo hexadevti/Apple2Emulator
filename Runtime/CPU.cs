@@ -41,6 +41,12 @@ public class CPU
         OpCodePart? opCodePart = OpCodes.GetOpCode(instruction);
         ushort? refAddress = null;
         
+        string pc = state.PC.ToString("X");
+        
+        if (pc == "FFBC")
+                Thread.Sleep(1);
+
+
         if (opCodePart != null)
         {
             switch (opCodePart.Addressing)
@@ -86,19 +92,18 @@ public class CPU
                 case "indirect":
                     if (opCodePart.Register != null)
                     {
+                        state.PC++;
                         refAddress = memory.ReadZeroPageAddress(state.PC);
                         if (refAddress != null)
                         {
                             if (opCodePart.Register=="Y")
                             {
                                 var pointer = memory.ReadZeroPageAddress(refAddress);
-                                refAddress = (ushort?)(memory.ReadAddressLLHH(pointer) + state.Y);
-                                
+                                refAddress = (ushort?)(pointer + state.Y);
                             }
                             else
                             {
-                                var pointer = memory.ReadZeroPageAddress((ushort)(refAddress + state.X));
-                                refAddress = memory.ReadAddressLLHH(pointer);
+                                refAddress = memory.ReadZeroPageAddress((ushort)(refAddress + state.X));
                             }
                         }
                         state.PC++;
@@ -125,7 +130,14 @@ public class CPU
                     break;
             }
 
+
+            string op = opCodePart?.Operation + "_" + opCodePart?.Addressing  + "_" + opCodePart?.Register;
+            string ac = state.A + " " + state.X + " " + state.Y;
+            string fl = (state.N ? "1" : "0") + "" + (state.V ? "1" : "0") + (state.B ? "1": "0") + (state.D ? "1": "0") + (state.I ? "1": "0") + (state.Z ? "1": "0") + (state.C ? "1": "0");
+            string ad = refAddress?.ToString("X");
+
             
+
 
             switch (opCodePart.Operation)
             {
@@ -184,7 +196,7 @@ public class CPU
                     BranchOpCodeProcessors.Process_BPL(state, refAddress ?? 0);
                     break;
                 case "BVC":
-                    BranchOpCodeProcessors.Process_BEQ(state, refAddress ?? 0);
+                    BranchOpCodeProcessors.Process_BVC(state, refAddress ?? 0);
                     break;
                 case "BVS":
                     BranchOpCodeProcessors.Process_BVS(state, refAddress ?? 0);

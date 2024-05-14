@@ -9,7 +9,10 @@ namespace ConsoleApp
 
         public static void Main(string[] args)
         {
-            var appleRom = File.ReadAllBytes(@"C:\Users\luciano\repos\6502\ConsoleApp\apple1.rom");
+            //var appleRom = File.ReadAllBytes(@"C:\Users\luciano\repos\6502\ConsoleApp\apple1.rom");
+            var appleRom = File.ReadAllBytes(@"/Users/lucianofaria/Desktop/Projects/6502/ConsoleApp/apple1.rom");
+            //var appleRom = File.ReadAllBytes(@"/Users/lucianofaria/Desktop/Projects/6502/ConsoleApp/basic.rom");
+            
             run = true;
             CPU cpu = new(new State(), new Memory(0xffff, appleRom, 0xff00));
             cpu.Reset();

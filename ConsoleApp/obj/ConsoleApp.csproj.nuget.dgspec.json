@@ -1,33 +1,33 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Users\\luciano\\repos\\6502\\ConsoleApp\\ConsoleApp.csproj": {}
+    "/Users/lucianofaria/Desktop/Projects/6502/ConsoleApp/ConsoleApp.csproj": {}
   },
   "projects": {
-    "c:\\Users\\luciano\\repos\\6502\\ConsoleApp\\ConsoleApp.csproj": {
+    "/Users/lucianofaria/Desktop/Projects/6502/ConsoleApp/ConsoleApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\luciano\\repos\\6502\\ConsoleApp\\ConsoleApp.csproj",
+        "projectUniqueName": "/Users/lucianofaria/Desktop/Projects/6502/ConsoleApp/ConsoleApp.csproj",
         "projectName": "ConsoleApp",
-        "projectPath": "c:\\Users\\luciano\\repos\\6502\\ConsoleApp\\ConsoleApp.csproj",
-        "packagesPath": "C:\\Users\\luciano\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\luciano\\repos\\6502\\ConsoleApp\\obj\\",
+        "projectPath": "/Users/lucianofaria/Desktop/Projects/6502/ConsoleApp/ConsoleApp.csproj",
+        "packagesPath": "/Users/lucianofaria/.nuget/packages/",
+        "outputPath": "/Users/lucianofaria/Desktop/Projects/6502/ConsoleApp/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\luciano\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "/Users/lucianofaria/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
-          "net8.0"
+          "net6.0"
         ],
         "sources": {
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net8.0": {
-            "targetAlias": "net8.0",
+          "net6.0": {
+            "targetAlias": "net6.0",
             "projectReferences": {
-              "c:\\Users\\luciano\\repos\\6502\\Runtime\\Runtime.csproj": {
-                "projectPath": "c:\\Users\\luciano\\repos\\6502\\Runtime\\Runtime.csproj"
+              "/Users/lucianofaria/Desktop/Projects/6502/Runtime/Runtime.csproj": {
+                "projectPath": "/Users/lucianofaria/Desktop/Projects/6502/Runtime/Runtime.csproj"
               }
             }
           }
@@ -36,30 +36,11 @@
           "warnAsError": [
             "NU1605"
           ]
-        },
-        "restoreAuditProperties": {
-          "enableAudit": "true",
-          "auditLevel": "low",
-          "auditMode": "direct"
         }
       },
       "frameworks": {
-        "net8.0": {
-          "targetAlias": "net8.0",
-          "dependencies": {
-            "Microsoft.DotNet.ILCompiler": {
-              "suppressParent": "All",
-              "target": "Package",
-              "version": "[8.0.4, )",
-              "autoReferenced": true
-            },
-            "Microsoft.NET.ILLink.Tasks": {
-              "suppressParent": "All",
-              "target": "Package",
-              "version": "[8.0.4, )",
-              "autoReferenced": true
-            }
-          },
+        "net6.0": {
+          "targetAlias": "net6.0",
           "imports": [
             "net461",
             "net462",
@@ -71,42 +52,36 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "runtime.win-x64.Microsoft.DotNet.ILCompiler",
-              "version": "[8.0.4, 8.0.4]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.204/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/6.0.421/RuntimeIdentifierGraph.json"
         }
       }
     },
-    "c:\\Users\\luciano\\repos\\6502\\Runtime\\Runtime.csproj": {
+    "/Users/lucianofaria/Desktop/Projects/6502/Runtime/Runtime.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\luciano\\repos\\6502\\Runtime\\Runtime.csproj",
+        "projectUniqueName": "/Users/lucianofaria/Desktop/Projects/6502/Runtime/Runtime.csproj",
         "projectName": "Runtime",
-        "projectPath": "c:\\Users\\luciano\\repos\\6502\\Runtime\\Runtime.csproj",
-        "packagesPath": "C:\\Users\\luciano\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\luciano\\repos\\6502\\Runtime\\obj\\",
+        "projectPath": "/Users/lucianofaria/Desktop/Projects/6502/Runtime/Runtime.csproj",
+        "packagesPath": "/Users/lucianofaria/.nuget/packages/",
+        "outputPath": "/Users/lucianofaria/Desktop/Projects/6502/Runtime/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\luciano\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "/Users/lucianofaria/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
-          "net8.0"
+          "net6.0"
         ],
         "sources": {
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net8.0": {
-            "targetAlias": "net8.0",
+          "net6.0": {
+            "targetAlias": "net6.0",
             "projectReferences": {}
           }
         },
@@ -114,16 +89,11 @@
           "warnAsError": [
             "NU1605"
           ]
-        },
-        "restoreAuditProperties": {
-          "enableAudit": "true",
-          "auditLevel": "low",
-          "auditMode": "direct"
         }
       },
       "frameworks": {
-        "net8.0": {
-          "targetAlias": "net8.0",
+        "net6.0": {
+          "targetAlias": "net6.0",
           "imports": [
             "net461",
             "net462",
@@ -140,7 +110,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.204/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/6.0.421/RuntimeIdentifierGraph.json"
         }
       }
     }

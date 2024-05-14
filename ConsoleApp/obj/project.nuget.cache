@@ -1,12 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "VnNsXNjmvByiFm6MFGhAlt58MayyopMev9CU41UkSH5CLXuRsA9YNeaYSbuRUafFlpkyPWGH73MVVe1JdhqREg==",
+  "dgSpecHash": "YcCIh6EcUq13FST5u6LcWVUHvuNh92wTpO09u2CEZ/lsubEJCrXC6W1PtgJTiyo2TGXN2JubiLBH39olFl0/Cw==",
   "success": true,
-  "projectFilePath": "c:\\Users\\luciano\\repos\\6502\\ConsoleApp\\ConsoleApp.csproj",
-  "expectedPackageFiles": [
-    "C:\\Users\\luciano\\.nuget\\packages\\microsoft.dotnet.ilcompiler\\8.0.4\\microsoft.dotnet.ilcompiler.8.0.4.nupkg.sha512",
-    "C:\\Users\\luciano\\.nuget\\packages\\microsoft.net.illink.tasks\\8.0.4\\microsoft.net.illink.tasks.8.0.4.nupkg.sha512",
-    "C:\\Users\\luciano\\.nuget\\packages\\runtime.win-x64.microsoft.dotnet.ilcompiler\\8.0.4\\runtime.win-x64.microsoft.dotnet.ilcompiler.8.0.4.nupkg.sha512"
-  ],
+  "projectFilePath": "/Users/lucianofaria/Desktop/Projects/6502/ConsoleApp/ConsoleApp.csproj",
+  "expectedPackageFiles": [],
   "logs": []
 }
