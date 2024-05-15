@@ -12,10 +12,16 @@ public class CPU
 
     public ushort m53266 { get; set; }
     
-    public CPU(State state, Memory memory)
+    public CPU(State state, ushort size, Dictionary<ushort, byte[]> roms)
     {
         this.state = state;
-        this.memory = memory;
+        memory  = new Memory(size);
+
+        foreach (var item in roms)
+        {
+            memory.WriteAt(item.Key, item.Value);
+        }
+        
         memory.RegisterOverlay(new AppleScreen());
         memory.RegisterOverlay(new Keyboard());
     }
@@ -43,8 +49,8 @@ public class CPU
         
         string pc = state.PC.ToString("X");
         
-        if (pc == "FFBC")
-                Thread.Sleep(1);
+        //  if (pc == "FFBF")
+        //         Thread.Sleep(1);
 
 
         if (opCodePart != null)
@@ -98,12 +104,12 @@ public class CPU
                         {
                             if (opCodePart.Register=="Y")
                             {
-                                var pointer = memory.ReadZeroPageAddress(refAddress);
+                                var pointer = memory.ReadAddressLLHH(refAddress);
                                 refAddress = (ushort?)(pointer + state.Y);
                             }
                             else
                             {
-                                refAddress = memory.ReadZeroPageAddress((ushort)(refAddress + state.X));
+                                refAddress = memory.ReadAddressLLHH((ushort)(refAddress + state.X));
                             }
                         }
                         state.PC++;
@@ -113,7 +119,7 @@ public class CPU
                         state.PC++;
                         var indirectAddress = memory.ReadAddressLLHH(state.PC);
                         if (indirectAddress != null)
-                            refAddress = memory.ReadAddressHHLL(indirectAddress);
+                            refAddress = memory.ReadAddressLLHH(indirectAddress);
                         state.PC++;
                         state.PC++;
                     }
@@ -137,7 +143,7 @@ public class CPU
             string ad = refAddress?.ToString("X");
 
             
-
+           
 
             switch (opCodePart.Operation)
             {

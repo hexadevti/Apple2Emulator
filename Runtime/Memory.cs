@@ -11,20 +11,14 @@ public class Memory
     private readonly IList<IOverLay> overlays;
     
 
-    public Memory(ushort size, byte[] rom, ushort romAddress)
+    public Memory(ushort size)
     {
         overlays = new List<IOverLay>();
-        for (ushort i = 0; i < 0xffff;i++)
+        for (ushort i = 0; i < size;i++)
         {
             memory[i] = (byte)0;
         }
-        memory[0xffff] = (byte)0;
-        ushort romLength = (ushort)rom.Length;
-
-        for (ushort i = romAddress; i < romAddress+romLength-1;i++)
-        {
-            memory[i] = rom[i-romAddress];
-        }
+        memory[size] = (byte)0;
     }
 
     private IOverLay? GetOverlay(ushort address) => 

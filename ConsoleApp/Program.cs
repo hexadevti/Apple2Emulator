@@ -9,12 +9,14 @@ namespace ConsoleApp
 
         public static void Main(string[] args)
         {
-            //var appleRom = File.ReadAllBytes(@"C:\Users\luciano\repos\6502\ConsoleApp\apple1.rom");
-            var appleRom = File.ReadAllBytes(@"/Users/lucianofaria/Desktop/Projects/6502/ConsoleApp/apple1.rom");
-            //var appleRom = File.ReadAllBytes(@"/Users/lucianofaria/Desktop/Projects/6502/ConsoleApp/basic.rom");
+            //var appleRom = File.ReadAllBytes(@"C:\Users\luciano\repos\6502\ConsoleApp\apple1.rom");\
+            var roms = new Dictionary<ushort, byte[]>();
+            
+            roms.Add(0xff00, File.ReadAllBytes(@"/Users/lucianofaria/Desktop/Projects/6502/ConsoleApp/apple1.rom"));
+            roms.Add(0xe000, File.ReadAllBytes(@"/Users/lucianofaria/Desktop/Projects/6502/ConsoleApp/basic.rom"));
             
             run = true;
-            CPU cpu = new(new State(), new Memory(0xffff, appleRom, 0xff00));
+            CPU cpu = new CPU(new State(), 0xffff, roms);
             cpu.Reset();
             Loop(cpu);
             //var values = Enum.GetNames(typeof(OpCode));
