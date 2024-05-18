@@ -10,7 +10,6 @@ public class AppleScreen : IOverLay
     {
         Start = 0xD012;
         End = 0xD012;
-        Console.CursorVisible = true;
     }
 
     public int Start { get; }

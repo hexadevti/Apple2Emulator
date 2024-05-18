@@ -40,13 +40,12 @@ public class CPU
         memory.RegisterOverlay(new AppleScreen());
         memory.RegisterOverlay(new Keyboard());
         memory.RegisterOverlay(new ClearKeyStrobe());
-        //memory.RegisterOverlay(new InputBufferOVl());
-
-        //memory.RegisterOverlay(new TextPage());
         
 
         pc = ""; op = ""; axy = ""; fl=""; ad = ""; inst = "";
 
+        Console.Title = "6502";
+        
     }
 
     public void Reset()
@@ -391,13 +390,9 @@ public class CPU
         {
             state.PC++;
         }
-
-
-        
-
     }
 
-     public void RefreshScreen()
+    public void RefreshScreen()
     {
         Console.Clear();
         Console.SetCursorPosition(0,0);
@@ -412,47 +407,43 @@ public class CPU
                 { 
                     var chr = memory.memory[(ushort)(0x400 + (b * 0x28) + (l * 0x80) + c)];
                     chr = (byte)(chr & 0b01111111);
-                    
                     linha = linha + Encoding.ASCII.GetString(new[] { chr });
                 }
                 Console.WriteLine(linha);
                 
-                linha = "";
             }
         }
-
-        // Console.WriteLine("----------------------------------------"); 
-        // var keys = ""; 
-        // for (ushort b = 0x0200; b < 0x02ff; b++)
-        // {
-        //     var chr = memory.memory[b];
-        //     keys = keys + chr.ToString("X2");
-        // } 
-        // Console.WriteLine(keys);
-       
-        
     }    
 
     public void Keyboard()
     {
         if (Console.KeyAvailable)
         {
-            // if (memory.InputBufferReset)
-            // {
-            //     memory.InputBuffer.Clear();
-            //     memory.InputBufferReset = false;
-            // }
-
             var consoleKeyInfo = Console.ReadKey(true);
 
-            if (consoleKeyInfo.Key == ConsoleKey.Enter)
+            switch (consoleKeyInfo.Modifiers)
             {
-                memory.KeyPressed = (byte)(0x8D);
-            }
-            else 
-            {
-                var ascii = Encoding.ASCII.GetBytes( new[] { consoleKeyInfo.KeyChar.ToString().ToUpper()[0]})[0];
-                memory.KeyPressed = (byte)(ascii | 0b10000000);
+                case ConsoleModifiers.Alt:
+                    switch (consoleKeyInfo.Key)
+                    {
+                        case ConsoleKey.C:
+                           memory.KeyPressed = (byte)(0x83);
+                           break; 
+                    }
+                    break;
+            
+                default:
+                    switch (consoleKeyInfo.Key)
+                    {
+                        case ConsoleKey.Enter:
+                            memory.KeyPressed = (byte)(0x8D);
+                            break;
+                        
+                        default:
+                            memory.KeyPressed = (byte)(Encoding.ASCII.GetBytes( new[] { consoleKeyInfo.KeyChar.ToString().ToUpper()[0]})[0] | 0b10000000);
+                            break;
+                    }
+                    break;
             }
         }
     }
