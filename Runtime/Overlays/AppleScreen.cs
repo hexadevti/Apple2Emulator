@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using Runtime.Abstractions;
 
-namespace Runtime;
+namespace Runtime.Overlays;
 
 public class AppleScreen : IOverLay
 {
@@ -10,12 +10,13 @@ public class AppleScreen : IOverLay
     {
         Start = 0xD012;
         End = 0xD012;
+        Console.CursorVisible = true;
     }
 
     public int Start { get; }
     public int End { get; }
 
-    public void Write(ushort address, byte b)
+    public void Write(ushort address, byte b, Memory memory)
     {
         if (b == 155) return;
         b = (byte)(b & 0b01111111);
@@ -28,6 +29,7 @@ public class AppleScreen : IOverLay
         {
             var format = Encoding.ASCII.GetString(new[] { b });
             Console.Write(format);
+            
             
         }
     }

@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Net.Sockets;
 using System.Text;
 using Runtime.OpCodeProcessors;
+using Runtime.Overlays;
 
 namespace Runtime;
 
@@ -16,6 +17,8 @@ public class CPU
     public bool running = true;
 
     public bool debug = false;
+
+    public bool cursorInverted = false;
     
 
     public string pc { get; set; }
@@ -40,6 +43,8 @@ public class CPU
         memory.RegisterOverlay(new AppleScreen());
         memory.RegisterOverlay(new Keyboard());
         memory.RegisterOverlay(new ClearKeyStrobe());
+        // memory.RegisterOverlay(new TextPage());
+        
         
 
         pc = ""; op = ""; axy = ""; fl=""; ad = ""; inst = "";
@@ -63,6 +68,7 @@ public class CPU
         }));
         threads.Add(Task.Run(()=> {
             while (running) {
+                
                 RefreshScreen();
                 Thread.Sleep(10);
             }
@@ -75,12 +81,9 @@ public class CPU
         }));
 
         Task.WaitAll(threads.ToArray());
-        
-    }
 
-    public void IncrementPC()
-    {
-        state.PC++;
+        Console.ReadLine();
+        
     }
 
     public void RunCycle()
@@ -394,25 +397,46 @@ public class CPU
 
     public void RefreshScreen()
     {
-        Console.Clear();
-        Console.SetCursorPosition(0,0);
-        
-        string linha = "";
-        
-        for (int b = 0; b < 3;b++)
-        {
-            for (int l = 0;l < 8;l++)
+        // if (memory.UpdateScreen)
+        // {
+            Console.SetCursorPosition(0,0);
+
+            var cursorH = memory.memory[0x24];
+            var cursorV = memory.memory[0x25];
+            
+            StringBuilder output = new StringBuilder();
+            
+            int posH = 0;
+            int posV = 0;
+
+            for (int b = 0; b < 3; b++)
             {
-               for (ushort c = 0; c < 0x28; c++) 
-                { 
-                    var chr = memory.memory[(ushort)(0x400 + (b * 0x28) + (l * 0x80) + c)];
-                    chr = (byte)(chr & 0b01111111);
-                    linha = linha + Encoding.ASCII.GetString(new[] { chr });
+                posV = b * 8;
+                for (int l = 0; l < 8; l++)
+                {
+                    
+                    for (ushort c = 0; c < 0x28; c++) 
+                    { 
+                        posH = c;
+                        
+                        var chr = memory.memory[(ushort)(0x400 + (b * 0x28) + (l * 0x80) + c)];
+                        chr = (byte)(chr & 0b01111111);
+                        if (posV == cursorV && posH == cursorH)
+                            chr = DateTime.Now.Millisecond > 500 ? chr : (byte)95;
+                        
+                        if (chr == 96)
+                           chr = DateTime.Now.Millisecond > 500 ? (byte)32 : (byte)95;
+                        output.Append(Encoding.ASCII.GetString(new[] { chr }));                        
+                        
+                    }
+                    posV = posV + 1;
+                    output.Append("\n");
                 }
-                Console.WriteLine(linha);
-                
             }
-        }
+
+            Console.Write(output.ToString());
+        //     memory.UpdateScreen = false;
+        // }
     }    
 
     public void Keyboard()
@@ -427,7 +451,11 @@ public class CPU
                     switch (consoleKeyInfo.Key)
                     {
                         case ConsoleKey.C:
-                           memory.KeyPressed = (byte)(0x83);
+                           memory.KeyPressed = 0x83;
+                           break; 
+                        case ConsoleKey.F12:
+                           state.PC = 0;
+                           Console.Beep();
                            break; 
                     }
                     break;
@@ -435,10 +463,24 @@ public class CPU
                 default:
                     switch (consoleKeyInfo.Key)
                     {
-                        case ConsoleKey.Enter:
-                            memory.KeyPressed = (byte)(0x8D);
+                        case ConsoleKey.LeftArrow:
+                            memory.KeyPressed = 0x88;
                             break;
-                        
+                        case ConsoleKey.RightArrow:
+                            memory.KeyPressed = 0x95;
+                            break;
+                        case ConsoleKey.UpArrow:
+                            memory.KeyPressed = 0x8b;
+                            break;
+                        case ConsoleKey.DownArrow:
+                            memory.KeyPressed = 0x8a;
+                            break;
+                        case ConsoleKey.Enter:
+                            memory.KeyPressed = 0x8D;
+                            break;
+                        case ConsoleKey.Escape:
+                            memory.KeyPressed = 0x9b;
+                            break;
                         default:
                             memory.KeyPressed = (byte)(Encoding.ASCII.GetBytes( new[] { consoleKeyInfo.KeyChar.ToString().ToUpper()[0]})[0] | 0b10000000);
                             break;

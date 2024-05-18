@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using Runtime.Abstractions;
 
-namespace Runtime;
+namespace Runtime.Overlays;
 
 public class Keyboard : IOverLay
 {
@@ -14,7 +14,7 @@ public class Keyboard : IOverLay
 
     public int Start { get; }
     public int End { get; }
-    public void Write(ushort address, byte b)
+    public void Write(ushort address, byte b, Memory memory)
     {
     }
 
