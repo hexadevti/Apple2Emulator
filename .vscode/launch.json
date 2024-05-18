@@ -16,6 +16,16 @@
             "console": "externalTerminal"
         },
         {
+            "name": "Apple2 (windows)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/Apple2/bin/Debug/net8.0-windows/Apple2.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false
+        },
+        {
             "name": ".NET Core Launch (mac)",
             "type": "coreclr",
             "request": "launch",

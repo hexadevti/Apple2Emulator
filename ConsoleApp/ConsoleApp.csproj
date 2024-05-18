@@ -2,6 +2,24 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Runtime\Runtime.csproj" />
+    <Content Include="roms\ApplesoftD000.rom">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+   </Content>
+    <Content Include="roms\ApplesoftD800.rom">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+   </Content>
+    <Content Include="roms\ApplesoftE000.rom">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+   </Content>
+    <Content Include="roms\ApplesoftE800.rom">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+   </Content>
+    <Content Include="roms\ApplesoftF000.rom">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+   </Content>
+    <Content Include="roms\ApplesoftF800.rom">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+   </Content>
   </ItemGroup>
 
   <PropertyGroup>
@@ -9,8 +27,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <!-- <PublishAOT>true</PublishAOT> -->
+    <PublishAOT>true</PublishAOT>
     <_EnableMacOSCodeSign>false</_EnableMacOSCodeSign>
   </PropertyGroup>
-
 </Project>
