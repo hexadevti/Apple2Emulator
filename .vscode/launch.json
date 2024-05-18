@@ -20,7 +20,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/ConsoleApp/bin/Debug/net6.0/ConsoleApp.dll",
+            "program": "${workspaceFolder}/ConsoleApp/bin/Debug/net8.0/ConsoleApp.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
