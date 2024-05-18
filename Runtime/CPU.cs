@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Sockets;
+using System.Text;
 using Runtime.OpCodeProcessors;
 
 namespace Runtime;
@@ -10,10 +11,24 @@ public class CPU
     public State state { get; set; }
     public Memory memory { get; set; }
 
-    public ushort m53266 { get; set; }
+    public List<Task> threads = new List<Task>();
+
+    public bool running = true;
+
+    public bool debug = false;
     
-    public CPU(State state, ushort size, Dictionary<ushort, byte[]> roms)
+
+    public string pc { get; set; }
+    public string op { get; set; }
+    public string axy { get; set; }
+    public string fl { get; set; }
+    public const string fh = "NVBDIZC";
+    public string ad { get; set;}
+    public string inst { get; set; }
+
+    public CPU(State state, ushort size, Dictionary<ushort, byte[]> roms, bool debug = false)
     {
+        this.debug = debug;
         this.state = state;
         memory  = new Memory(size);
 
@@ -24,11 +39,44 @@ public class CPU
         
         memory.RegisterOverlay(new AppleScreen());
         memory.RegisterOverlay(new Keyboard());
+        memory.RegisterOverlay(new ClearKeyStrobe());
+        //memory.RegisterOverlay(new InputBufferOVl());
+
+        //memory.RegisterOverlay(new TextPage());
+        
+
+        pc = ""; op = ""; axy = ""; fl=""; ad = ""; inst = "";
+
     }
 
     public void Reset()
     {
         state.PC = 0;
+    }
+
+    public void Start()
+    {
+        Console.CursorVisible = false;
+        threads.Add(Task.Run(()=> {
+          while (running) {
+            RunCycle();  
+          }
+        }));
+        threads.Add(Task.Run(()=> {
+            while (running) {
+                RefreshScreen();
+                Thread.Sleep(10);
+            }
+        }));
+        threads.Add(Task.Run(()=> {
+            while (running) {
+                Keyboard();
+                Thread.Sleep(10);
+            }
+        }));
+
+        Task.WaitAll(threads.ToArray());
+        
     }
 
     public void IncrementPC()
@@ -45,46 +93,71 @@ public class CPU
 
         byte instruction = memory.ReadByte(state.PC);
         OpCodePart? opCodePart = OpCodes.GetOpCode(instruction);
+        if (debug)
+        {
+            op = opCodePart?.Operation + (opCodePart?.Addressing != null ? "_" + opCodePart?.Addressing : "") + (opCodePart?.Register != null ? "_" + opCodePart?.Register : "");
+            pc = state.PC.ToString("x");
+            axy = state.A.ToString("X") + " " + state.X.ToString("X") + " " + state.Y.ToString("X");
+            fl = (state.N ? "1" : "0") + "" + (state.V ? "1" : "0") + (state.B ? "1": "0") 
+                + (state.D ? "1": "0") + (state.I ? "1": "0") + (state.Z ? "1": "0") 
+                + (state.C ? "1": "0");
+            inst = pc + ": " + instruction.ToString("x");
+            ushort nextbytes = 0;
+            if (opCodePart?.Addressing == Addressing.immediate)
+                nextbytes = 1;
+            if (opCodePart?.Addressing == Addressing.absolute)
+                nextbytes = 2;
+            if (opCodePart?.Addressing == Addressing.zeropage)
+                nextbytes = 1;
+            if (opCodePart?.Addressing == Addressing.indirect && opCodePart.Register != null)
+                nextbytes = 1;
+            if (opCodePart?.Addressing == Addressing.indirect && opCodePart.Register == null)
+                nextbytes = 2;
+            if (opCodePart?.Addressing == Addressing.relative)
+                nextbytes = 1;
+            for (int i = 1;i<=nextbytes;i++)
+            {
+                inst = inst + " " + memory.ReadByte((ushort)(state.PC+i)).ToString("x");
+            }
+        } 
+           
         ushort? refAddress = null;
         
-        string pc = state.PC.ToString("X");
-        
-        //  if (pc == "FFBF")
-        //         Thread.Sleep(1);
-
+         if (pc == "fd84")
+                Thread.Sleep(1);
 
         if (opCodePart != null)
         {
             switch (opCodePart.Addressing)
             {
-                case "immediate":
+                case Addressing.immediate:
                     state.PC++;
                     refAddress = state.PC;
                     state.PC++;
                     break;
-                case "absolute":
+                case Addressing.absolute:
                     state.PC++;
                     refAddress = memory.ReadAddressLLHH(state.PC);
                     if (opCodePart.Register != null)
                     {
-                        if (opCodePart.Register=="Y")
+                        if (opCodePart.Register== Register.Y)
                         {
-                            refAddress = (ushort)(refAddress + state.Y);
+                            refAddress = (ushort)((refAddress ?? 0) + state.Y);
                         }
                         else
                         {
-                            refAddress = (ushort)(refAddress + state.X);
+                            refAddress = (ushort)((refAddress ?? 0) + state.X);
                         }
                     }
                     state.PC++;
                     state.PC++;
                     break;
-                case "zeropage":
+                case Addressing.zeropage:
                     state.PC++;
                     refAddress = memory.ReadZeroPageAddress(state.PC);
                     if (refAddress != null && opCodePart.Register != null)
                     {
-                        if (opCodePart.Register=="Y")
+                        if (opCodePart.Register== Register.Y)
                         {
                             refAddress = (ushort)(refAddress + state.Y);
                         }
@@ -95,14 +168,14 @@ public class CPU
                     }
                     state.PC++;
                     break;
-                case "indirect":
+                case Addressing.indirect:
                     if (opCodePart.Register != null)
                     {
                         state.PC++;
                         refAddress = memory.ReadZeroPageAddress(state.PC);
                         if (refAddress != null)
                         {
-                            if (opCodePart.Register=="Y")
+                            if (opCodePart.Register==Register.Y)
                             {
                                 var pointer = memory.ReadAddressLLHH(refAddress);
                                 refAddress = (ushort?)(pointer + state.Y);
@@ -124,7 +197,7 @@ public class CPU
                         state.PC++;
                     }
                     break;
-                case "relative":
+                case Addressing.relative:
                     state.PC++;
                     var b = memory.ReadByte(state.PC);
                     var offset = unchecked((sbyte)b);
@@ -136,14 +209,10 @@ public class CPU
                     break;
             }
 
-
-            string op = opCodePart?.Operation + "_" + opCodePart?.Addressing  + "_" + opCodePart?.Register;
-            string ac = state.A + " " + state.X + " " + state.Y;
-            string fl = (state.N ? "1" : "0") + "" + (state.V ? "1" : "0") + (state.B ? "1": "0") + (state.D ? "1": "0") + (state.I ? "1": "0") + (state.Z ? "1": "0") + (state.C ? "1": "0");
-            string ad = refAddress?.ToString("X");
-
-            
            
+
+            if (debug)
+                ad = (refAddress.HasValue ? refAddress.Value.ToString("x") : "null");
 
             switch (opCodePart.Operation)
             {
@@ -328,7 +397,65 @@ public class CPU
 
     }
 
-         
+     public void RefreshScreen()
+    {
+        Console.Clear();
+        Console.SetCursorPosition(0,0);
+        
+        string linha = "";
+        
+        for (int b = 0; b < 3;b++)
+        {
+            for (int l = 0;l < 8;l++)
+            {
+               for (ushort c = 0; c < 0x28; c++) 
+                { 
+                    var chr = memory.memory[(ushort)(0x400 + (b * 0x28) + (l * 0x80) + c)];
+                    chr = (byte)(chr & 0b01111111);
+                    
+                    linha = linha + Encoding.ASCII.GetString(new[] { chr });
+                }
+                Console.WriteLine(linha);
+                
+                linha = "";
+            }
+        }
+
+        // Console.WriteLine("----------------------------------------"); 
+        // var keys = ""; 
+        // for (ushort b = 0x0200; b < 0x02ff; b++)
+        // {
+        //     var chr = memory.memory[b];
+        //     keys = keys + chr.ToString("X2");
+        // } 
+        // Console.WriteLine(keys);
+       
+        
+    }    
+
+    public void Keyboard()
+    {
+        if (Console.KeyAvailable)
+        {
+            // if (memory.InputBufferReset)
+            // {
+            //     memory.InputBuffer.Clear();
+            //     memory.InputBufferReset = false;
+            // }
+
+            var consoleKeyInfo = Console.ReadKey(true);
+
+            if (consoleKeyInfo.Key == ConsoleKey.Enter)
+            {
+                memory.KeyPressed = (byte)(0x8D);
+            }
+            else 
+            {
+                var ascii = Encoding.ASCII.GetBytes( new[] { consoleKeyInfo.KeyChar.ToString().ToUpper()[0]})[0];
+                memory.KeyPressed = (byte)(ascii | 0b10000000);
+            }
+        }
+    }
 }   
 
 

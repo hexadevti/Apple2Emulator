@@ -3,13 +3,15 @@ using Runtime.Abstractions;
 
 namespace Runtime;
 
-public class Keyboard : IOverLay
+public class ClearKeyStrobe : IOverLay
 {
      
-    public Keyboard()
+    public ClearKeyStrobe()
     {
-        Start = 0xc000;
-        End = 0xc000;
+
+        Start = 0xc010;
+        End = 0xc010;
+          
     }
 
     public int Start { get; }
@@ -20,6 +22,7 @@ public class Keyboard : IOverLay
 
     public byte Read(ushort address, Memory memory)
     {
-        return memory.KeyPressed;
+        memory.KeyPressed = 0x00;
+        return 0x00;
     }
 }

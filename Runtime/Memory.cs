@@ -9,7 +9,8 @@ public class Memory
     public const ushort _IRQVector = 0xFFFE;
     private const byte ZeroByte = (byte)0;
     private readonly IList<IOverLay> overlays;
-    
+
+    public byte KeyPressed { get; set; }
 
     public Memory(ushort size)
     {
@@ -34,7 +35,7 @@ public class Memory
         var overLay = GetOverlay(address);
         byte value;
         if (overLay != null)
-            value = overLay.Read(address);
+            value = overLay.Read(address, this);
         else
             value = memory[address];
         return value;
