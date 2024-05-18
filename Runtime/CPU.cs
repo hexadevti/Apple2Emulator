@@ -397,46 +397,42 @@ public class CPU
 
     public void RefreshScreen()
     {
-        // if (memory.UpdateScreen)
-        // {
-            Console.SetCursorPosition(0,0);
+        Console.SetCursorPosition(0,0);
 
-            var cursorH = memory.memory[0x24];
-            var cursorV = memory.memory[0x25];
-            
-            StringBuilder output = new StringBuilder();
-            
-            int posH = 0;
-            int posV = 0;
+        var cursorH = memory.memory[0x24];
+        var cursorV = memory.memory[0x25];
+        
+        StringBuilder output = new StringBuilder();
+        
+        int posH = 0;
+        int posV = 0;
 
-            for (int b = 0; b < 3; b++)
+        for (int b = 0; b < 3; b++)
+        {
+            posV = b * 8;
+            for (int l = 0; l < 8; l++)
             {
-                posV = b * 8;
-                for (int l = 0; l < 8; l++)
-                {
+                
+                for (ushort c = 0; c < 0x28; c++) 
+                { 
+                    posH = c;
                     
-                    for (ushort c = 0; c < 0x28; c++) 
-                    { 
-                        posH = c;
-                        
-                        var chr = memory.memory[(ushort)(0x400 + (b * 0x28) + (l * 0x80) + c)];
-                        chr = (byte)(chr & 0b01111111);
-                        if (posV == cursorV && posH == cursorH)
-                            chr = DateTime.Now.Millisecond > 500 ? chr : (byte)95;
-                        
-                        if (chr == 96)
-                           chr = DateTime.Now.Millisecond > 500 ? (byte)32 : (byte)95;
-                        output.Append(Encoding.ASCII.GetString(new[] { chr }));                        
-                        
-                    }
-                    posV = posV + 1;
-                    output.Append("\n");
+                    var chr = memory.memory[(ushort)(0x400 + (b * 0x28) + (l * 0x80) + c)];
+                    chr = (byte)(chr & 0b01111111);
+                    if (posV == cursorV && posH == cursorH)
+                        chr = DateTime.Now.Millisecond > 500 ? chr : (byte)95;
+                    
+                    if (chr == 96)
+                        chr = DateTime.Now.Millisecond > 500 ? (byte)32 : (byte)95;
+                    output.Append(Encoding.ASCII.GetString(new[] { chr }));                        
+                    
                 }
+                posV = posV + 1;
+                output.Append("\n");
             }
+        }
 
-            Console.Write(output.ToString());
-        //     memory.UpdateScreen = false;
-        // }
+        Console.Write(output.ToString());
     }    
 
     public void Keyboard()
