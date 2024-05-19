@@ -4,6 +4,7 @@ using System.Text;
 using Runtime.OpCodeProcessors;
 using Runtime.Overlays;
 
+
 namespace Runtime;
 
 public class CPU
@@ -12,9 +13,8 @@ public class CPU
     public State state { get; set; }
     public Memory memory { get; set; }
 
-    public List<Task> threads = new List<Task>();
 
-    public bool running = true;
+
 
     public bool debug = false;
 
@@ -29,28 +29,16 @@ public class CPU
     public string ad { get; set;}
     public string inst { get; set; }
 
-    public CPU(State state, ushort size, Dictionary<ushort, byte[]> roms, bool debug = false)
+    public CPU(State state, Memory memory, bool debug = false)
     {
+        this.memory = memory;
         this.debug = debug;
         this.state = state;
-        memory  = new Memory(size);
-
-        foreach (var item in roms)
-        {
-            memory.WriteAt(item.Key, item.Value);
-        }
-        
         memory.RegisterOverlay(new AppleScreen());
         memory.RegisterOverlay(new Keyboard());
         memory.RegisterOverlay(new ClearKeyStrobe());
         // memory.RegisterOverlay(new TextPage());
-        
-        
-
         pc = ""; op = ""; axy = ""; fl=""; ad = ""; inst = "";
-
-        Console.Title = "6502";
-        
     }
 
     public void Reset()
@@ -58,34 +46,11 @@ public class CPU
         state.PC = 0;
     }
 
-    public void Start()
+    public void InitConsole()
     {
         Console.CursorVisible = false;
-        threads.Add(Task.Run(()=> {
-          while (running) {
-            RunCycle();  
-          }
-        }));
-        threads.Add(Task.Run(()=> {
-            while (running) {
-                
-                RefreshScreen();
-                Thread.Sleep(10);
-            }
-        }));
-        threads.Add(Task.Run(()=> {
-            while (running) {
-                Keyboard();
-                Thread.Sleep(10);
-            }
-        }));
-
-        Task.WaitAll(threads.ToArray());
-
-        Console.ReadLine();
-        
     }
-
+    
     public void RunCycle()
     {
         if (state.PC == 0)  

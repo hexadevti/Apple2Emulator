@@ -1,0 +1,1214 @@
+AutoF8ROM Disassembly
+                   ********************************************************************************
+                   * Apple II                                                                     *
+                   * Monitor II                                                                   *
+                   *                                                                              *
+                   * Copyright 1978 by Apple Computer, Inc                                        *
+                   * All Rights Reserved                                                          *
+                   *                                                                              *
+                   * Steve Wozniak                                                                *
+                   ********************************************************************************
+                   * Modified Nov 1978                                                            *
+                   * By John A                                                                    *
+                   ********************************************************************************
+                   * This is a disassembly of the updated monitor ROM found in the Apple ][+.     *
+                   * The labels and comments come from "Autostart ROM Listing" in the Apple II    *
+                   * Reference Manual (starts page 136).  This is a fairly direct translation --  *
+                   * operands are generally formatted as they appear in the original listing.     *
+                   * Comments have been converted to mixed-case, but are otherwise unchanged.     *
+                   ********************************************************************************
+                   * Project created by Andy McFadden, using 6502bench SourceGen v1.4.            *
+                   * Last updated 2019/09/22                                                      *
+                   ********************************************************************************
+                   IOADR       .eq     $c000  {const}
+                   LOC0        .eq     $00
+                   LOC1        .eq     $01
+                   WNDLFT      .eq     $20
+                   WNDWDTH     .eq     $21
+                   WNDTOP      .eq     $22
+                   WNDBTM      .eq     $23
+                   CH          .eq     $24
+                   CV          .eq     $25
+                   GBASL       .eq     $26
+                   GBASH       .eq     $27
+                   BASL        .eq     $28
+                   BASH        .eq     $29
+                   BAS2L       .eq     $2a
+                   BAS2H       .eq     $2b
+                   COLOR       .eq     $30
+                   MODE        .eq     $31
+                   INVFLG      .eq     $32
+                   PROMPT      .eq     $33
+                   YSAV        .eq     $34
+                   YSAV1       .eq     $35
+                   CSWL        .eq     $36
+                   KSWL        .eq     $38
+                   PCL         .eq     $3a
+                   PCH         .eq     $3b
+                   A1L         .eq     $3c
+                   A1H         .eq     $3d
+                   A2L         .eq     $3e
+                   A2H         .eq     $3f
+                   A3L         .eq     $40
+                   A3H         .eq     $41
+                   A4L         .eq     $42
+                   A4H         .eq     $43
+                   A5L         .eq     $44
+                   A5H         .eq     $45
+                   ACC         .eq     $45             ;note overlap with A5H!
+                   XREG        .eq     $46
+                   YREG        .eq     $47
+                   STATUS      .eq     $48
+                   SPNT        .eq     $49
+                   RNDL        .eq     $4e
+                   RNDH        .eq     $4f
+                   IN          .eq     $0200  {addr/256}
+                   BRKV        .eq     $03f0  {addr/2} ;new vector for BRK
+                   SOFTEV      .eq     $03f2  {addr/2} ;vector for warm start
+                   PWREDUP     .eq     $03f4           ;this must = EOR #$A5 of SOFTEV+1
+                   USRADR      .eq     $03f8  {addr/3}
+                   NMI         .eq     $03fb  {addr/3}
+                   IRQLOC      .eq     $03fe  {addr/2}
+                   LINE1       .eq     $0400  {addr/40}
+                   MSLOT       .eq     $07f8
+                   KBD         .eq     $c000           ;R last key pressed + 128
+                   KBDSTRB     .eq     $c010           ;RW keyboard strobe
+                   TAPEOUT     .eq     $c020           ;RW toggle caseette tape output
+                   SPKR        .eq     $c030           ;RW toggle speaker
+                   TXTCLR      .eq     $c050           ;RW display graphics
+                   TXTSET      .eq     $c051           ;RW display text
+                   MIXSET      .eq     $c053           ;RW display split screen
+                   TXTPAGE1    .eq     $c054           ;RW display page 1
+                   LORES       .eq     $c056           ;RW display lo-res graphics
+                   SETAN0      .eq     $c058           ;RW annunciator 0 off
+                   SETAN1      .eq     $c05a           ;RW annunciator 1 off
+                   CLRAN2      .eq     $c05d           ;RW annunciator 2 on
+                   CLRAN3      .eq     $c05f           ;RW annunciator 3 on
+                   TAPEIN      .eq     $c060
+                   PADDL0      .eq     $c064           ;R analog input 0
+                   PTRIG       .eq     $c070           ;RW analog input reset
+                   CLRROM      .eq     $cfff           ;disable slot C8 ROM
+                   BASIC       .eq     $e000
+                   BASIC2      .eq     $e003
+
+                               .org    $f800
+                   H2          .var    $2c    {addr/1}
+                   V2          .var    $2d    {addr/1}
+                   MASK        .var    $2e    {addr/1}
+
+f800: 4a           PLOT        lsr     A
+f801: 08                       php
+f802: 20 47 f8                 jsr     GBASCALC
+f805: 28                       plp
+f806: a9 0f                    lda     #$0f
+f808: 90 02                    bcc     RTMASK
+f80a: 69 e0                    adc     #$e0
+f80c: 85 2e        RTMASK      sta     MASK
+f80e: b1 26        PLOT1       lda     (GBASL),y
+f810: 45 30                    eor     COLOR
+f812: 25 2e                    and     MASK
+f814: 51 26                    eor     (GBASL),y
+f816: 91 26                    sta     (GBASL),y
+f818: 60                       rts
+
+f819: 20 00 f8     HLINE       jsr     PLOT
+f81c: c4 2c        HLINE1      cpy     H2
+f81e: b0 11                    bcs     RTS1
+f820: c8                       iny
+f821: 20 0e f8                 jsr     PLOT1
+f824: 90 f6                    bcc     HLINE1
+f826: 69 01        VLINEZ      adc     #$01
+f828: 48           VLINE       pha
+f829: 20 00 f8                 jsr     PLOT
+f82c: 68                       pla
+f82d: c5 2d                    cmp     V2
+f82f: 90 f5                    bcc     VLINEZ
+f831: 60           RTS1        rts
+
+f832: a0 2f        CLRSCR      ldy     #$2f
+f834: d0 02                    bne     CLRSC2
+
+f836: a0 27        CLRTOP      ldy     #$27
+f838: 84 2d        CLRSC2      sty     V2
+f83a: a0 27                    ldy     #$27
+f83c: a9 00        CLRSC3      lda     #$00
+f83e: 85 30                    sta     COLOR
+f840: 20 28 f8                 jsr     VLINE
+f843: 88                       dey
+f844: 10 f6                    bpl     CLRSC3
+f846: 60                       rts
+
+f847: 48           GBASCALC    pha
+f848: 4a                       lsr     A
+f849: 29 03                    and     #$03
+f84b: 09 04                    ora     #$04
+f84d: 85 27                    sta     GBASH
+f84f: 68                       pla
+f850: 29 18                    and     #$18
+f852: 90 02                    bcc     GBCALC
+f854: 69 7f                    adc     #$7f
+f856: 85 26        GBCALC      sta     GBASL
+f858: 0a                       asl     A
+f859: 0a                       asl     A
+f85a: 05 26                    ora     GBASL
+f85c: 85 26                    sta     GBASL
+f85e: 60                       rts
+
+f85f: a5 30        NEXTCOL     lda     COLOR
+f861: 18                       clc
+f862: 69 03                    adc     #$03
+f864: 29 0f        SETCOL      and     #$0f
+f866: 85 30                    sta     COLOR
+f868: 0a                       asl     A
+f869: 0a                       asl     A
+f86a: 0a                       asl     A
+f86b: 0a                       asl     A
+f86c: 05 30                    ora     COLOR
+f86e: 85 30                    sta     COLOR
+f870: 60                       rts
+
+f871: 4a           SCRN        lsr     A
+f872: 08                       php
+f873: 20 47 f8                 jsr     GBASCALC
+f876: b1 26                    lda     (GBASL),y
+f878: 28                       plp
+f879: 90 04        SCRN2       bcc     RTMSKZ
+f87b: 4a                       lsr     A
+f87c: 4a                       lsr     A
+f87d: 4a                       lsr     A
+f87e: 4a                       lsr     A
+f87f: 29 0f        RTMSKZ      and     #$0f
+f881: 60                       rts
+
+                   • Clear variables
+                   LMNEM       .var    $2c    {addr/1}
+                   RMNEM       .var    $2d    {addr/1}
+                   FORMAT      .var    $2e    {addr/1}
+                   LENGTH      .var    $2f    {addr/1}
+
+f882: a6 3a        INSDS1      ldx     PCL
+f884: a4 3b                    ldy     PCH
+f886: 20 96 fd                 jsr     PRYX2
+f889: 20 48 f9                 jsr     PRBLNK
+f88c: a1 3a                    lda     (PCL,x)
+f88e: a8                       tay
+f88f: 4a                       lsr     A
+f890: 90 09                    bcc     IEVEN
+f892: 6a                       ror     A
+f893: b0 10                    bcs     ERR
+f895: c9 a2                    cmp     #$a2
+f897: f0 0c                    beq     ERR
+f899: 29 87                    and     #$87
+f89b: 4a           IEVEN       lsr     A
+f89c: aa                       tax
+f89d: bd 62 f9                 lda     FMT1,x
+f8a0: 20 79 f8                 jsr     SCRN2
+f8a3: d0 04                    bne     GETFMT
+f8a5: a0 80        ERR         ldy     #$80
+f8a7: a9 00                    lda     #$00
+f8a9: aa           GETFMT      tax
+f8aa: bd a6 f9                 lda     FMT2,x
+f8ad: 85 2e                    sta     FORMAT
+f8af: 29 03                    and     #$03
+f8b1: 85 2f                    sta     LENGTH
+f8b3: 98                       tya
+f8b4: 29 8f                    and     #$8f
+f8b6: aa                       tax
+f8b7: 98                       tya
+f8b8: a0 03                    ldy     #$03
+f8ba: e0 8a                    cpx     #$8a
+f8bc: f0 0b                    beq     MNNDX3
+f8be: 4a           MNNDX1      lsr     A
+f8bf: 90 08                    bcc     MNNDX3
+f8c1: 4a                       lsr     A
+f8c2: 4a           MNNDX2      lsr     A
+f8c3: 09 20                    ora     #$20
+f8c5: 88                       dey
+f8c6: d0 fa                    bne     MNNDX2
+f8c8: c8                       iny
+f8c9: 88           MNNDX3      dey
+f8ca: d0 f2                    bne     MNNDX1
+f8cc: 60                       rts
+
+f8cd: ff ff ff                 .fill   3,$ff
+
+f8d0: 20 82 f8     INSTDSP     jsr     INSDS1
+f8d3: 48                       pha
+f8d4: b1 3a        PRNTOP      lda     (PCL),y
+f8d6: 20 da fd                 jsr     PRBYTE
+f8d9: a2 01                    ldx     #$01
+f8db: 20 4a f9     PRNTBL      jsr     PRBL2
+f8de: c4 2f                    cpy     LENGTH
+f8e0: c8                       iny
+f8e1: 90 f1                    bcc     PRNTOP
+f8e3: a2 03                    ldx     #$03
+f8e5: c0 04                    cpy     #$04
+f8e7: 90 f2                    bcc     PRNTBL
+f8e9: 68                       pla
+f8ea: a8                       tay
+f8eb: b9 c0 f9                 lda     MNEML,y
+f8ee: 85 2c                    sta     LMNEM
+f8f0: b9 00 fa                 lda     MNEMR,y
+f8f3: 85 2d                    sta     RMNEM
+f8f5: a9 00        NXTCOL      lda     #$00
+f8f7: a0 05                    ldy     #$05
+f8f9: 06 2d        PRMN2       asl     RMNEM
+f8fb: 26 2c                    rol     LMNEM
+f8fd: 2a                       rol     A
+f8fe: 88                       dey
+f8ff: d0 f8                    bne     PRMN2
+f901: 69 bf                    adc     #$bf
+f903: 20 ed fd                 jsr     COUT
+f906: ca                       dex
+f907: d0 ec                    bne     NXTCOL
+f909: 20 48 f9                 jsr     PRBLNK
+f90c: a4 2f                    ldy     LENGTH
+f90e: a2 06                    ldx     #$06
+f910: e0 03        PRADR1      cpx     #$03
+f912: f0 1c                    beq     PRADR5
+f914: 06 2e        PRADR2      asl     FORMAT
+f916: 90 0e                    bcc     PRADR3
+f918: bd b3 f9                 lda     CHAR1-1,x
+f91b: 20 ed fd                 jsr     COUT
+f91e: bd b9 f9                 lda     CHAR2-1,x
+f921: f0 03                    beq     PRADR3
+f923: 20 ed fd                 jsr     COUT
+f926: ca           PRADR3      dex
+f927: d0 e7                    bne     PRADR1
+f929: 60                       rts
+
+f92a: 88           PRADR4      dey
+f92b: 30 e7                    bmi     PRADR2
+f92d: 20 da fd                 jsr     PRBYTE
+f930: a5 2e        PRADR5      lda     FORMAT
+f932: c9 e8                    cmp     #$e8
+f934: b1 3a                    lda     (PCL),y
+f936: 90 f2                    bcc     PRADR4
+f938: 20 56 f9     RELADR      jsr     PCADJ3
+f93b: aa                       tax
+f93c: e8                       inx
+f93d: d0 01                    bne     PRNTYX
+f93f: c8                       iny
+f940: 98           PRNTYX      tya
+f941: 20 da fd     PRNTAX      jsr     PRBYTE
+f944: 8a           PRNTX       txa
+f945: 4c da fd                 jmp     PRBYTE
+
+f948: a2 03        PRBLNK      ldx     #$03
+f94a: a9 a0        PRBL2       lda     #$a0
+f94c: 20 ed fd                 jsr     COUT
+f94f: ca                       dex
+f950: d0 f8                    bne     PRBL2
+f952: 60                       rts
+
+f953: 38           PCADJ       sec
+f954: a5 2f        PCADJ2      lda     LENGTH
+f956: a4 3b        PCADJ3      ldy     PCH
+f958: aa                       tax
+f959: 10 01                    bpl     PCADJ4
+f95b: 88                       dey
+f95c: 65 3a        PCADJ4      adc     PCL
+f95e: 90 01                    bcc     RTS2
+f960: c8                       iny
+f961: 60           RTS2        rts
+
+f962: 04 20 54 30+ FMT1        .bulk   $04,$20,$54,$30,$0d,$80,$04,$90,$03,$22,$54,$33,$0d,$80,$04,$90
+                                +      $04,$20,$54,$33,$0d,$80,$04,$90,$04,$20,$54,$3b,$0d,$80,$04,$90
+                                +      $00,$22,$44,$33,$0d,$c8,$44,$00,$11,$22,$44,$33,$0d,$c8,$44,$a9
+                                +      $01,$22,$44,$33,$0d,$80,$04,$90,$01,$22,$44,$33,$0d,$80,$04,$90
+                                +      $26,$31,$87,$9a
+f9a6: 00 21 81 82+ FMT2        .bulk   $00,$21,$81,$82,$00,$00,$59,$4d,$91,$92,$86,$4a,$85,$9d
+f9b4: ac a9 ac a3+ CHAR1       .bulk   $ac,$a9,$ac,$a3,$a8,$a4
+f9ba: d9 00 d8 a4+ CHAR2       .bulk   $d9,$00,$d8,$a4,$a4,$00
+f9c0: 1c 8a 1c 23+ MNEML       .bulk   $1c,$8a,$1c,$23,$5d,$8b,$1b,$a1,$9d,$8a,$1d,$23,$9d,$8b,$1d,$a1
+                                +      $00,$29,$19,$ae,$69,$a8,$19,$23,$24,$53,$1b,$23,$24,$53,$19,$a1
+                                +      $00,$1a,$5b,$5b,$a5,$69,$24,$24,$ae,$ae,$a8,$ad,$29,$00,$7c,$00
+                                +      $15,$9c,$6d,$9c,$a5,$69,$29,$53,$84,$13,$34,$11,$a5,$69,$23,$a0
+fa00: d8 62 5a 48+ MNEMR       .bulk   $d8,$62,$5a,$48,$26,$62,$94,$88,$54,$44,$c8,$54,$68,$44,$e8,$94
+                                +      $00,$b4,$08,$84,$74,$b4,$28,$6e,$74,$f4,$cc,$4a,$72,$f2,$a4,$8a
+                                +      $00,$aa,$a2,$a2,$74,$74,$74,$72,$44,$68,$b2,$32,$b2,$00,$22,$00
+                                +      $1a,$1a,$26,$26,$72,$72,$88,$c8,$c4,$ca,$26,$48,$44,$44,$a2,$c8
+
+fa40: 85 45        IRQ         sta     ACC
+fa42: 68                       pla
+fa43: 48                       pha
+fa44: 0a                       asl     A
+fa45: 0a                       asl     A
+fa46: 0a                       asl     A
+fa47: 30 03                    bmi     BREAK
+fa49: 6c fe 03                 jmp     (IRQLOC)
+
+fa4c: 28           BREAK       plp
+fa4d: 20 4c ff                 jsr     SAV1
+fa50: 68                       pla
+fa51: 85 3a                    sta     PCL
+fa53: 68                       pla
+fa54: 85 3b                    sta     PCH
+fa56: 6c f0 03                 jmp     (BRKV)          ;BRKV written over by disk boot
+
+fa59: 20 82 f8     OLDBRK      jsr     INSDS1
+fa5c: 20 da fa                 jsr     RGDSP1
+fa5f: 4c 65 ff                 jmp     MON
+
+fa62: d8           RESET       cld                     ;do this first this time
+fa63: 20 84 fe                 jsr     SETNORM
+fa66: 20 2f fb                 jsr     INIT
+fa69: 20 93 fe                 jsr     SETVID
+fa6c: 20 89 fe                 jsr     SETKBD
+fa6f: ad 58 c0                 lda     SETAN0          ;AN0 = TTL hi
+fa72: ad 5a c0                 lda     SETAN1          ;AN1 = TTL hi
+fa75: ad 5d c0                 lda     CLRAN2          ;AN2 = TTL lo
+fa78: ad 5f c0                 lda     CLRAN3          ;AN3 = TTL lo
+fa7b: ad ff cf                 lda     CLRROM          ;turn off extension ROM
+fa7e: 2c 10 c0                 bit     KBDSTRB         ;clear keyboard
+fa81: d8                       cld
+fa82: 20 3a ff                 jsr     BELL            ;causes delay if key bounces
+fa85: ad f3 03                 lda     SOFTEV+1        ;is reset hi
+fa88: 49 a5                    eor     #$a5            ;a funny complement of the
+fa8a: cd f4 03                 cmp     PWREDUP         ;pwr up byte ???
+fa8d: d0 17                    bne     PWRUP           ;no so pwrup
+fa8f: ad f2 03                 lda     SOFTEV          ;yes see if cold start
+fa92: d0 0f                    bne     NOFIX           ;has been done yet?
+fa94: a9 e0                    lda     #$e0            ;??
+fa96: cd f3 03                 cmp     SOFTEV+1        ;??
+fa99: d0 08                    bne     NOFIX           ;yes so reenter system
+fa9b: a0 03        FIXSEV      ldy     #$03            ;no so point at warm start
+fa9d: 8c f2 03                 sty     SOFTEV          ;for next reset
+faa0: 4c 00 e0                 jmp     BASIC           ;and do the cold start
+
+faa3: 6c f2 03     NOFIX       jmp     (SOFTEV)        ;soft entry vector
+
+                   ; ********************
+faa6: 20 60 fb     PWRUP       jsr     APPLEII
+faa9: a2 05        SETPG3      ldx     #$05            ;set page 3 vectors
+faab: bd fc fa     LFAAB       lda     PWRCON-1,x      ;with cntrl B adrs
+faae: 9d ef 03                 sta     BRKV-1,x        ;of current BASIC
+fab1: ca                       dex
+fab2: d0 f7                    bne     LFAAB
+fab4: a9 c8                    lda     #$c8            ;load hi slot +1
+fab6: 86 00                    stx     LOC0            ;SETPG3 must return X=0
+fab8: 85 01                    sta     LOC1            ;set ptr H
+faba: a0 07        SLOOP       ldy     #$07            ;Y is byte ptr
+fabc: c6 01                    dec     LOC1
+fabe: a5 01                    lda     LOC1
+fac0: c9 c0                    cmp     #$c0            ;at last slot yet?
+fac2: f0 d7                    beq     FIXSEV          ;yes and it cant be a disk
+fac4: 8d f8 07                 sta     MSLOT
+fac7: b1 00        NXTBYT      lda     (LOC0),y        ;fetch a slot byte
+fac9: d9 01 fb                 cmp     DISKID-1,y      ;is it a disk ??
+facc: d0 ec                    bne     SLOOP           ;no so next slot down
+face: 88                       dey
+facf: 88                       dey                     ;yes so check next byte
+fad0: 10 f5                    bpl     NXTBYT          ;until 4 checked
+fad2: 6c 00 00                 jmp     (LOC0)
+
+fad5: ea                       nop
+fad6: ea                       nop
+                   ; REGDSP must ORG $FAD7
+fad7: 20 8e fd     REGDSP      jsr     CROUT
+fada: a9 45        RGDSP1      lda     #$45
+fadc: 85 40                    sta     A3L
+fade: a9 00                    lda     #$00
+fae0: 85 41                    sta     A3H
+fae2: a2 fb                    ldx     #$fb
+fae4: a9 a0        RDSP1       lda     #$a0
+fae6: 20 ed fd                 jsr     COUT
+fae9: bd 1e fa                 lda     RTBL-251,x
+faec: 20 ed fd                 jsr     COUT
+faef: a9 bd                    lda     #$bd
+faf1: 20 ed fd                 jsr     COUT
+faf4: b5 4a                    lda     ACC+5,x         ;(this is DFB $B5,$4A in listing)
+faf6: 20 da fd                 jsr     PRBYTE
+faf9: e8                       inx
+fafa: 30 e8                    bmi     RDSP1
+fafc: 60                       rts
+
+fafd: 59 fa        PWRCON      .dd2    OLDBRK
+faff: 00 e0 45                 .bulk   $00,$e0,$45
+fb02: 20 ff 00 ff+ DISKID      .bulk   $20,$ff,$00,$ff,$03,$ff,$3c
+fb09: c1 d0 d0 cc+ TITLE       .str    “APPLE ][”
+fb11: c4 c2 c1 ff+ XLTBL       .bulk   $c4,$c2,$c1,$ff,$c3,$ff,$ff,$ff
+                   ; must ORG $FB19
+fb19: c1 d8 d9 d0+ RTBL        .str    “AXYPS”
+
+fb1e: ad 70 c0     PREAD       lda     PTRIG
+fb21: a0 00                    ldy     #$00
+fb23: ea                       nop
+fb24: ea                       nop
+fb25: bd 64 c0     PREAD2      lda     PADDL0,x
+fb28: 10 04                    bpl     RTS2D
+fb2a: c8                       iny
+fb2b: d0 f8                    bne     PREAD2
+fb2d: 88                       dey
+fb2e: 60           RTS2D       rts
+
+fb2f: a9 00        INIT        lda     #$00
+fb31: 85 48                    sta     STATUS
+fb33: ad 56 c0                 lda     LORES
+fb36: ad 54 c0                 lda     TXTPAGE1
+fb39: ad 51 c0     SETTXT      lda     TXTSET
+fb3c: a9 00                    lda     #$00
+fb3e: f0 0b                    beq     SETWND
+
+fb40: ad 50 c0     SETGR       lda     TXTCLR
+fb43: ad 53 c0                 lda     MIXSET
+fb46: 20 36 f8                 jsr     CLRTOP
+fb49: a9 14                    lda     #$14
+fb4b: 85 22        SETWND      sta     WNDTOP
+fb4d: a9 00                    lda     #$00
+fb4f: 85 20                    sta     WNDLFT
+fb51: a9 28                    lda     #$28
+fb53: 85 21                    sta     WNDWDTH
+fb55: a9 18                    lda     #$18
+fb57: 85 23                    sta     WNDBTM
+fb59: a9 17                    lda     #$17
+fb5b: 85 25        TABV        sta     CV
+fb5d: 4c 22 fc                 jmp     VTAB
+
+fb60: 20 58 fc     APPLEII     jsr     HOME            ;clear the scrn
+fb63: a0 08                    ldy     #$08
+fb65: b9 08 fb     STITLE      lda     TITLE-1,y       ;get a char
+fb68: 99 0e 04                 sta     LINE1+14,y
+fb6b: 88                       dey
+fb6c: d0 f7                    bne     STITLE
+fb6e: 60                       rts
+
+fb6f: ad f3 03     SETPWRC     lda     SOFTEV+1
+fb72: 49 a5                    eor     #$a5
+fb74: 8d f4 03                 sta     PWREDUP
+fb77: 60                       rts
+
+fb78: c9 8d        VIDWAIT     cmp     #$8d            ;check for a pause only when I have a CR
+fb7a: d0 18                    bne     NOWAIT          ;no so, do regular
+fb7c: ac 00 c0                 ldy     KBD             ;is key pressed?
+fb7f: 10 13                    bpl     NOWAIT          ;no
+fb81: c0 93                    cpy     #$93            ;is it ctl S?
+fb83: d0 0f                    bne     NOWAIT          ;no so ignore
+fb85: 2c 10 c0                 bit     KBDSTRB         ;clear strobe
+fb88: ac 00 c0     KBDWAIT     ldy     KBD             ;wait till next key to resume
+fb8b: 10 fb                    bpl     KBDWAIT         ;wait for keypress
+fb8d: c0 83                    cpy     #$83            ;is it control C ?
+fb8f: f0 03                    beq     NOWAIT          ;yes so leave it
+fb91: 2c 10 c0                 bit     KBDSTRB         ;clr strobe
+fb94: 4c fd fb     NOWAIT      jmp     VIDOUT          ;do as before
+
+fb97: 38           ESCOLD      sec                     ;insure carry set
+fb98: 4c 2c fc                 jmp     ESC1
+
+fb9b: a8           ESCNOW      tay                     ;use char as index
+fb9c: b9 48 fa                 lda     XLTBL-201,y     ;xlate IJKM to CBAD
+fb9f: 20 97 fb                 jsr     ESCOLD          ;do this cursor motion
+fba2: 20 0c fd                 jsr     RDKEY           ;and get next
+fba5: c9 ce        ESCNEW      cmp     #$ce            ;is this an N ?
+fba7: b0 ee                    bcs     ESCOLD          ;N or greater do it
+fba9: c9 c9                    cmp     #$c9            ;less than I ?
+fbab: 90 ea                    bcc     ESCOLD          ;yes so old way
+fbad: c9 cc                    cmp     #$cc            ;is it a L ?
+fbaf: f0 e6                    beq     ESCOLD          ;do normal
+fbb1: d0 e8                    bne     ESCNOW          ;go do it
+
+fbb3: ea ea ea ea+             .bulk   $ea,$ea,$ea,$ea,$ea,$ea,$ea,$ea,$ea,$ea,$ea,$ea,$ea,$ea ;padding
+
+                   ; must ORG $FBC1
+fbc1: 48           BASCALC     pha
+fbc2: 4a                       lsr     A
+fbc3: 29 03                    and     #$03
+fbc5: 09 04                    ora     #$04
+fbc7: 85 29                    sta     BASH
+fbc9: 68                       pla
+fbca: 29 18                    and     #$18
+fbcc: 90 02                    bcc     BASCLC2
+fbce: 69 7f                    adc     #$7f
+fbd0: 85 28        BASCLC2     sta     BASL
+fbd2: 0a                       asl     A
+fbd3: 0a                       asl     A
+fbd4: 05 28                    ora     BASL
+fbd6: 85 28                    sta     BASL
+fbd8: 60                       rts
+
+fbd9: c9 87        BELL1       cmp     #$87
+fbdb: d0 12                    bne     RTS2B
+fbdd: a9 40                    lda     #$40
+fbdf: 20 a8 fc                 jsr     WAIT
+fbe2: a0 c0                    ldy     #$c0
+fbe4: a9 0c        BELL2       lda     #$0c
+fbe6: 20 a8 fc                 jsr     WAIT
+fbe9: ad 30 c0                 lda     SPKR
+fbec: 88                       dey
+fbed: d0 f5                    bne     BELL2
+fbef: 60           RTS2B       rts
+
+fbf0: a4 24        STORADV     ldy     CH
+fbf2: 91 28                    sta     (BASL),y
+fbf4: e6 24        ADVANCE     inc     CH
+fbf6: a5 24                    lda     CH
+fbf8: c5 21                    cmp     WNDWDTH
+fbfa: b0 66                    bcs     CR
+fbfc: 60           RTS3        rts
+
+fbfd: c9 a0        VIDOUT      cmp     #$a0
+fbff: b0 ef                    bcs     STORADV
+fc01: a8                       tay
+fc02: 10 ec                    bpl     STORADV
+fc04: c9 8d                    cmp     #$8d
+fc06: f0 5a                    beq     CR
+fc08: c9 8a                    cmp     #$8a
+fc0a: f0 5a                    beq     LF
+fc0c: c9 88                    cmp     #$88
+fc0e: d0 c9                    bne     BELL1
+fc10: c6 24        BS          dec     CH
+fc12: 10 e8                    bpl     RTS3
+fc14: a5 21                    lda     WNDWDTH
+fc16: 85 24                    sta     CH
+fc18: c6 24                    dec     CH
+fc1a: a5 22        UP          lda     WNDTOP
+fc1c: c5 25                    cmp     CV
+fc1e: b0 0b                    bcs     RTS4
+fc20: c6 25                    dec     CV
+fc22: a5 25        VTAB        lda     CV
+fc24: 20 c1 fb     VTABZ       jsr     BASCALC
+fc27: 65 20                    adc     WNDLFT
+fc29: 85 28                    sta     BASL
+fc2b: 60           RTS4        rts
+
+fc2c: 49 c0        ESC1        eor     #$c0            ;esc @ ?
+fc2e: f0 28                    beq     HOME            ;if so do home and clear
+fc30: 69 fd                    adc     #$fd            ;esc-A or B check
+fc32: 90 c0                    bcc     ADVANCE         ;A, advance
+fc34: f0 da                    beq     BS              ;B, backspace
+fc36: 69 fd                    adc     #$fd            ;esc-C or D check
+fc38: 90 2c                    bcc     LF              ;C, down
+fc3a: f0 de                    beq     UP              ;D, go up
+fc3c: 69 fd                    adc     #$fd            ;esc-E or F check
+fc3e: 90 5c                    bcc     CLREOL          ;E, clear to end of line
+fc40: d0 e9                    bne     RTS4            ;else not F, return
+fc42: a4 24        CLREOP      ldy     CH              ;esc F is clr to end of page
+fc44: a5 25                    lda     CV
+fc46: 48           CLEOP1      pha
+fc47: 20 24 fc                 jsr     VTABZ
+fc4a: 20 9e fc                 jsr     CLEOLZ
+fc4d: a0 00                    ldy     #$00
+fc4f: 68                       pla
+fc50: 69 00                    adc     #$00
+fc52: c5 23                    cmp     WNDBTM
+fc54: 90 f0                    bcc     CLEOP1
+fc56: b0 ca                    bcs     VTAB
+
+fc58: a5 22        HOME        lda     WNDTOP
+fc5a: 85 25                    sta     CV
+fc5c: a0 00                    ldy     #$00
+fc5e: 84 24                    sty     CH
+fc60: f0 e4                    beq     CLEOP1
+
+fc62: a9 00        CR          lda     #$00
+fc64: 85 24                    sta     CH
+fc66: e6 25        LF          inc     CV
+fc68: a5 25                    lda     CV
+fc6a: c5 23                    cmp     WNDBTM
+fc6c: 90 b6                    bcc     VTABZ
+fc6e: c6 25                    dec     CV
+fc70: a5 22        SCROLL      lda     WNDTOP
+fc72: 48                       pha
+fc73: 20 24 fc                 jsr     VTABZ
+fc76: a5 28        SCRL1       lda     BASL
+fc78: 85 2a                    sta     BAS2L
+fc7a: a5 29                    lda     BASH
+fc7c: 85 2b                    sta     BAS2H
+fc7e: a4 21                    ldy     WNDWDTH
+fc80: 88                       dey
+fc81: 68                       pla
+fc82: 69 01                    adc     #$01
+fc84: c5 23                    cmp     WNDBTM
+fc86: b0 0d                    bcs     SCRL3
+fc88: 48                       pha
+fc89: 20 24 fc                 jsr     VTABZ
+fc8c: b1 28        SCRL2       lda     (BASL),y
+fc8e: 91 2a                    sta     (BAS2L),y
+fc90: 88                       dey
+fc91: 10 f9                    bpl     SCRL2
+fc93: 30 e1                    bmi     SCRL1
+
+fc95: a0 00        SCRL3       ldy     #$00
+fc97: 20 9e fc                 jsr     CLEOLZ
+fc9a: b0 86                    bcs     VTAB
+fc9c: a4 24        CLREOL      ldy     CH
+fc9e: a9 a0        CLEOLZ      lda     #$a0
+fca0: 91 28        CLREOL2     sta     (BASL),y
+fca2: c8                       iny
+fca3: c4 21                    cpy     WNDWDTH
+fca5: 90 f9                    bcc     CLREOL2
+fca7: 60                       rts
+
+fca8: 38           WAIT        sec
+fca9: 48           WAIT2       pha
+fcaa: e9 01        WAIT3       sbc     #$01
+fcac: d0 fc                    bne     WAIT3
+fcae: 68                       pla
+fcaf: e9 01                    sbc     #$01
+fcb1: d0 f6                    bne     WAIT2
+fcb3: 60                       rts
+
+fcb4: e6 42        NXTA4       inc     A4L
+fcb6: d0 02                    bne     NXTA1
+fcb8: e6 43                    inc     A4H
+fcba: a5 3c        NXTA1       lda     A1L
+fcbc: c5 3e                    cmp     A2L
+fcbe: a5 3d                    lda     A1H
+fcc0: e5 3f                    sbc     A2H
+fcc2: e6 3c                    inc     A1L
+fcc4: d0 02                    bne     RTS4B
+fcc6: e6 3d                    inc     A1H
+fcc8: 60           RTS4B       rts
+
+fcc9: a0 4b        HEADR       ldy     #$4b
+fccb: 20 db fc                 jsr     ZERDLY
+fcce: d0 f9                    bne     HEADR
+fcd0: 69 fe                    adc     #$fe
+fcd2: b0 f5                    bcs     HEADR
+fcd4: a0 21                    ldy     #$21
+fcd6: 20 db fc     WRBIT       jsr     ZERDLY
+fcd9: c8                       iny
+fcda: c8                       iny
+fcdb: 88           ZERDLY      dey
+fcdc: d0 fd                    bne     ZERDLY
+fcde: 90 05                    bcc     WRTAPE
+fce0: a0 32                    ldy     #$32
+fce2: 88           ONEDLY      dey
+fce3: d0 fd                    bne     ONEDLY
+fce5: ac 20 c0     WRTAPE      ldy     TAPEOUT
+fce8: a0 2c                    ldy     #$2c
+fcea: ca                       dex
+fceb: 60                       rts
+
+fcec: a2 08        RDBYTE      ldx     #$08
+fcee: 48           RDBYT2      pha
+fcef: 20 fa fc                 jsr     RD2BIT
+fcf2: 68                       pla
+fcf3: 2a                       rol     A
+fcf4: a0 3a                    ldy     #$3a
+fcf6: ca                       dex
+fcf7: d0 f5                    bne     RDBYT2
+fcf9: 60                       rts
+
+                   • Clear variables
+                   LASTIN      .var    $2f    {addr/1}
+
+fcfa: 20 fd fc     RD2BIT      jsr     RDBIT
+fcfd: 88           RDBIT       dey
+fcfe: ad 60 c0                 lda     TAPEIN
+fd01: 45 2f                    eor     LASTIN
+fd03: 10 f8                    bpl     RDBIT
+fd05: 45 2f                    eor     LASTIN
+fd07: 85 2f                    sta     LASTIN
+fd09: c0 80                    cpy     #$80
+fd0b: 60                       rts
+
+fd0c: a4 24        RDKEY       ldy     CH
+fd0e: b1 28                    lda     (BASL),y
+fd10: 48                       pha
+fd11: 29 3f                    and     #$3f
+fd13: 09 40                    ora     #$40
+fd15: 91 28                    sta     (BASL),y
+fd17: 68                       pla
+fd18: 6c 38 00                 jmp     (KSWL)
+
+fd1b: e6 4e        KEYIN       inc     RNDL
+fd1d: d0 02                    bne     KEYIN2
+fd1f: e6 4f                    inc     RNDH
+fd21: 2c 00 c0     KEYIN2      bit     KBD             ;read keyboard
+fd24: 10 f5                    bpl     KEYIN
+fd26: 91 28                    sta     (BASL),y
+fd28: ad 00 c0                 lda     KBD
+fd2b: 2c 10 c0                 bit     KBDSTRB
+fd2e: 60                       rts
+
+fd2f: 20 0c fd     ESC         jsr     RDKEY
+fd32: 20 a5 fb                 jsr     ESCNEW
+fd35: 20 0c fd     RDCHAR      jsr     RDKEY
+fd38: c9 9b                    cmp     #$9b
+fd3a: f0 f3                    beq     ESC
+fd3c: 60                       rts
+
+fd3d: a5 32        NOTCR       lda     INVFLG
+fd3f: 48                       pha
+fd40: a9 ff                    lda     #$ff
+fd42: 85 32                    sta     INVFLG
+fd44: bd 00 02                 lda     IN,x
+fd47: 20 ed fd                 jsr     COUT
+fd4a: 68                       pla
+fd4b: 85 32                    sta     INVFLG
+fd4d: bd 00 02                 lda     IN,x
+fd50: c9 88                    cmp     #$88
+fd52: f0 1d                    beq     BCKSPC
+fd54: c9 98                    cmp     #$98
+fd56: f0 0a                    beq     CANCEL
+fd58: e0 f8                    cpx     #$f8
+fd5a: 90 03                    bcc     NOTCR1
+fd5c: 20 3a ff                 jsr     BELL
+fd5f: e8           NOTCR1      inx
+fd60: d0 13                    bne     NXTCHAR
+fd62: a9 dc        CANCEL      lda     #$dc
+fd64: 20 ed fd                 jsr     COUT
+fd67: 20 8e fd     GETLNZ      jsr     CROUT
+fd6a: a5 33        GETLN       lda     PROMPT
+fd6c: 20 ed fd                 jsr     COUT
+fd6f: a2 01        GETLN1      ldx     #$01
+fd71: 8a           BCKSPC      txa
+fd72: f0 f3                    beq     GETLNZ
+fd74: ca                       dex
+fd75: 20 35 fd     NXTCHAR     jsr     RDCHAR
+fd78: c9 95                    cmp     #$95
+fd7a: d0 02                    bne     CAPTST
+fd7c: b1 28                    lda     (BASL),y
+fd7e: c9 e0        CAPTST      cmp     #$e0
+fd80: 90 02                    bcc     ADDINP
+fd82: 29 df                    and     #$df            ;shift to upper case
+fd84: 9d 00 02     ADDINP      sta     IN,x
+fd87: c9 8d                    cmp     #$8d
+fd89: d0 b2                    bne     NOTCR
+fd8b: 20 9c fc     CROUT1      jsr     CLREOL
+fd8e: a9 8d        CROUT       lda     #$8d
+fd90: d0 5b                    bne     COUT
+
+fd92: a4 3d        PRA1        ldy     A1H
+fd94: a6 3c                    ldx     A1L
+fd96: 20 8e fd     PRYX2       jsr     CROUT
+fd99: 20 40 f9                 jsr     PRNTYX
+fd9c: a0 00                    ldy     #$00
+fd9e: a9 ad                    lda     #$ad
+fda0: 4c ed fd                 jmp     COUT
+
+fda3: a5 3c        XAMB        lda     A1L
+fda5: 09 07                    ora     #$07
+fda7: 85 3e                    sta     A2L
+fda9: a5 3d                    lda     A1H
+fdab: 85 3f                    sta     A2H
+fdad: a5 3c        MOD8CHK     lda     A1L
+fdaf: 29 07                    and     #$07
+fdb1: d0 03                    bne     DATAOUT
+fdb3: 20 92 fd     XAM         jsr     PRA1
+fdb6: a9 a0        DATAOUT     lda     #$a0
+fdb8: 20 ed fd                 jsr     COUT
+fdbb: b1 3c                    lda     (A1L),y
+fdbd: 20 da fd                 jsr     PRBYTE
+fdc0: 20 ba fc                 jsr     NXTA1
+fdc3: 90 e8                    bcc     MOD8CHK
+fdc5: 60           RTS4C       rts
+
+fdc6: 4a           XAMPM       lsr     A
+fdc7: 90 ea                    bcc     XAM
+fdc9: 4a                       lsr     A
+fdca: 4a                       lsr     A
+fdcb: a5 3e                    lda     A2L
+fdcd: 90 02                    bcc     ADD
+fdcf: 49 ff                    eor     #$ff
+fdd1: 65 3c        ADD         adc     A1L
+fdd3: 48                       pha
+fdd4: a9 bd                    lda     #$bd
+fdd6: 20 ed fd                 jsr     COUT
+fdd9: 68                       pla
+fdda: 48           PRBYTE      pha
+fddb: 4a                       lsr     A
+fddc: 4a                       lsr     A
+fddd: 4a                       lsr     A
+fdde: 4a                       lsr     A
+fddf: 20 e5 fd                 jsr     PRHEXZ
+fde2: 68                       pla
+fde3: 29 0f        PRHEX       and     #$0f
+fde5: 09 b0        PRHEXZ      ora     #$b0
+fde7: c9 ba                    cmp     #$ba
+fde9: 90 02                    bcc     COUT
+fdeb: 69 06                    adc     #$06
+fded: 6c 36 00     COUT        jmp     (CSWL)
+
+fdf0: c9 a0        COUT1       cmp     #$a0
+fdf2: 90 02                    bcc     COUTZ
+fdf4: 25 32                    and     INVFLG
+fdf6: 84 35        COUTZ       sty     YSAV1
+fdf8: 48                       pha
+fdf9: 20 78 fb                 jsr     VIDWAIT         ;go check for pause
+fdfc: 68                       pla
+fdfd: a4 35                    ldy     YSAV1
+fdff: 60                       rts
+
+fe00: c6 34        BL1         dec     YSAV
+fe02: f0 9f                    beq     XAMB
+fe04: ca           BLANK       dex
+fe05: d0 16                    bne     SETMDZ
+fe07: c9 ba                    cmp     #$ba
+fe09: d0 bb                    bne     XAMPM
+fe0b: 85 31                    sta     MODE
+fe0d: a5 3e                    lda     A2L
+fe0f: 91 40                    sta     (A3L),y
+fe11: e6 40                    inc     A3L
+fe13: d0 02                    bne     RTS5
+fe15: e6 41                    inc     A3H
+fe17: 60           RTS5        rts
+
+                   ; check me
+fe18: a4 34        SETMODE     ldy     YSAV
+fe1a: b9 ff 01                 lda     IN-1,y
+fe1d: 85 31        SETMDZ      sta     MODE
+fe1f: 60                       rts
+
+fe20: a2 01        LT          ldx     #$01
+fe22: b5 3e        LT2         lda     A2L,x
+fe24: 95 42                    sta     A4L,x
+fe26: 95 44                    sta     A5L,x
+fe28: ca                       dex
+fe29: 10 f7                    bpl     LT2
+fe2b: 60                       rts
+
+fe2c: b1 3c        MOVE        lda     (A1L),y
+fe2e: 91 42                    sta     (A4L),y
+fe30: 20 b4 fc                 jsr     NXTA4
+fe33: 90 f7                    bcc     MOVE
+fe35: 60                       rts
+
+fe36: b1 3c        VFY         lda     (A1L),y
+fe38: d1 42                    cmp     (A4L),y
+fe3a: f0 1c                    beq     VFYOK
+fe3c: 20 92 fd                 jsr     PRA1
+fe3f: b1 3c                    lda     (A1L),y
+fe41: 20 da fd                 jsr     PRBYTE
+fe44: a9 a0                    lda     #$a0
+fe46: 20 ed fd                 jsr     COUT
+fe49: a9 a8                    lda     #$a8
+fe4b: 20 ed fd                 jsr     COUT
+fe4e: b1 42                    lda     (A4L),y
+fe50: 20 da fd                 jsr     PRBYTE
+fe53: a9 a9                    lda     #$a9
+fe55: 20 ed fd                 jsr     COUT
+fe58: 20 b4 fc     VFYOK       jsr     NXTA4
+fe5b: 90 d9                    bcc     VFY
+fe5d: 60                       rts
+
+fe5e: 20 75 fe     LIST        jsr     A1PC
+fe61: a9 14                    lda     #$14
+fe63: 48           LIST2       pha
+fe64: 20 d0 f8                 jsr     INSTDSP
+fe67: 20 53 f9                 jsr     PCADJ
+fe6a: 85 3a                    sta     PCL
+fe6c: 84 3b                    sty     PCH
+fe6e: 68                       pla
+fe6f: 38                       sec
+fe70: e9 01                    sbc     #$01
+fe72: d0 ef                    bne     LIST2
+fe74: 60                       rts
+
+fe75: 8a           A1PC        txa
+fe76: f0 07                    beq     A1PCRTS
+fe78: b5 3c        A1PCLP      lda     A1L,x
+fe7a: 95 3a                    sta     PCL,x
+fe7c: ca                       dex
+fe7d: 10 f9                    bpl     A1PCLP
+fe7f: 60           A1PCRTS     rts
+
+fe80: a0 3f        SETINV      ldy     #$3f
+fe82: d0 02                    bne     SETIFLG
+
+fe84: a0 ff        SETNORM     ldy     #$ff
+fe86: 84 32        SETIFLG     sty     INVFLG
+fe88: 60                       rts
+
+fe89: a9 00        SETKBD      lda     #$00
+fe8b: 85 3e        INPORT      sta     A2L
+fe8d: a2 38        INPRT       ldx     #KSWL
+fe8f: a0 1b                    ldy     #<KEYIN
+fe91: d0 08                    bne     IOPRT
+
+fe93: a9 00        SETVID      lda     #$00
+fe95: 85 3e        OUTPORT     sta     A2L
+fe97: a2 36        OUTPRT      ldx     #CSWL
+fe99: a0 f0                    ldy     #<COUT1
+fe9b: a5 3e        IOPRT       lda     A2L
+fe9d: 29 0f                    and     #$0f
+fe9f: f0 06                    beq     IOPRT1
+fea1: 09 c0                    ora     #>IOADR
+fea3: a0 00                    ldy     #$00
+fea5: f0 02                    beq     IOPRT2
+
+fea7: a9 fd        IOPRT1      lda     #>COUT1
+fea9: 94 00        IOPRT2      sty     LOC0,x          ;$94,$00
+feab: 95 01                    sta     LOC1,x          ;$95,$01
+fead: 60                       rts
+
+feae: ea                       nop
+feaf: ea                       nop
+feb0: 4c 00 e0     XBASIC      jmp     BASIC
+
+feb3: 4c 03 e0     BASCONT     jmp     BASIC2
+
+feb6: 20 75 fe     GO          jsr     A1PC
+feb9: 20 3f ff                 jsr     RESTORE
+febc: 6c 3a 00                 jmp     (PCL)
+
+febf: 4c d7 fa     REGZ        jmp     REGDSP
+
+fec2: 60           TRACE       rts                     ;TRACE is gone
+
+fec3: ea                       nop
+fec4: 60           STEPZ       rts                     ;STEP is gone
+
+fec5: ea           _REMOVED    nop
+fec6: ea                       nop
+fec7: ea                       nop
+fec8: ea                       nop
+fec9: ea                       nop
+feca: 4c f8 03     USR         jmp     USRADR
+
+fecd: a9 40        WRITE       lda     #$40
+fecf: 20 c9 fc                 jsr     HEADR
+fed2: a0 27                    ldy     #$27
+fed4: a2 00        WR1         ldx     #$00
+fed6: 41 3c                    eor     (A1L,x)
+fed8: 48                       pha
+fed9: a1 3c                    lda     (A1L,x)
+fedb: 20 ed fe                 jsr     WRBYTE
+fede: 20 ba fc                 jsr     NXTA1
+fee1: a0 1d                    ldy     #$1d
+fee3: 68                       pla
+fee4: 90 ee                    bcc     WR1
+fee6: a0 22                    ldy     #$22
+fee8: 20 ed fe                 jsr     WRBYTE
+feeb: f0 4d                    beq     BELL
+feed: a2 10        WRBYTE      ldx     #$10
+feef: 0a           WRBYT2      asl     A
+fef0: 20 d6 fc                 jsr     WRBIT
+fef3: d0 fa                    bne     WRBYT2
+fef5: 60                       rts
+
+                   • Clear variables
+                   CHKSUM      .var    $2e    {addr/1}
+
+fef6: 20 00 fe     CRMON       jsr     BL1
+fef9: 68                       pla
+fefa: 68                       pla
+fefb: d0 6c                    bne     MONZ
+fefd: 20 fa fc     READ        jsr     RD2BIT
+ff00: a9 16                    lda     #$16
+ff02: 20 c9 fc                 jsr     HEADR
+ff05: 85 2e                    sta     CHKSUM
+ff07: 20 fa fc                 jsr     RD2BIT
+ff0a: a0 24        RD2         ldy     #$24
+ff0c: 20 fd fc                 jsr     RDBIT
+ff0f: b0 f9                    bcs     RD2
+ff11: 20 fd fc                 jsr     RDBIT
+ff14: a0 3b                    ldy     #$3b
+ff16: 20 ec fc     RD3         jsr     RDBYTE
+ff19: 81 3c                    sta     (A1L,x)
+ff1b: 45 2e                    eor     CHKSUM
+ff1d: 85 2e                    sta     CHKSUM
+ff1f: 20 ba fc                 jsr     NXTA1
+ff22: a0 35                    ldy     #$35
+ff24: 90 f0                    bcc     RD3
+ff26: 20 ec fc                 jsr     RDBYTE
+ff29: c5 2e                    cmp     CHKSUM
+ff2b: f0 0d                    beq     BELL
+ff2d: a9 c5        PRERR       lda     #$c5
+ff2f: 20 ed fd                 jsr     COUT
+ff32: a9 d2                    lda     #$d2
+ff34: 20 ed fd                 jsr     COUT
+ff37: 20 ed fd                 jsr     COUT
+ff3a: a9 87        BELL        lda     #$87
+ff3c: 4c ed fd                 jmp     COUT
+
+ff3f: a5 48        RESTORE     lda     STATUS
+ff41: 48                       pha
+ff42: a5 45                    lda     A5H
+ff44: a6 46        RESTR1      ldx     XREG
+ff46: a4 47                    ldy     YREG
+ff48: 28                       plp
+ff49: 60                       rts
+
+ff4a: 85 45        SAVE        sta     A5H
+ff4c: 86 46        SAV1        stx     XREG
+ff4e: 84 47                    sty     YREG
+ff50: 08                       php
+ff51: 68                       pla
+ff52: 85 48                    sta     STATUS
+ff54: ba                       tsx
+ff55: 86 49                    stx     SPNT
+ff57: d8                       cld
+ff58: 60                       rts
+
+ff59: 20 84 fe     OLDRST      jsr     SETNORM
+ff5c: 20 2f fb                 jsr     INIT
+ff5f: 20 93 fe                 jsr     SETVID
+ff62: 20 89 fe                 jsr     SETKBD
+ff65: d8           MON         cld
+ff66: 20 3a ff                 jsr     BELL
+ff69: a9 aa        MONZ        lda     #$aa            ;CALL -151
+ff6b: 85 33                    sta     PROMPT
+ff6d: 20 67 fd                 jsr     GETLNZ
+ff70: 20 c7 ff                 jsr     ZMODE
+ff73: 20 a7 ff     NXTITM      jsr     GETNUM
+ff76: 84 34                    sty     YSAV
+ff78: a0 17                    ldy     #$17
+ff7a: 88           CHRSRCH     dey
+ff7b: 30 e8                    bmi     MON
+ff7d: d9 cc ff                 cmp     CHRTBL,y
+ff80: d0 f8                    bne     CHRSRCH
+ff82: 20 be ff                 jsr     TOSUB
+ff85: a4 34                    ldy     YSAV
+ff87: 4c 73 ff                 jmp     NXTITM
+
+ff8a: a2 03        DIG         ldx     #$03
+ff8c: 0a                       asl     A
+ff8d: 0a                       asl     A
+ff8e: 0a                       asl     A
+ff8f: 0a                       asl     A
+ff90: 0a           NXTBIT      asl     A
+ff91: 26 3e                    rol     A2L
+ff93: 26 3f                    rol     A2H
+ff95: ca                       dex
+ff96: 10 f8                    bpl     NXTBIT
+ff98: a5 31        NXTBAS      lda     MODE
+ff9a: d0 06                    bne     NXTBS2
+ff9c: b5 3f                    lda     A2H,x
+ff9e: 95 3d                    sta     A1H,x
+ffa0: 95 41                    sta     A3H,x
+ffa2: e8           NXTBS2      inx
+ffa3: f0 f3                    beq     NXTBAS
+ffa5: d0 06                    bne     NXTCHR
+
+ffa7: a2 00        GETNUM      ldx     #$00
+ffa9: 86 3e                    stx     A2L
+ffab: 86 3f                    stx     A2H
+ffad: b9 00 02     NXTCHR      lda     IN,y
+ffb0: c8                       iny
+ffb1: 49 b0                    eor     #$b0
+ffb3: c9 0a                    cmp     #$0a
+ffb5: 90 d3                    bcc     DIG
+ffb7: 69 88                    adc     #$88
+ffb9: c9 fa                    cmp     #$fa
+ffbb: b0 cd                    bcs     DIG
+ffbd: 60                       rts
+
+ffbe: a9 fe        TOSUB       lda     #>GO
+ffc0: 48                       pha
+ffc1: b9 e3 ff                 lda     SUBTBL,y
+ffc4: 48                       pha
+ffc5: a5 31                    lda     MODE
+ffc7: a0 00        ZMODE       ldy     #$00
+ffc9: 84 31                    sty     MODE
+ffcb: 60                       rts
+
+ffcc: bc           CHRTBL      .dd1    $bc
+ffcd: b2                       .dd1    $b2
+ffce: be                       .dd1    $be
+ffcf: b2                       .dd1    $b2             ;T cmd now like USR
+ffd0: ef                       .dd1    $ef
+ffd1: c4                       .dd1    $c4
+ffd2: b2                       .dd1    $b2             ;S cmd now like USR
+ffd3: a9                       .dd1    $a9
+ffd4: bb                       .dd1    $bb
+ffd5: a6                       .dd1    $a6
+ffd6: a4                       .dd1    $a4
+ffd7: 06                       .dd1    $06
+ffd8: 95                       .dd1    $95
+ffd9: 07                       .dd1    $07
+ffda: 02                       .dd1    $02
+ffdb: 05                       .dd1    $05
+ffdc: f0                       .dd1    $f0
+ffdd: 00                       .dd1    $00
+ffde: eb                       .dd1    $eb
+ffdf: 93                       .dd1    $93
+ffe0: a7                       .dd1    $a7
+ffe1: c6                       .dd1    $c6
+ffe2: 99                       .dd1    $99
+ffe3: b2           SUBTBL      .dd1    <BASCONT-1
+ffe4: c9                       .dd1    <USR-1
+ffe5: be                       .dd1    <REGZ-1
+ffe6: c1                       .dd1    <TRACE-1
+ffe7: 35                       .dd1    <VFY-1
+ffe8: 8c                       .dd1    <INPRT-1
+ffe9: c4                       .dd1    <_REMOVED-1
+ffea: 96                       .dd1    <OUTPRT-1
+ffeb: af                       .dd1    <XBASIC-1
+ffec: 17                       .dd1    <SETMODE-1
+ffed: 17                       .dd1    <SETMODE-1
+ffee: 2b                       .dd1    <MOVE-1
+ffef: 1f                       .dd1    <LT-1
+fff0: 83                       .dd1    <SETNORM-1
+fff1: 7f                       .dd1    <SETINV-1
+fff2: 5d                       .dd1    <LIST-1
+fff3: cc                       .dd1    <WRITE-1
+fff4: b5                       .dd1    <GO-1
+fff5: fc                       .dd1    <READ-1
+fff6: 17                       .dd1    <SETMODE-1
+fff7: 17                       .dd1    <SETMODE-1
+fff8: f5                       .dd1    <CRMON-1
+fff9: 03                       .dd1    <BLANK-1
+fffa: fb 03                    .dd2    NMI
+fffc: 62 fa                    .dd2    RESET
+fffe: 40 fa                    .dd2    IRQ
+Symbol Table
+APPLEII	$fb60
+BASCALC	$fbc1
+BELL	$ff3a
+CLREOL	$fc9c
+CLREOP	$fc42
+CLRSCR	$f832
+CLRTOP	$f836
+COUT	$fded
+COUT1	$fdf0
+CRMON	$fef6
+CROUT	$fd8e
+CROUT1	$fd8b
+GBASCALC	$f847
+GETLN	$fd6a
+GETLN1	$fd6f
+GETLNZ	$fd67
+HEADR	$fcc9
+HLINE	$f819
+HOME	$fc58
+INIT	$fb2f
+INSTDSP	$f8d0
+IRQ	$fa40
+KEYIN	$fd1b
+LIST	$fe5e
+MON	$ff65
+MONZ	$ff69
+MOVE	$fe2c
+NEXTCOL	$f85f
+NXTA4	$fcb4
+OLDBRK	$fa59
+OLDRST	$ff59
+PLOT	$f800
+PRBL2	$f94a
+PRBLNK	$f948
+PRBYTE	$fdda
+PREAD	$fb1e
+PRERR	$ff2d
+PRHEX	$fde3
+PRNTAX	$f941
+PWRUP	$faa6
+RD2BIT	$fcfa
+RDBYTE	$fcec
+RDCHAR	$fd35
+RDKEY	$fd0c
+RESET	$fa62
+RGDSP1	$fada
+RTBL	$fb19
+SAVE	$ff4a
+SCRN	$f871
+SCROLL	$fc70
+SETCOL	$f864
+SETGR	$fb40
+SETINV	$fe80
+SETKBD	$fe89
+SETMODE	$fe18
+SETNORM	$fe84
+SETPWRC	$fb6f
+SETTXT	$fb39
+SETVID	$fe93
+TRACE	$fec2
+VFY	$fe36
+VLINE	$f828
+VTAB	$fc22
+WAIT	$fca8
+WRITE	$fecd
+WRTAPE	$fce5
+HTML generated by 6502bench SourceGen v1.5.0-alpha1 on 2020/01/15
+Expression style: Common

@@ -1,8 +1,33 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <Content Include="roms\ApplesoftD000.rom">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="roms\ApplesoftD800.rom">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="roms\ApplesoftE000.rom">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="roms\ApplesoftE800.rom">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="roms\ApplesoftF000.rom">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="roms\ApplesoftF800.rom">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="roms\CharROM.rom">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Runtime\Runtime.csproj" />
   </ItemGroup>
+
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -10,6 +35,8 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
+    <!-- <PublishTrimmed>true</PublishTrimmed>
+    <PublishAOT>true</PublishAOT> -->
   </PropertyGroup>
 
 </Project>

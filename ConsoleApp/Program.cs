@@ -1,4 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using System.Reflection;
 using Runtime;
 
@@ -6,8 +8,6 @@ namespace ConsoleApp
 {
     public  class Program 
     {
-        public static bool run = true;
-
         [RequiresAssemblyFiles()]
         public static void Main(string[] args)
         {
@@ -22,11 +22,45 @@ namespace ConsoleApp
             roms.Add(0xe000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftE000.rom"));
             roms.Add(0xd800, File.ReadAllBytes(assemblyPath + "roms/ApplesoftD800.rom"));
             roms.Add(0xd000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftD000.rom"));
-            
-            run = true;
-            CPU cpu = new CPU(new State(), 0xffff, roms, true);
+            Memory memory = new Memory(0xffff);
+
+            foreach (var item in roms)
+            {
+                memory.WriteAt(item.Key, item.Value);
+            }
+
+            List<Task> threads = new List<Task>();
+
+            bool running = true;
+
+
+            CPU cpu = new CPU(new State(), memory, true);
             cpu.Reset();
-            cpu.Start();
+            cpu.InitConsole();
+
+            threads.Add(Task.Run(() => {
+                while (running)
+                {
+                    cpu.RunCycle();
+                }
+            }));
+            threads.Add(Task.Run(() => {
+                while (running)
+                {
+
+                    cpu.RefreshScreen();
+                    Thread.Sleep(10);
+                }
+            }));
+            threads.Add(Task.Run(() => {
+                while (running)
+                {
+                    cpu.Keyboard();
+                    Thread.Sleep(10);
+                }
+            }));
+
+            Task.WaitAll(threads.ToArray());
         }
     }
 }

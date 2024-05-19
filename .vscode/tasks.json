@@ -15,6 +15,11 @@
             "label": "build",
             "type": "shell",
             "command": "dotnet build ${workspaceFolder}/ConsoleApp/ConsoleApp.csproj"
+        },
+        {
+            "label": "build",
+            "type": "shell",
+            "command": "dotnet build ${workspaceFolder}/Apple2/Apple2.csproj"
         }
     ]
 }
