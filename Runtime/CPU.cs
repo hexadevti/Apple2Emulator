@@ -34,11 +34,16 @@ public class CPU
         this.memory = memory;
         this.debug = debug;
         this.state = state;
-        memory.RegisterOverlay(new AppleScreen());
-        memory.RegisterOverlay(new Keyboard());
-        memory.RegisterOverlay(new ClearKeyStrobe());
+        memory.RegisterOverlay(new AppleScreenOvl());
+        memory.RegisterOverlay(new KeyboardOvl());
+        memory.RegisterOverlay(new SoftswitchesOvl());
         // memory.RegisterOverlay(new TextPage());
         pc = ""; op = ""; axy = ""; fl=""; ad = ""; inst = "";
+        
+        this.memory.softswitches = new Softswitches() {
+            Graphics_Text = false
+        };
+        
     }
 
     public void Reset()
@@ -90,8 +95,10 @@ public class CPU
            
         ushort? refAddress = null;
         
-         if (pc == "fd84")
+         if (pc == "ff9e")
                 Thread.Sleep(1);
+
+        var a1l = memory.ReadByte(0x3c);
 
         if (opCodePart != null)
         {
@@ -122,15 +129,16 @@ public class CPU
                 case Addressing.zeropage:
                     state.PC++;
                     refAddress = memory.ReadZeroPageAddress(state.PC);
+                    
                     if (refAddress != null && opCodePart.Register != null)
                     {
                         if (opCodePart.Register== Register.Y)
                         {
-                            refAddress = (ushort)(refAddress + state.Y);
+                            refAddress = (byte)(refAddress + state.Y);
                         }
                         else
                         {
-                            refAddress = (ushort)(refAddress + state.X);
+                            refAddress = (byte)(refAddress + state.X);
                         }
                     }
                     state.PC++;

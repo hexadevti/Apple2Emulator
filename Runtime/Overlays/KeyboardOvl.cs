@@ -3,10 +3,10 @@ using Runtime.Abstractions;
 
 namespace Runtime.Overlays;
 
-public class Keyboard : IOverLay
+public class KeyboardOvl : IOverLay
 {
      
-    public Keyboard()
+    public KeyboardOvl()
     {
         Start = 0xc000;
         End = 0xc000;

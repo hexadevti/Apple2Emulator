@@ -12,12 +12,12 @@
 		// 	"label": "build"
 		// },
         {
-            "label": "build",
+            "label": "buildConsole",
             "type": "shell",
             "command": "dotnet build ${workspaceFolder}/ConsoleApp/ConsoleApp.csproj"
         },
         {
-            "label": "build",
+            "label": "buildForms",
             "type": "shell",
             "command": "dotnet build ${workspaceFolder}/Apple2/Apple2.csproj"
         }

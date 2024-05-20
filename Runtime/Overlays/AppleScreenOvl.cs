@@ -3,10 +3,10 @@ using Runtime.Abstractions;
 
 namespace Runtime.Overlays;
 
-public class AppleScreen : IOverLay
+public class AppleScreenOvl : IOverLay
 {
        
-    public AppleScreen()
+    public AppleScreenOvl()
     {
         Start = 0xD012;
         End = 0xD012;

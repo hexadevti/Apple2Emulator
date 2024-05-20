@@ -20,6 +20,13 @@
     <Content Include="roms\ApplesoftF800.rom">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
    </Content>
+   <Content Include="roms\OriginalF800.rom">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+   </Content>
+   <Content Include="roms\FreezesF800v1.rom">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+   </Content>
+   
   </ItemGroup>
 
   <PropertyGroup>
