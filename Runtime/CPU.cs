@@ -34,10 +34,7 @@ public class CPU
         this.memory = memory;
         this.debug = debug;
         this.state = state;
-        memory.RegisterOverlay(new AppleScreenOvl());
-        memory.RegisterOverlay(new KeyboardOvl());
-        memory.RegisterOverlay(new SoftswitchesOvl());
-        // memory.RegisterOverlay(new TextPage());
+        
         pc = ""; op = ""; axy = ""; fl=""; ad = ""; inst = "";
         
         this.memory.softswitches = new Softswitches() {
@@ -91,15 +88,20 @@ public class CPU
             {
                 inst = inst + " " + memory.ReadByte((ushort)(state.PC+i)).ToString("x");
             }
+            if (pc == "d820" || pc == "d838")
+            {
+                state.I = true;
+                state.B = true;
+                Thread.Sleep(1);
+            }
+
+        var a1l = memory.ReadByte(0xd012);
+
         } 
            
         ushort? refAddress = null;
         
-         if (pc == "ff9e")
-                Thread.Sleep(1);
-
-        var a1l = memory.ReadByte(0x3c);
-
+        
         if (opCodePart != null)
         {
             switch (opCodePart.Addressing)

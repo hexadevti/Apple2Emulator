@@ -1,5 +1,6 @@
 using Runtime.Abstractions;
 using Runtime.Overlays;
+using System.Globalization;
 using System.Runtime.ExceptionServices;
 
 namespace Runtime;
@@ -87,6 +88,14 @@ public class Memory
             
         }
 
+    }
+
+    public void ImportImage(string image, ushort address)
+    {
+        for (int i = 0; i < 0x1fff; i = i + 1)
+        {
+            memory[(ushort)(address + i)] = byte.Parse(image.Substring(i*2, 2), NumberStyles.HexNumber);
+        }
     }
 
     public bool[] ConvertByteToBoolArray(byte b)

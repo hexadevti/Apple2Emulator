@@ -26,7 +26,6 @@
    <Content Include="roms\FreezesF800v1.rom">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
    </Content>
-   
   </ItemGroup>
 
   <PropertyGroup>

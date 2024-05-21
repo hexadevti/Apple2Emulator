@@ -1,5 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
     <Content Include="roms\ApplesoftD000.rom">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -25,13 +24,17 @@
     <Content Include="roms\CharROM.rom">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
+    <Content Include="roms\karateka.BIN">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="roms\colors.BIN">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="roms\pattern.BIN">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <ProjectReference Include="..\Runtime\Runtime.csproj" />
   </ItemGroup>
-
-
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
@@ -41,5 +44,4 @@
     <!-- <PublishTrimmed>true</PublishTrimmed>
     <PublishAOT>true</PublishAOT> -->
   </PropertyGroup>
-
 </Project>
