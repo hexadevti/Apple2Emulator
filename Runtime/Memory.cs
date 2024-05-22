@@ -18,7 +18,7 @@ public class Memory
 
     public Softswitches softswitches { get; set; }
 
-
+    public DiskDrive drive { get; set; }
 
     public bool UpdateScreen { get; set;}
     public Memory(ushort size)

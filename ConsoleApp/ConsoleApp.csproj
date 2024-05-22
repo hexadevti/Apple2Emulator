@@ -25,6 +25,10 @@
     <Content Include="roms\FreezesF800v1.rom">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="roms\diskinterface.rom">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    
     <Content Include="roms\DOS 3.3 System Master - 680-0051-00.dsk">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

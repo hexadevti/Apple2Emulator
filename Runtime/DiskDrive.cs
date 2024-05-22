@@ -243,7 +243,7 @@ public class DiskDrive
             if ((i % 16) == 15)
             {
                 info += String.Format("  ");
-              for (int n = 0; n < 16; n++)
+                for (int n = 0; n < 16; n++)
                 {
                     info += System.Convert.ToChar(text[n]);
                 }
@@ -258,13 +258,17 @@ public class DiskDrive
 
     public byte[] GetSectorData(int track, int sector)
     {
-        var offset = GetOffset(track, sector);
         byte[] output = new byte[256];
-
-        for (int i = 0; i < 256; i++)
+        if (track < 35 && sector < 16)
         {
-            output[i] = diskImage[offset + i];
+            var offset = GetOffset(track, sector);
+
+            for (int i = 0; i < 256; i++)
+            {
+                output[i] = diskImage[offset + i];
+            }
         }
+
         return output;
     }
 
@@ -274,23 +278,23 @@ public class DiskDrive
         bool[] bitsEncoded = new bool[16];
         BitArray bitsData = new BitArray(new byte[] { data });
 
-        for (int i = 0;i < 16; i++)
+        for (int i = 0; i < 16; i++)
         {
             if (i % 2 == 0)
                 bitsEncoded[i] = true;
             else
             {
                 if (i > 8)
-                    bitsEncoded[i] = bitsData[8-(i-7)];
+                    bitsEncoded[i] = bitsData[8 - (i - 7)];
                 else
-                    bitsEncoded[i] = bitsData[8-i];
+                    bitsEncoded[i] = bitsData[8 - i];
             }
         }
 
-        for (int i = 0;i<8;i++)
+        for (int i = 0; i < 8; i++)
         {
-            output[0] = (byte)(output[0] + (bitsEncoded[i] ? Math.Pow(2,7-i) : 0));
-            output[1] = (byte)(output[1] + (bitsEncoded[i+8] ? Math.Pow(2,7-i) : 0));
+            output[0] = (byte)(output[0] + (bitsEncoded[i] ? Math.Pow(2, 7 - i) : 0));
+            output[1] = (byte)(output[1] + (bitsEncoded[i + 8] ? Math.Pow(2, 7 - i) : 0));
         }
         return output;
     }
@@ -304,7 +308,7 @@ public class DiskDrive
         BitArray bitsSector = new BitArray(EncodeByte(sector));
         BitArray bitsTrack = new BitArray(EncodeByte(track));
 
-        for (int i = 0;i < 16; i++)
+        for (int i = 0; i < 16; i++)
         {
             int sumBits = (bitsVolume[i] ? 1 : 0) + (bitsSector[i] ? 1 : 0) + (bitsTrack[i] ? 1 : 0);
             switch (sumBits)
@@ -323,17 +327,17 @@ public class DiskDrive
                     break;
             }
         }
-        for (int i = 0;i<16;i++)
+        for (int i = 0; i < 16; i++)
         {
             if (i < 8)
-                checkedBitsInverted[i] = checkedBits[7-i];
+                checkedBitsInverted[i] = checkedBits[7 - i];
             else
-                checkedBitsInverted[i] = checkedBits[23-i];
+                checkedBitsInverted[i] = checkedBits[23 - i];
         }
-        for (int i = 0;i<8;i++)
+        for (int i = 0; i < 8; i++)
         {
-            output[0] = (byte)(output[0] + (checkedBitsInverted[i] ? Math.Pow(2,7-i) : 0));
-            output[1] = (byte)(output[1] + (checkedBitsInverted[i+8] ? Math.Pow(2,7-i) : 0));
+            output[0] = (byte)(output[0] + (checkedBitsInverted[i] ? Math.Pow(2, 7 - i) : 0));
+            output[1] = (byte)(output[1] + (checkedBitsInverted[i + 8] ? Math.Pow(2, 7 - i) : 0));
         }
         return output;
     }

@@ -29,15 +29,12 @@ namespace ConsoleApp
 
             roms.Add(0xc600, File.ReadAllBytes(assemblyPath + "roms/diskinterface.rom"));
         
-            Memory memory = new Memory(0xffff);
+            Runtime.Memory memory = new Runtime.Memory(0xffff);
             //memory.RegisterOverlay(new AppleScreenOvl()); // Apple I
             memory.RegisterOverlay(new KeyboardOvl());
             memory.RegisterOverlay(new CpuSoftswitchesOvl());
             memory.RegisterOverlay(new SlotsSoftSwitchesOvl());
-
-            DiskDrive diskDrive = new DiskDrive(assemblyPath + "roms/karateka.dsk", memory);
-            
-            
+            memory.drive = new DiskDrive(assemblyPath + "roms/DOS 3.3 System Master - 680-0051-00.dsk", memory);
 
             foreach (var item in roms)
             {

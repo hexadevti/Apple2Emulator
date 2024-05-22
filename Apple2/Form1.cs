@@ -60,8 +60,7 @@ public partial class Form1 : Form
         memory.RegisterOverlay(new CpuSoftswitchesOvl());
         memory.RegisterOverlay(new SlotsSoftSwitchesOvl());
         memory.LoadChars(File.ReadAllBytes(assemblyPath + "roms/CharROM.rom"));
-        
-        DiskDrive diskDrive = new DiskDrive(assemblyPath + "roms/DOS 3.3 System Master - 680-0051-00.dsk", memory);
+        memory.drive = new DiskDrive(assemblyPath + "roms/DOS 3.3 System Master - 680-0051-00.dsk", memory);
         // Console.WriteLine(diskDrive.DiskInfo());
         //Console.WriteLine(diskDrive.PrintCatalog());
         var test2 = diskDrive.EncodeByte(0x2f);

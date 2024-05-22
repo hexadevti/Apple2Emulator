@@ -88,7 +88,7 @@ public class CPU
             {
                 inst = inst + " " + memory.ReadByte((ushort)(state.PC+i)).ToString("x");
             }
-            if (pc == "c6a4")
+            if (pc == "c609")
             {
                 Thread.Sleep(1);
             }

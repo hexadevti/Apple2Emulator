@@ -17,6 +17,12 @@ public class SlotsSoftSwitchesOvl : IOverLay
     public int End { get; }
 
     int slot = 6;
+    int pointer = 0;
+
+    byte track = 0;
+    byte sector = 0;
+
+    List<byte> selectedSector = new List<byte>();
     //                        |   gap pri    | | Marca ident.  | | Volume  | | trilha  | | Setor   | | check   | | gap sec | | Marca dados   |
     byte[] bytes= new byte[] {0xff, 0xff, 0xff, 0xd5, 0xaa, 0x96, 0xbf, 0xaf, 0xaa, 0xaa, 0xaa, 0xaa, 0Xbf, 0xaf, 0xff, 0xff, 0xd5, 0xaa, 0xad, 
                               0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 
@@ -53,14 +59,8 @@ public class SlotsSoftSwitchesOvl : IOverLay
                               0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 
                               0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff  };
 
-    int pointer = 0;
     public void Write(ushort address, byte b, Memory memory)
     {
-        // var slotOffset = slot * 0x10;
-        // if (address == 0xc08c + slotOffset)
-        // {
-            
-        // }
     }
     
     public byte Read(ushort address, Memory memory)
@@ -68,8 +68,25 @@ public class SlotsSoftSwitchesOvl : IOverLay
         int slotOffset = slot * 0x10;    
         if (address == 0xc08c + slotOffset)
         {
-            var sector = memory.ReadByte(0x3d);
-            var track = memory.ReadByte(0x41);
+            var newsector = memory.ReadByte(0x3d);
+            var newtrack = memory.ReadByte(0x41);
+            if (sector != newsector || track != newtrack)
+            {
+                sector = newsector;
+                track = newtrack;
+                selectedSector = new List<byte>() { 0xff, 0xff, 0xff, 0xd5, 0xaa, 0x96, 0xbf, 0xaf };
+                selectedSector.AddRange(memory.drive.EncodeByte(0x2f).ToList());
+                selectedSector.AddRange(memory.drive.EncodeByte(track).ToList());
+                selectedSector.AddRange(memory.drive.EncodeByte(sector).ToList());
+                selectedSector.AddRange(memory.drive.Checksum(0x2f, track,sector).ToList());
+                selectedSector.AddRange(new List<byte>() { 0xff, 0xff, 0xd5, 0xaa, 0xad });
+                foreach (var item in memory.drive.GetSectorData(track, sector))
+                {
+                    selectedSector.AddRange(memory.drive.EncodeByte(item));
+                }
+                selectedSector.AddRange(new List<byte>() { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff });
+                pointer=0;
+            }
             if (pointer > bytes.Length)
                 pointer=0;
             // Le Byte disco
