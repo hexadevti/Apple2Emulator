@@ -26,10 +26,17 @@ namespace ConsoleApp
 
             // roms.Add(0xf800, File.ReadAllBytes(assemblyPath + "roms/OriginalF800.rom"));
             //roms.Add(0xf800, File.ReadAllBytes(assemblyPath + "roms/FreezesF800v1.rom"));
+
+            roms.Add(0xc600, File.ReadAllBytes(assemblyPath + "roms/diskinterface.rom"));
+        
             Memory memory = new Memory(0xffff);
             //memory.RegisterOverlay(new AppleScreenOvl()); // Apple I
             memory.RegisterOverlay(new KeyboardOvl());
-            memory.RegisterOverlay(new SoftswitchesOvl());
+            memory.RegisterOverlay(new CpuSoftswitchesOvl());
+            memory.RegisterOverlay(new SlotsSoftSwitchesOvl());
+
+            DiskDrive diskDrive = new DiskDrive(assemblyPath + "roms/karateka.dsk", memory);
+            
             
 
             foreach (var item in roms)

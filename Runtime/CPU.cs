@@ -88,10 +88,8 @@ public class CPU
             {
                 inst = inst + " " + memory.ReadByte((ushort)(state.PC+i)).ToString("x");
             }
-            if (pc == "d820" || pc == "d838")
+            if (pc == "c6a4")
             {
-                state.I = true;
-                state.B = true;
                 Thread.Sleep(1);
             }
 

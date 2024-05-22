@@ -1,33 +1,34 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
     <ProjectReference Include="..\Runtime\Runtime.csproj" />
     <Content Include="roms\ApplesoftD000.rom">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-   </Content>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="roms\ApplesoftD800.rom">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-   </Content>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="roms\ApplesoftE000.rom">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-   </Content>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="roms\ApplesoftE800.rom">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-   </Content>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="roms\ApplesoftF000.rom">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-   </Content>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="roms\ApplesoftF800.rom">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-   </Content>
-   <Content Include="roms\OriginalF800.rom">
+    </Content>
+    <Content Include="roms\OriginalF800.rom">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-   </Content>
-   <Content Include="roms\FreezesF800v1.rom">
+    </Content>
+    <Content Include="roms\FreezesF800v1.rom">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-   </Content>
+    </Content>
+    <Content Include="roms\DOS 3.3 System Master - 680-0051-00.dsk">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
-
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
