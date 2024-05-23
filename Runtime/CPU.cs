@@ -70,7 +70,7 @@ public class CPU
             fl = (state.N ? "1" : "0") + "" + (state.V ? "1" : "0") + (state.B ? "1": "0") 
                 + (state.D ? "1": "0") + (state.I ? "1": "0") + (state.Z ? "1": "0") 
                 + (state.C ? "1": "0");
-            inst = pc + ": " + instruction.ToString("x");
+            inst = pc + ": " + instruction.ToString("x4");
             ushort nextbytes = 0;
             if (opCodePart?.Addressing == Addressing.immediate)
                 nextbytes = 1;
@@ -81,19 +81,19 @@ public class CPU
             if (opCodePart?.Addressing == Addressing.indirect && opCodePart.Register != null)
                 nextbytes = 1;
             if (opCodePart?.Addressing == Addressing.indirect && opCodePart.Register == null)
-                nextbytes = 2;
+                nextbytes = 2;  
             if (opCodePart?.Addressing == Addressing.relative)
                 nextbytes = 1;
             for (int i = 1;i<=nextbytes;i++)
             {
                 inst = inst + " " + memory.ReadByte((ushort)(state.PC+i)).ToString("x");
             }
-            if (pc == "c609")
+            if (pc == "c6f8" || pc == "394f")
             {
                 Thread.Sleep(1);
             }
 
-        var a1l = memory.ReadByte(0xd012);
+        
 
         } 
            

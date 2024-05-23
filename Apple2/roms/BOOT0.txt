@@ -191,7 +191,7 @@ c6a4: b0 b7                      bcs     ReadSector_C      ;correct T/S, go find
                    ; have three consecutive zeroes.
                    ; 
                    ; The data bytes are written to disk with a rolling XOR to compute a checksum,
-                   ; so we read them back the same way.  We keep this in the A-reg for the
+                   ; so we read them b96ack the same way.  We keep this in the A-reg for the
                    ; duration.  The actual value is always in the range [$00,$3f] (6 bits).
                    ; 
                    ; On entry:

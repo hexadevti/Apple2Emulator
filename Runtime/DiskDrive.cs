@@ -17,6 +17,28 @@ public class DiskDrive
 
     public int offset_to_disk_info { get; set; }
 
+    public byte[] translateTable = new byte[] {
+                            0x96,0x97,0x9A,0x9B,0x9D,0x9E,0x9F,0xA6,
+                            0xA7,0xAB,0xAC,0xAD,0xAE,0xAF,0xB2,0xB3,
+                            0xB4,0xB5,0xB6,0xB7,0xB9,0xBA,0xBB,0xBC,
+                            0xBD,0xBE,0xBF,0xCB,0xCD,0xCE,0xCF,0xD3,
+                            0xD6,0xD7,0xD9,0xDA,0xDB,0xDC,0xDD,0xDE,
+                            0xDF,0xE5,0xE6,0xE7,0xE9,0xEA,0xEB,0xEC,
+                            0xED,0xEE,0xEF,0xF2,0xF3,0xF4,0xF5,0xF6,
+                            0xF7,0xF9,0xFA,0xFB,0xFC,0xFD,0xFE,0xFF
+                        };
+
+/* DO logical order  0 1 2 3 4 5 6 7 8 9 A B C D E F */
+/*    physical order 0 D B 9 7 5 3 1 E C A 8 6 4 2 F */
+
+/* PO logical order  0 E D C B A 9 8 7 6 5 4 3 2 1 F */
+/*    physical order 0 2 4 6 8 A C E 1 3 5 7 9 B D F */
+
+    public byte[] translateDos33Track = new byte[] { 
+        0x0, 0x7, 0xe, 0x6, 0x0d, 0x05, 0x0c, 0x04, 0x0b, 0x03, 0x0a, 0x02, 0x09, 0x01, 0x08, 0x0f };
+
+    // public byte[] translateDos33Track = new byte[] { 
+    //     0x0, 0x1, 0x2, 0x3, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f };
     public DiskDrive(string dskPath, Memory memory)
     {
         this.memory = memory;
@@ -340,6 +362,69 @@ public class DiskDrive
             output[1] = (byte)(output[1] + (checkedBitsInverted[i + 8] ? Math.Pow(2, 7 - i) : 0));
         }
         return output;
+    }
+
+    public byte Translate(byte input)
+    {
+        return translateTable[input];
+    }
+
+//  01 a5 27 c9 09 d0 18 a5 2b 4a 4a 4a 4a 09 c0 85 3f a9 5c 85 3e 18 ad fe 08 6d ff 08 8d fe 08 ae ff 08 30 15 bd 4d 08 85 3d ce ff 08 ad fe 08 85 27 ce fe 08 a6 2b 6c 3e 00 ee fe 08 ee fe 08 20 89 fe 20 93 fe 20 2f fb a6 2b 6c fd 08 00 0d 0b 09 07 05 03 01 0e
+//  0c 0a 08 06 04 02 0f 00 20 64 27 b0 08 a9 00 a8 8d 5d 36 91 40 ad c5 35 4c d2 26 ad 5d 36 f0 08 ee bd 35 d0 03 ee be 35 a9 00 8d 5d 36 4c 46 25 8d bc 35 20 a8 26 20 ea 22 4c 7d 22 a0 13 b1 42 d0 14 c8 c0 17 d0 f7 a0 19 b1 42 99 a4 35 c8 c0 1d d0 f6 4c bc 26 
+//  a2 ff 8e 5d 36 d0 f6 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 20 58 fc a9 c2 20 ed fd a9 01 20 da fd a9 ad 20 ed fd a9 00 20 da fd 60 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 36 09
+
+    public byte[] Encode6_2(int track, int sector)
+    {
+        byte[] input = GetSectorData(track, translateDos33Track[sector]);
+        byte[] outputData = new byte[256];
+        
+        byte[] outputlast2 = new byte[0x56];
+        
+        byte[] outputlast2Encoded = new byte[0x56];
+        byte[] outputDataEncoded = new byte[256];
+
+        for (int i = 0;i<input.Length;i++)
+        {
+            outputData[i] = (byte)(input[i] >> 2);
+            if (i < 86)
+            {
+                BitArray bitsVolume = new BitArray(new byte[] { input[i] });
+                var last2bits = (bitsVolume[0] ? 2 : 0) + (bitsVolume[1] ? 1 : 0);
+                outputlast2[i] = (byte)(outputlast2[i] | last2bits );
+            } 
+            else if (i < 172)
+            {
+                BitArray bitsVolume = new BitArray(new byte[] { input[i] });
+                var last2bits = ((bitsVolume[0] ? 2 : 0) + (bitsVolume[1] ? 1 : 0)) << 2;
+                outputlast2[i-86] = (byte)(outputlast2[i-86] | last2bits );
+            }
+            else
+            {
+                BitArray bitsVolume = new BitArray(new byte[] { input[i] });
+                var last2bits = ((bitsVolume[0] ? 2 : 0) + (bitsVolume[1] ? 1 : 0)) << 4;
+                outputlast2[i-172] = (byte)(outputlast2[i-172] | last2bits );
+            }
+        }    
+        var lastByte = 0;
+        for (int i = 0; i < 86; i++)
+        {
+            outputlast2Encoded[i] = translateTable[(byte)(outputlast2[i] ^ lastByte)];
+            lastByte = outputlast2[i];
+        }
+        List<byte> agregate = outputlast2Encoded.ToList();
+
+        for (int i = 0; i < 256; i++)
+        {
+            outputDataEncoded[i] = translateTable[(byte)(outputData[i] ^ lastByte)];
+            lastByte = outputData[i];
+        }
+
+        agregate.AddRange(outputDataEncoded.ToList());
+
+        List<byte> checksum = new List<byte>() { translateTable[lastByte] };
+        agregate.AddRange(checksum.ToList());
+
+        return agregate.ToArray();
     }
 
 
