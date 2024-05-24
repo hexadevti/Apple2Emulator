@@ -20,7 +20,7 @@ public class CpuSoftswitchesOvl : IOverLay
     {
     }
 
-    public byte Read(ushort address, Memory memory)
+    public byte Read(ushort address, Memory memory, State state)
     {
         
         if (address==0xc010)

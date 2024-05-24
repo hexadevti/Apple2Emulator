@@ -18,7 +18,7 @@ public partial class Form1 : Form
 
     private CPU cpu { get; set;}
     
-    float zoom = 6.0f;
+    float zoom = 4.0f;
     int scrWidth = 280;
     int scrHeight = 192;
 
@@ -52,7 +52,7 @@ public partial class Form1 : Form
         roms.Add(0xd800, File.ReadAllBytes(assemblyPath + "roms/ApplesoftD800.rom"));
         roms.Add(0xd000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftD000.rom"));
 
-        memory = new Memory(0xffff);
+        memory = new Memory(0xffff, state);
 
         memory.ImportImage(File.ReadAllText(assemblyPath + "roms/karateka.bin"), 0x2000);
         memory.RegisterOverlay(new KeyboardOvl());
@@ -63,21 +63,12 @@ public partial class Form1 : Form
         memory.drive = new DiskDrive(assemblyPath + "roms/karateka.dsk", memory);
         memory.RegisterOverlay(new SlotsSoftSwitchesOvl());
         
-        
-        // Console.WriteLine(diskDrive.DiskInfo());
-        //Console.WriteLine(diskDrive.PrintCatalog());
-        // var test2 = diskDrive.EncodeByte(0x2f);
-        // var test = diskDrive.Checksum(0x2f, 0x09, 0x03);
-        // Console.WriteLine(test[0].ToString("X2") + " " + test[1].ToString("X2"));
-        // Console.WriteLine(diskDrive.DumpSector(1,1));
-        // byte[] sector = diskDrive.GetSectorData(1,1);
-        
         foreach (var item in roms)
         {
             memory.WriteAt(item.Key, item.Value);
         }
         List<Task> threads = new List<Task>();
-        cpu = new CPU(state, memory, true);
+        cpu = new CPU(state, memory, false);
         Keyboard keyboard= new Keyboard(memory, state, lockObj);
         this.KeyDown += keyboard.OnKeyDown;
         this.KeyPress += keyboard.OnKeyPress;    

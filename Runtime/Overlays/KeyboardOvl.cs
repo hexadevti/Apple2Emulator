@@ -18,7 +18,7 @@ public class KeyboardOvl : IOverLay
     {
     }
 
-    public byte Read(ushort address, Memory memory)
+    public byte Read(ushort address, Memory memory, State state)
     {
         return memory.KeyPressed;
     }

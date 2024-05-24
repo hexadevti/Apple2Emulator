@@ -21,7 +21,7 @@ public class TextPageOvl : IOverLay
         memory.UpdateScreen = true;
     }
     
-    public byte Read(ushort address, Memory memory)
+    public byte Read(ushort address, Memory memory, State state)
     {
         return 0;
     }

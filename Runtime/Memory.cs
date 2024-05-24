@@ -2,6 +2,7 @@ using Runtime.Abstractions;
 using Runtime.Overlays;
 using System.Globalization;
 using System.Runtime.ExceptionServices;
+using System.Threading.Channels;
 
 namespace Runtime;
 
@@ -21,9 +22,12 @@ public class Memory
     public DiskDrive drive { get; set; }
 
     public bool UpdateScreen { get; set;}
-    public Memory(ushort size)
+
+    public State state { get ; set; }
+    public Memory(ushort size, State state)
     {
         overlays = new List<IOverLay>();
+        this.state = state;
         Random rnd = new Random();
          byte[] b = new byte[size];
          rnd.NextBytes(b);
@@ -126,7 +130,7 @@ public class Memory
         var overLay = GetOverlay(address);
         byte value;
         if (overLay != null)
-            value = overLay.Read(address, this);
+            value = overLay.Read(address, this, state);
         else
             value = memory[address];
         return value;
@@ -135,7 +139,14 @@ public class Memory
     public ushort? ReadAddressLLHH(ushort? address)
     {
         if (address!=null)
-            return (ushort)(memory[(ushort)(address.Value+1)] << 8 | memory[address.Value]);
+        {
+            var addr = (ushort)(address.Value+1);
+            var mem = memory[addr];
+            var mem8 = memory[addr] << 8;
+            var memff =  memory[addr] << 8 | memory[address.Value];
+            return (ushort)memff;
+        }
+            //return (ushort)(memory[(ushort)(address.Value+1)] << 8 | memory[address.Value]);
         else 
             return null;
     }
@@ -230,6 +241,22 @@ public class Softswitches
     public bool TextPage1_Page2 { get; set; }
     public bool DisplayFull_Split { get; set;}
     public bool LoRes_HiRes { get; set; }
+
+    public bool DrivePhase0ON_OFF { get; set; }
+    public bool DrivePhase1ON_OFF { get; set; }
+    public bool DrivePhase2ON_OFF { get; set; }
+    public bool DrivePhase3ON_OFF { get; set; }
+
+    public bool DriveMotorON_OFF { get; set; }
+
+    public bool DriveQ6H_L { get; set; }
+
+    public bool DriveQ7H_L { get; set; }
+
+    public bool Drive1_2 { get; set; }
+
+
+
     // public bool C050 { get; set; } // Display Graphics
     // public bool C051 { get; set; } // Display Text
     // public bool C052 { get; set; } // Display Full Screen

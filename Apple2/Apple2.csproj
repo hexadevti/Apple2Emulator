@@ -42,6 +42,9 @@
     <Content Include="roms\karateka.dsk">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="roms\EMPTY DOS33.dsk">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <ProjectReference Include="..\Runtime\Runtime.csproj" />
   </ItemGroup>
   <PropertyGroup>

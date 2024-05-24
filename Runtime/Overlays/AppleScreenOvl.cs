@@ -34,7 +34,7 @@ public class AppleScreenOvl : IOverLay
         }
     }
     
-    public byte Read(ushort address, Memory memory)
+    public byte Read(ushort address, Memory memory, State state)
     {
         return 0;
     }
