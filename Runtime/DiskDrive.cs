@@ -363,16 +363,7 @@ public class DiskDrive
         }
         return output;
     }
-
-    public byte Translate(byte input)
-    {
-        return translateTable[input];
-    }
-
-//  01 a5 27 c9 09 d0 18 a5 2b 4a 4a 4a 4a 09 c0 85 3f a9 5c 85 3e 18 ad fe 08 6d ff 08 8d fe 08 ae ff 08 30 15 bd 4d 08 85 3d ce ff 08 ad fe 08 85 27 ce fe 08 a6 2b 6c 3e 00 ee fe 08 ee fe 08 20 89 fe 20 93 fe 20 2f fb a6 2b 6c fd 08 00 0d 0b 09 07 05 03 01 0e
-//  0c 0a 08 06 04 02 0f 00 20 64 27 b0 08 a9 00 a8 8d 5d 36 91 40 ad c5 35 4c d2 26 ad 5d 36 f0 08 ee bd 35 d0 03 ee be 35 a9 00 8d 5d 36 4c 46 25 8d bc 35 20 a8 26 20 ea 22 4c 7d 22 a0 13 b1 42 d0 14 c8 c0 17 d0 f7 a0 19 b1 42 99 a4 35 c8 c0 1d d0 f6 4c bc 26 
-//  a2 ff 8e 5d 36 d0 f6 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 20 58 fc a9 c2 20 ed fd a9 01 20 da fd a9 ad 20 ed fd a9 00 20 da fd 60 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 36 09
-
+   
     public byte[] Encode6_2(int track, int sector)
     {
         byte[] input = GetSectorData(track, translateDos33Track[sector]);
@@ -426,7 +417,6 @@ public class DiskDrive
 
         return agregate.ToArray();
     }
-
 
     public int GetOffset(int track, int sector)
     {

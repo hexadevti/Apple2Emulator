@@ -139,14 +139,7 @@ public class Memory
     public ushort? ReadAddressLLHH(ushort? address)
     {
         if (address!=null)
-        {
-            var addr = (ushort)(address.Value+1);
-            var mem = memory[addr];
-            var mem8 = memory[addr] << 8;
-            var memff =  memory[addr] << 8 | memory[address.Value];
-            return (ushort)memff;
-        }
-            //return (ushort)(memory[(ushort)(address.Value+1)] << 8 | memory[address.Value]);
+            return (ushort)(memory[(ushort)(address.Value+1)] << 8 | memory[address.Value]);
         else 
             return null;
     }

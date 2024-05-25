@@ -89,7 +89,8 @@ public class CPU
                 inst = inst + " " + memory.ReadByte((ushort)(state.PC+i)).ToString("x");
             }
         } 
-           
+            if (state.PC == 0x38c2)
+                Thread.Sleep(1); 
         ushort? refAddress = null;
         
         
@@ -182,85 +183,26 @@ public class CPU
             if (debug)
                 ad = (refAddress.HasValue ? refAddress.Value.ToString("x4") : "null");
             
+            if (state.PC == 0x3e30)
+                 Thread.Sleep(1);
+            if (state.PC == 0x38d6 && state.Y == 0x80 && state.X == 0x2b)
+                 Thread.Sleep(1); 
+           
+            // if (pc == "3988") // Extrai dados do address header do setor
+            //     Thread.Sleep(1);
 
+            // if (pc == "3e30") // Compara setor descoberto com o setor solicitado
+            //     Thread.Sleep(1);
+           
+            // if (pc == "3911") // Buffer 1 - 2 bits 
+            //     Thread.Sleep(1);
             
-            // if (pc == "3e35") // Read16
-            // {
+            // if (pc == "3922") // Buffer 2 - 6 bits
             //     Thread.Sleep(1);
-            // }
-            // if (pc == "3e38") // tryadr2
-            // {
-            //     Thread.Sleep(1);
-            // }
-            // if (pc == "3dc4") // rdaddr16
-            // {
-            //     Thread.Sleep(1);
-            // }
-            // if (pc == "3983") // Verifica checksum
-            // {
-            //     Thread.Sleep(1);
-            // }
-            // if (pc == "3dc7") // Verifica checksum
-            // {
-            //     Thread.Sleep(1);
-            // }
 
-            // if (pc == "3e30") // Verifica Setor
-            // {
+            // if (pc == "38d4") // Processa buffer 1 e 2 e grava dado em memoria (Acumulador)
             //     Thread.Sleep(1);
-            // }
-            // if (pc == "3e33") // Read16
-            // {
-            //     Thread.Sleep(1);
-            // }
-            // if (pc == "3e39") // Le dados e tenta depois achar endereco
-            // {
-            //     Thread.Sleep(1);
-            // }
-            // if (pc == "3e3b") // Achou
-            // {
-            //     Thread.Sleep(1);
-            // }
-            //  if (pc == "3e40") // postnb grava dados memoria
-            // {
-            //     Thread.Sleep(1);
-            // }
 
-
-            //retry volta 3dc4 e fica em loop por 48 tentativas
-
-            if (pc == "399f") 
-            {
-                Thread.Sleep(1);
-            }
-
-            if (pc == "3e30") 
-            {
-                Thread.Sleep(1);
-            }
-
-            if (pc == "38dc") 
-            {
-                Thread.Sleep(1);
-            }
-
-            if (pc == "390e") 
-            {
-                Thread.Sleep(1);
-            }
-            if (pc == "391f") // Le 2 bits 
-            {
-                Thread.Sleep(1);
-            }
-            if (pc == "3e38") // Le 6 bits -> Buffer
-            {
-                Thread.Sleep(1);
-            }
-            if (pc == "3925") 
-            {
-                Thread.Sleep(1);
-            }
-            
 
             
             

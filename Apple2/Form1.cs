@@ -60,7 +60,7 @@ public partial class Form1 : Form
         memory.LoadChars(File.ReadAllBytes(assemblyPath + "roms/CharROM.rom"));
         
         roms.Add(0xc600, File.ReadAllBytes(assemblyPath + "roms/diskinterface.rom"));
-        memory.drive = new DiskDrive(assemblyPath + "roms/karateka.dsk", memory);
+        memory.drive = new DiskDrive(assemblyPath + "roms/KARATEKA.dsk", memory);
         memory.RegisterOverlay(new SlotsSoftSwitchesOvl());
         
         foreach (var item in roms)
