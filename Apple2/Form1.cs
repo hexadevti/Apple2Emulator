@@ -54,13 +54,13 @@ public partial class Form1 : Form
 
         memory = new Memory(0xffff, state);
 
-        memory.ImportImage(File.ReadAllText(assemblyPath + "roms/karateka.bin"), 0x2000);
+        //memory.ImportImage(File.ReadAllText(assemblyPath + "roms/karateka.bin"), 0x2000);
         memory.RegisterOverlay(new KeyboardOvl());
         memory.RegisterOverlay(new CpuSoftswitchesOvl());
         memory.LoadChars(File.ReadAllBytes(assemblyPath + "roms/CharROM.rom"));
         
         roms.Add(0xc600, File.ReadAllBytes(assemblyPath + "roms/diskinterface.rom"));
-        memory.drive = new DiskDrive(assemblyPath + "roms/KARATEKA.dsk", memory);
+        memory.drive = new DiskDrive(assemblyPath + "roms/karateka.dsk", memory);
         memory.RegisterOverlay(new SlotsSoftSwitchesOvl());
         
         foreach (var item in roms)

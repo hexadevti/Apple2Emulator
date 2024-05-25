@@ -64,7 +64,7 @@ public class CPU
         OpCodePart? opCodePart = OpCodes.GetOpCode(instruction);
         if (debug)
         {
-            op = opCodePart?.Operation + (opCodePart?.Addressing != null ? "_" + opCodePart?.Addressing : "") + (opCodePart?.Register != null ? "_" + opCodePart?.Register : "");
+            //op = opCodePart?.Operation + (opCodePart?.Addressing != null ? "_" + opCodePart?.Addressing : "") + (opCodePart?.Register != null ? "_" + opCodePart?.Register : "");
             pc = state.PC.ToString("x4");
             axy = state.A.ToString("X") + " " + state.X.ToString("X") + " " + state.Y.ToString("X");
             fl = (state.N ? "1" : "0") + "" + (state.V ? "1" : "0") + (state.B ? "1": "0") 
@@ -89,8 +89,7 @@ public class CPU
                 inst = inst + " " + memory.ReadByte((ushort)(state.PC+i)).ToString("x");
             }
         } 
-            if (state.PC == 0x38c2)
-                Thread.Sleep(1); 
+           
         ushort? refAddress = null;
         
         
@@ -183,25 +182,22 @@ public class CPU
             if (debug)
                 ad = (refAddress.HasValue ? refAddress.Value.ToString("x4") : "null");
             
-            if (state.PC == 0x3e30)
-                 Thread.Sleep(1);
-            if (state.PC == 0x38d6 && state.Y == 0x80 && state.X == 0x2b)
-                 Thread.Sleep(1); 
-           
-            // if (pc == "3988") // Extrai dados do address header do setor
-            //     Thread.Sleep(1);
+            if (pc == "b988") // Extrai dados do address header do setor
+                Thread.Sleep(1);
+            if (pc == "be14") // Compara volume 
+                Thread.Sleep(1);
 
-            // if (pc == "3e30") // Compara setor descoberto com o setor solicitado
-            //     Thread.Sleep(1);
+            if (pc == "be30") // Compara setor descoberto com o setor solicitado
+                Thread.Sleep(1);
            
-            // if (pc == "3911") // Buffer 1 - 2 bits 
-            //     Thread.Sleep(1);
+            if (pc == "b911") // Buffer 1 - 2 bits 
+                Thread.Sleep(1);
             
-            // if (pc == "3922") // Buffer 2 - 6 bits
-            //     Thread.Sleep(1);
+            if (pc == "b922") // Buffer 2 - 6 bits
+                Thread.Sleep(1);
 
-            // if (pc == "38d4") // Processa buffer 1 e 2 e grava dado em memoria (Acumulador)
-            //     Thread.Sleep(1);
+            if (pc == "b8d4" && state.Y == 0x80 && state.X== 0x2b ) // Processa buffer 1 e 2 e grava dado em memoria (Acumulador)
+                Thread.Sleep(1);
 
 
             

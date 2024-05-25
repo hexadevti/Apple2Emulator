@@ -37,8 +37,6 @@ public class DiskDrive
     public byte[] translateDos33Track = new byte[] { 
         0x0, 0x7, 0xe, 0x6, 0x0d, 0x05, 0x0c, 0x04, 0x0b, 0x03, 0x0a, 0x02, 0x09, 0x01, 0x08, 0x0f };
 
-    // public byte[] translateDos33Track = new byte[] { 
-    //     0x0, 0xd, 0xb, 0x9, 0x7, 0x5, 0x3, 0x1, 0xe, 0xc, 0xa, 0x8, 0x6, 0x4, 0x2, 0x0f };
     public DiskDrive(string dskPath, Memory memory)
     {
         this.memory = memory;
@@ -110,6 +108,10 @@ public class DiskDrive
         diskImage[byte_pair_offset + 1] = (byte)(current & 0xff);
     }
 
+    public byte GetVolume()
+    {
+        return diskImage[offset + 0x06];
+    }
 
     public string DiskInfo()
     {

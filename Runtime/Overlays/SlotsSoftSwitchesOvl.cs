@@ -58,6 +58,7 @@ public class SlotsSoftSwitchesOvl : IOverLay
                 {
                     selectedTrack = new List<byte>();
                     track = newtrack;
+                    //Console.WriteLine(memory.drive.DiskInfo());
                     foreach (byte isec in new byte[] { 0xa, 0xb, 0xc, 0xd, 0xe, 0xf, 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9})
                     {
                         var sec = (byte)isec; // memory.drive.translateDos33Track[isec];
@@ -66,8 +67,9 @@ public class SlotsSoftSwitchesOvl : IOverLay
                         Console.WriteLine("Track: " + track  + " Sector: " + sec);
                         selectedSector = new List<byte>() { 0xff, 0xff, 0xff };
                         selectedSector.AddRange(new List<byte>() { 0xd5, 0xaa, 0x96 }); // Prologe address
-                        b = memory.drive.EncodeByte(0x2f).ToList();
-                        Console.WriteLine("Volume: " + Print(b) + " 2F");
+                        var volume = memory.drive.GetVolume();
+                        b = memory.drive.EncodeByte(volume).ToList();
+                        Console.WriteLine("Volume: " + Print(b) + " " + volume.ToString("X"));
                         selectedSector.AddRange(b); // Volume
                         b = memory.drive.EncodeByte(track).ToList();
                         Console.WriteLine("Track: " + Print(b) + "" + track);
@@ -75,7 +77,7 @@ public class SlotsSoftSwitchesOvl : IOverLay
                         b = memory.drive.EncodeByte(sec).ToList();
                         Console.WriteLine("Sector: " + Print(b) + "" + sec);
                         selectedSector.AddRange(b); // Sector
-                        b = memory.drive.Checksum(0x2f, track, sec).ToList();
+                        b = memory.drive.Checksum(volume, track, sec).ToList();
                         Console.WriteLine("Checksum: " + Print(b));
                         selectedSector.AddRange(b); // Checksum
                         selectedSector.AddRange(new List<byte>() { 0xde, 0xaa, 0xeb }); // Epilogue address

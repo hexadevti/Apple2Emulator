@@ -12,10 +12,16 @@ public static class VideoGenerator
         int byteid = 0;
         var cursorH = memory.memory[0x24];
         var cursorV = memory.memory[0x25];
+        ushort graphicsPage = 0x2000;
+        ushort textPage = 0x400;
+        
 
         int posH = 0;
         int posV = 0;
         byte[] linha = new byte[0x28];
+
+        graphicsPage = (ushort)(memory.softswitches.TextPage1_Page2 ? 0x2000 : 0x4000);
+        textPage = (ushort)(memory.softswitches.TextPage1_Page2 ? 0x400 : 0x800);
 
         for (int b = 0; b < 3; b++)
         {
@@ -31,7 +37,7 @@ public static class VideoGenerator
                         bool[] blocklineAnt = new bool[] { false, false, false, false, false, false, false, false };
                         for (ushort c = 0; c < 0x28; c++)
                         {
-                            var chr = memory.memory[(ushort)(((0x2000) + (b * 0x28) + (l * 0x80) + c) + block * 0x400)];
+                            var chr = memory.memory[(ushort)(((graphicsPage) + (b * 0x28) + (l * 0x80) + c) + block * 0x400)];
                             bool[] blockline = memory.ConvertByteToBoolArray(chr);
                             if (color)
                             {
@@ -94,7 +100,7 @@ public static class VideoGenerator
                     {
                         posH = c;
 
-                        var chr = memory.memory[(ushort)(0x400 + (b * 0x28) + (l * 0x80) + c)];
+                        var chr = memory.memory[(ushort)(textPage + (b * 0x28) + (l * 0x80) + c)];
 
                         if (posV == cursorV && posH == cursorH)
                             chr = DateTime.Now.Millisecond > 500 ? chr : (byte)(chr | 0b10000000);                                                                                                                         
