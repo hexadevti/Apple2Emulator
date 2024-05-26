@@ -30,6 +30,7 @@ public class SlotsSoftSwitchesOvl : IOverLay
 
     public void Write(ushort address, byte b, Memory memory)
     {
+        
     }
 
     public byte Read(ushort address, Memory memory, State state)
@@ -37,7 +38,7 @@ public class SlotsSoftSwitchesOvl : IOverLay
         int slotOffset = slot * 0x10;
         if (address == 0xc08c + slotOffset)
         {
-            if (memory.softswitches.DriveQ6H_L == false || memory.softswitches.DriveQ7H_L == false)
+            if (memory.drive != null && (memory.softswitches.DriveQ6H_L == false || memory.softswitches.DriveQ7H_L == false))
             {
                 byte newtrack = 0;
                 if (state.PC > 0xc000 + slot * 0x100 && state.PC < (0xc000 + slot  * 0x100) + 0x100)

@@ -33,6 +33,9 @@ public class Keyboard
                 case Keys.C:
                     memory.KeyPressed = 0x83;
                     break;
+                case Keys.G:
+                    memory.KeyPressed = 0x87;
+                    break;
                 case Keys.B:
                     memory.KeyPressed = 0x82;
                     break;

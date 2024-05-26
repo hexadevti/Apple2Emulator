@@ -12,6 +12,8 @@ namespace ConsoleApp
         [RequiresAssemblyFiles()]
         public static void Main(string[] args)
         {
+            Runtime.State state = new Runtime.State();
+
             var roms = new Dictionary<ushort, byte[]>();
             string? assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             if (assemblyPath != null)
@@ -29,7 +31,7 @@ namespace ConsoleApp
 
             roms.Add(0xc600, File.ReadAllBytes(assemblyPath + "roms/diskinterface.rom"));
         
-            Runtime.Memory memory = new Runtime.Memory(0xffff);
+            Runtime.Memory memory = new Runtime.Memory(state);
             //memory.RegisterOverlay(new AppleScreenOvl()); // Apple I
             memory.RegisterOverlay(new KeyboardOvl());
             memory.RegisterOverlay(new CpuSoftswitchesOvl());

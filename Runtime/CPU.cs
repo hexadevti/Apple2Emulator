@@ -200,6 +200,9 @@ public class CPU
                 Thread.Sleep(1);
 
 
+            if (pc == "e000") // Processa buffer 1 e 2 e grava dado em memoria (Acumulador)
+                Thread.Sleep(1);
+
             
             
             switch (opCodePart.Operation)
@@ -385,8 +388,8 @@ public class CPU
     {
         Console.SetCursorPosition(0,0);
 
-        var cursorH = memory.memory[0x24];
-        var cursorV = memory.memory[0x25];
+        var cursorH = memory.baseRAM[0x24];
+        var cursorV = memory.baseRAM[0x25];
         
         StringBuilder output = new StringBuilder();
         
@@ -403,7 +406,7 @@ public class CPU
                 { 
                     posH = c;
                     
-                    var chr = memory.memory[(ushort)(0x400 + (b * 0x28) + (l * 0x80) + c)];
+                    var chr = memory.baseRAM[(ushort)(0x400 + (b * 0x28) + (l * 0x80) + c)];
                     chr = (byte)(chr & 0b01111111);
                     if (posV == cursorV && posH == cursorH)
                         chr = DateTime.Now.Millisecond > 500 ? chr : (byte)95;

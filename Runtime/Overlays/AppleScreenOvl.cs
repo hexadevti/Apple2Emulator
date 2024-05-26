@@ -29,9 +29,8 @@ public class AppleScreenOvl : IOverLay
         {
             var format = Encoding.ASCII.GetString(new[] { b });
             Console.Write(format);
-            
-            
         }
+        
     }
     
     public byte Read(ushort address, Memory memory, State state)
