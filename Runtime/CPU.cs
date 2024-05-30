@@ -9,7 +9,7 @@ namespace Runtime;
 
 public class CPU
 {
-    
+
     public State state { get; set; }
     public Memory memory { get; set; }
 
@@ -19,14 +19,14 @@ public class CPU
     public bool debug = false;
 
     public bool cursorInverted = false;
-    
+
 
     public string pc { get; set; }
     public string op { get; set; }
     public string axy { get; set; }
     public string fl { get; set; }
     public const string fh = "NVBDIZC";
-    public string ad { get; set;}
+    public string ad { get; set; }
     public string inst { get; set; }
 
     public CPU(State state, Memory memory, bool debug = false)
@@ -34,13 +34,14 @@ public class CPU
         this.memory = memory;
         this.debug = debug;
         this.state = state;
-        
-        pc = ""; op = ""; axy = ""; fl=""; ad = ""; inst = "";
-        
-        this.memory.softswitches = new Softswitches() {
+
+        pc = ""; op = ""; axy = ""; fl = ""; ad = ""; inst = "";
+
+        this.memory.softswitches = new Softswitches()
+        {
             Graphics_Text = false
         };
-        
+
     }
 
     public void Reset()
@@ -51,26 +52,27 @@ public class CPU
     public void InitConsole()
     {
         Console.CursorVisible = false;
+        Console.WindowHeight = 700;
     }
-    
+
     public void RunCycle()
     {
-        if (state.PC == 0)  
+        if (state.PC == 0)
         {
             state.PC = memory.ReadAddressLLHH(0xfffc) ?? 0;
-        }   
+        }
 
         byte instruction = memory.ReadByte(state.PC);
         OpCodePart? opCodePart = OpCodes.GetOpCode(instruction);
         if (debug)
         {
-            //op = opCodePart?.Operation + (opCodePart?.Addressing != null ? "_" + opCodePart?.Addressing : "") + (opCodePart?.Register != null ? "_" + opCodePart?.Register : "");
+            op = opCodePart?.Operation + (opCodePart?.Addressing != null ? "_" + opCodePart?.Addressing : "") + (opCodePart?.Register != null ? "_" + opCodePart?.Register : "");
             pc = state.PC.ToString("x4");
             axy = state.A.ToString("X") + " " + state.X.ToString("X") + " " + state.Y.ToString("X");
-            fl = (state.N ? "1" : "0") + "" + (state.V ? "1" : "0") + (state.B ? "1": "0") 
-                + (state.D ? "1": "0") + (state.I ? "1": "0") + (state.Z ? "1": "0") 
-                + (state.C ? "1": "0");
-            inst = pc + ": " + instruction.ToString("x4");
+            fl = (state.N ? "1" : "0") + "" + (state.V ? "1" : "0") + (state.B ? "1" : "0")
+                + (state.D ? "1" : "0") + (state.I ? "1" : "0") + (state.Z ? "1" : "0")
+                + (state.C ? "1" : "0");
+            inst = pc + ": " + instruction.ToString("x2");
             ushort nextbytes = 0;
             if (opCodePart?.Addressing == Addressing.immediate)
                 nextbytes = 1;
@@ -81,18 +83,17 @@ public class CPU
             if (opCodePart?.Addressing == Addressing.indirect && opCodePart.Register != null)
                 nextbytes = 1;
             if (opCodePart?.Addressing == Addressing.indirect && opCodePart.Register == null)
-                nextbytes = 2;  
+                nextbytes = 2;
             if (opCodePart?.Addressing == Addressing.relative)
                 nextbytes = 1;
-            for (int i = 1;i<=nextbytes;i++)
+            for (int i = 1; i <= nextbytes; i++)
             {
-                inst = inst + " " + memory.ReadByte((ushort)(state.PC+i)).ToString("x");
+                inst = inst + " " + memory.ReadByte((ushort)(state.PC + i)).ToString("x");
             }
-        } 
-           
+        }
+
         ushort? refAddress = null;
-        
-        
+
         if (opCodePart != null)
         {
             switch (opCodePart.Addressing)
@@ -107,7 +108,7 @@ public class CPU
                     refAddress = memory.ReadAddressLLHH(state.PC);
                     if (opCodePart.Register != null)
                     {
-                        if (opCodePart.Register== Register.Y)
+                        if (opCodePart.Register == Register.Y)
                         {
                             refAddress = (ushort)((refAddress ?? 0) + state.Y);
                         }
@@ -122,10 +123,10 @@ public class CPU
                 case Addressing.zeropage:
                     state.PC++;
                     refAddress = memory.ReadZeroPageAddress(state.PC);
-                    
+
                     if (refAddress != null && opCodePart.Register != null)
                     {
-                        if (opCodePart.Register== Register.Y)
+                        if (opCodePart.Register == Register.Y)
                         {
                             refAddress = (byte)(refAddress + state.Y);
                         }
@@ -143,7 +144,7 @@ public class CPU
                         refAddress = memory.ReadZeroPageAddress(state.PC);
                         if (refAddress != null)
                         {
-                            if (opCodePart.Register==Register.Y)
+                            if (opCodePart.Register == Register.Y)
                             {
                                 var pointer = memory.ReadAddressLLHH(refAddress);
                                 refAddress = (ushort?)(pointer + state.Y);
@@ -173,41 +174,71 @@ public class CPU
                     state.PC++;
                     break;
                 default:
-                    state.PC++;    
+                    state.PC++;
                     break;
             }
 
-           
+
 
             if (debug)
                 ad = (refAddress.HasValue ? refAddress.Value.ToString("x4") : "null");
+
             
             if (pc == "b988") // Extrai dados do address header do setor
                 Thread.Sleep(1);
             if (pc == "be14") // Compara volume 
                 Thread.Sleep(1);
 
-            if (pc == "be30") // Compara setor descoberto com o setor solicitado
+            if (pc == "be2e") // Compara setor descoberto com o setor solicitado
                 Thread.Sleep(1);
-           
+
             if (pc == "b911") // Buffer 1 - 2 bits 
                 Thread.Sleep(1);
-            
+
             if (pc == "b922") // Buffer 2 - 6 bits
                 Thread.Sleep(1);
+            // leitura
+            if (pc == "b8d4" && state.Y == 0x80 && state.X == 0x2b) // Processa buffer 1 e 2 e grava dado em memoria (Acumulador)
+                Thread.Sleep(1);
 
-            if (pc == "b8d4" && state.Y == 0x80 && state.X== 0x2b ) // Processa buffer 1 e 2 e grava dado em memoria (Acumulador)
+            // gravaçao
+            if (pc == "b83f") // entra em write16
+                Thread.Sleep(1);
+
+            if (pc == "b866") // 2 bits
+                Thread.Sleep(1);
+
+            if (pc == "b872") // 2 bits
+                Thread.Sleep(1);
+
+            if (pc == "a397") // Command SAVE
+                Thread.Sleep(1);
+    
+            if (pc == "b80f") // buffer STA NBUF1 
+                Thread.Sleep(1); // 51
+
+            if (pc == "b823") // buffer STA NBUF2 
+                Thread.Sleep(1);
+
+            if (pc == "b866") // buffer LDA NBUF2 
+                Thread.Sleep(1);
+
+            if (pc == "b87e") // buffer LDA NBUF1 
+                Thread.Sleep(1);
+
+            if (pc == "b87e" && memory.baseRAM[0x2e] == 19) // 6 bits
+                Thread.Sleep(1);
+
+            if (pc == "b87e") // checksum
+                Thread.Sleep(1);
+
+            if (pc == "b89a") // checksum
                 Thread.Sleep(1);
 
 
-            if (pc == "e000") // Processa buffer 1 e 2 e grava dado em memoria (Acumulador)
-                Thread.Sleep(1);
-
-            
-            
             switch (opCodePart.Operation)
             {
-                case "CLC": 
+                case "CLC":
                     FlagOpCodeProcessors.Process_CLC(state);
                     break;
                 case "SEI":
@@ -230,13 +261,13 @@ public class CPU
                     break;
                 case "LDY":
                     LoadOpCodeProcessors.Process_LDY(state, memory, refAddress ?? 0);
-                    break;           
+                    break;
                 case "LDX":
                     LoadOpCodeProcessors.Process_LDX(state, memory, refAddress ?? 0);
-                    break;           
+                    break;
                 case "LDA":
                     LoadOpCodeProcessors.Process_LDA(state, memory, refAddress ?? 0);
-                    break;           
+                    break;
                 case "STY":
                     StoreOpCodeProcessors.Process_STY(state, memory, refAddress ?? 0);
                     break;
@@ -378,7 +409,7 @@ public class CPU
 
 
         }
-        else 
+        else
         {
             state.PC++;
         }
@@ -386,13 +417,13 @@ public class CPU
 
     public void RefreshScreen()
     {
-        Console.SetCursorPosition(0,0);
+        Console.SetCursorPosition(0, 0);
 
         var cursorH = memory.baseRAM[0x24];
         var cursorV = memory.baseRAM[0x25];
-        
+
         StringBuilder output = new StringBuilder();
-        
+
         int posH = 0;
         int posV = 0;
 
@@ -401,20 +432,20 @@ public class CPU
             posV = b * 8;
             for (int l = 0; l < 8; l++)
             {
-                
-                for (ushort c = 0; c < 0x28; c++) 
-                { 
+
+                for (ushort c = 0; c < 0x28; c++)
+                {
                     posH = c;
-                    
+
                     var chr = memory.baseRAM[(ushort)(0x400 + (b * 0x28) + (l * 0x80) + c)];
                     chr = (byte)(chr & 0b01111111);
                     if (posV == cursorV && posH == cursorH)
                         chr = DateTime.Now.Millisecond > 500 ? chr : (byte)95;
-                    
+
                     if (chr == 96)
                         chr = DateTime.Now.Millisecond > 500 ? (byte)32 : (byte)95;
-                    output.Append(Encoding.ASCII.GetString(new[] { chr }));                        
-                    
+                    output.Append(Encoding.ASCII.GetString(new[] { chr }));
+
                 }
                 posV = posV + 1;
                 output.Append("\n");
@@ -422,7 +453,7 @@ public class CPU
         }
 
         Console.Write(output.ToString());
-    }    
+    }
 
     public void Keyboard()
     {
@@ -436,15 +467,15 @@ public class CPU
                     switch (consoleKeyInfo.Key)
                     {
                         case ConsoleKey.C:
-                           memory.KeyPressed = 0x83;
-                           break; 
+                            memory.KeyPressed = 0x83;
+                            break;
                         case ConsoleKey.F12:
-                           state.PC = 0;
-                           Console.Beep();
-                           break; 
+                            state.PC = 0;
+                            Console.Beep();
+                            break;
                     }
                     break;
-            
+
                 default:
                     switch (consoleKeyInfo.Key)
                     {
@@ -467,13 +498,21 @@ public class CPU
                             memory.KeyPressed = 0x9b;
                             break;
                         default:
-                            memory.KeyPressed = (byte)(Encoding.ASCII.GetBytes( new[] { consoleKeyInfo.KeyChar.ToString().ToUpper()[0]})[0] | 0b10000000);
+                            switch (consoleKeyInfo.KeyChar)
+                            {
+                                case (char)231:
+                                    memory.KeyPressed = 0x83;
+                                    break;
+                                default:
+                                    memory.KeyPressed = (byte)(Encoding.ASCII.GetBytes(new[] { consoleKeyInfo.KeyChar.ToString().ToUpper()[0] })[0] | 0b10000000);
+                                    break;
+                            }
                             break;
                     }
                     break;
             }
         }
     }
-}   
+}
 
 

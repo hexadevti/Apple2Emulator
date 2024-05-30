@@ -29,9 +29,14 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     
-    <Content Include="roms\DOS 3.3 System Master - 680-0051-00.dsk">
+    <Content Include="roms\EMPTY DOS33.dsk">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="NAudio" Version="2.2.1" />
+    
   </ItemGroup>
   <PropertyGroup>
     <OutputType>Exe</OutputType>

@@ -8,8 +8,8 @@ public class AppleScreenOvl : IOverLay
        
     public AppleScreenOvl()
     {
-        Start = 0xD012;
-        End = 0xD012;
+        Start = 0x33;
+        End = 0x33;
         
     }
 

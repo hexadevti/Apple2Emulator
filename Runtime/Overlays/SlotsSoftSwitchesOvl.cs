@@ -1,4 +1,5 @@
 
+using System.Reflection;
 using System.Text;
 using Runtime.Abstractions;
 
@@ -28,9 +29,56 @@ public class SlotsSoftSwitchesOvl : IOverLay
     int trackSize = 5856;
     byte[] rawdisktrack = new byte[5856];
 
+    Dictionary<string, List<byte>> output = new Dictionary<string, List<byte>>();
+
+
     public void Write(ushort address, byte b, Memory memory)
     {
-        
+        int slotOffset = slot * 0x10;
+        var sec = memory.baseRAM[0x2d];
+        var trk = memory.baseRAM[0x2e];
+        string key = trk + "_" + sec;
+        if (address == 0xc08d + slotOffset)
+        {
+            if (output.ContainsKey(key))
+            {
+                var data = output[key];
+                data.Add(b);
+                output[key] = data;
+            }
+            else
+            {
+                output.Add(key, new List<byte>() { b });
+            }
+        }
+        else if (address == 0xc08f + slotOffset)
+        {
+            memory.softswitches.DriveQ7H_L = true;
+            string? assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            if (assemblyPath != null)
+                assemblyPath += "/";
+            using (StreamWriter outputFile = new StreamWriter(Path.Combine(assemblyPath, "write.txt")))
+            {
+                foreach (var keyd in output)
+                {
+
+                    outputFile.WriteLine(keyd.Key + " ");
+                    foreach (var item in keyd.Value) //memory.drive.Decode6_2(output.ToArray(), trk, sec))
+                    {
+                        outputFile.Write(item.ToString("X2") + " ");
+                    }
+                    outputFile.WriteLine("----------------------");
+                    
+                }
+            }
+            
+            
+        }
+
+        else
+        {
+
+        }
     }
 
     public byte Read(ushort address, Memory memory, State state)
@@ -38,12 +86,12 @@ public class SlotsSoftSwitchesOvl : IOverLay
         int slotOffset = slot * 0x10;
         if (address == 0xc08c + slotOffset)
         {
-            if (memory.drive != null && (memory.softswitches.DriveQ6H_L == false || memory.softswitches.DriveQ7H_L == false))
+            if (memory.drive != null && (memory.softswitches.DriveQ6H_L == false && memory.softswitches.DriveQ7H_L == false))
             {
                 byte newtrack = 0;
-                if (state.PC > 0xc000 + slot * 0x100 && state.PC < (0xc000 + slot  * 0x100) + 0x100)
+                if (state.PC > 0xc000 + slot * 0x100 && state.PC < (0xc000 + slot * 0x100) + 0x100)
                 {
-                    newtrack = 0; 
+                    newtrack = 0;
                 }
                 else
                 {
@@ -52,7 +100,7 @@ public class SlotsSoftSwitchesOvl : IOverLay
 
                 if ((int)newtrack > 34)
                 {
-                    newtrack = 0; 
+                    newtrack = 0;
                 }
 
                 if (track != newtrack)
@@ -60,7 +108,7 @@ public class SlotsSoftSwitchesOvl : IOverLay
                     selectedTrack = new List<byte>();
                     track = newtrack;
                     //Console.WriteLine(memory.drive.DiskInfo());
-                    foreach (byte isec in new byte[] { 0xa, 0xb, 0xc, 0xd, 0xe, 0xf, 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9})
+                    foreach (byte isec in new byte[] { 0xa, 0xb, 0xc, 0xd, 0xe, 0xf, 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9 })
                     {
                         var sec = (byte)isec; // memory.drive.translateDos33Track[isec];
                         List<byte> b = new List<byte>();
@@ -93,7 +141,7 @@ public class SlotsSoftSwitchesOvl : IOverLay
                         selectedTrack.AddRange(selectedSector);
                         Console.WriteLine("-------------------------------------------------------------");
                     }
-                    for (int i = 0;i < trackSize;i++)
+                    for (int i = 0; i < trackSize; i++)
                     {
                         rawdisktrack[i] = selectedTrack[i];
                     }
@@ -101,10 +149,14 @@ public class SlotsSoftSwitchesOvl : IOverLay
                     pointer = 0;
                 }
 
-                 if (pointer > trackSize - 1)
-                     pointer = 0;
-                
+                if (pointer > trackSize - 1)
+                    pointer = 0;
+
                 return rawdisktrack[pointer++];
+            }
+            else
+            {
+
             }
         }
         if (address == 0xc080 + slotOffset)
@@ -138,11 +190,12 @@ public class SlotsSoftSwitchesOvl : IOverLay
         if (address == 0xc08e + slotOffset)
         {
             memory.softswitches.DriveQ7H_L = false;
-            return 0x9a;
+            return 0; // Not Write Protected, 9f Write protected
         }
-            
         if (address == 0xc08f + slotOffset)
+        {
             memory.softswitches.DriveQ7H_L = true;
+        }
 
         return 0;
     }

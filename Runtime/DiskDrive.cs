@@ -35,7 +35,7 @@ public class DiskDrive
 /*    physical order 0 2 4 6 8 A C E 1 3 5 7 9 B D F */
 
     public byte[] translateDos33Track = new byte[] { 
-        0x0, 0x7, 0xe, 0x6, 0x0d, 0x05, 0x0c, 0x04, 0x0b, 0x03, 0x0a, 0x02, 0x09, 0x01, 0x08, 0x0f };
+        0x00, 0x07, 0x0e, 0x06, 0x0d, 0x05, 0x0c, 0x04, 0x0b, 0x03, 0x0a, 0x02, 0x09, 0x01, 0x08, 0x0f };
 
     public DiskDrive(string dskPath, Memory memory)
     {
@@ -295,7 +295,7 @@ public class DiskDrive
 
         return output;
     }
-
+    
     public byte[] EncodeByte(byte data)
     {
         byte[] output = new byte[2];
@@ -418,6 +418,41 @@ public class DiskDrive
         agregate.AddRange(checksum.ToList());
 
         return agregate.ToArray();
+    }
+
+    public byte[] Decode6_2(byte[] data, int track, int sector)
+    {
+        byte[] inputlast2Encoded = new byte[0x56];
+        byte[] inputDataEncoded = new byte[256];
+        byte[] inputDataDecoded = new byte[256];
+
+        for (int i = 0; i< data.Length; i++)
+        {
+            if (i < 0x7)
+                continue;
+            else if (i < 0x56 + 0x7)
+                inputlast2Encoded[i - 0x7] = data[i];
+            else if (i < 0x56 + 0x7 + 0x100) 
+                inputDataEncoded[i - 0x56 - 0x7] = data[i];
+        }
+
+        for (int i = 0; i < inputlast2Encoded.Length;i++)
+        {
+            BitArray bitsData = new BitArray(new byte[] { inputlast2Encoded[i] });
+
+            inputDataDecoded[255-i] = (byte)((bitsData[1] ? 2 : 0) + (bitsData[0] ? 1 : 0));
+            inputDataDecoded[172-i] = (byte)((bitsData[3] ? 2 : 0) + (bitsData[2] ? 1 : 0));
+            inputDataDecoded[86-i] = (byte)((bitsData[5] ? 2 : 0) + (bitsData[4] ? 1 : 0));
+        }
+
+
+        for (int i = 0; i < inputDataEncoded.Length; i++)
+        {
+            BitArray bitsData = new BitArray(new byte[] { inputDataEncoded[i] });
+            inputDataDecoded[i] = (byte)((inputDataEncoded[i] << 2) + inputDataDecoded[i]);
+        }
+
+        return inputDataDecoded;
     }
 
     public int GetOffset(int track, int sector)
