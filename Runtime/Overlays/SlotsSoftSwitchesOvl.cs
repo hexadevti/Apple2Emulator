@@ -50,31 +50,68 @@ public class SlotsSoftSwitchesOvl : IOverLay
             {
                 output.Add(key, new List<byte>() { b });
             }
+
+            List<string> keysToClear = new List<string>();
+            foreach (var data in output)
+            {
+                if (data.Value.Count == 354)
+                {
+                    // string? assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                    // if (assemblyPath != null)
+                    //     assemblyPath += "/";
+                    // using (StreamWriter outputFile = new StreamWriter(Path.Combine(assemblyPath, "write_" + data.Key + ".txt"), false))
+                    // {
+                        int trkd = int.Parse(data.Key.Split('_')[0]);
+                        int secd = int.Parse(data.Key.Split('_')[1]);
+                        // outputFile.WriteLine("Track: " + trkd + " Sector: " + secd);
+                        var cleanData = data.Value.Skip(7).Take(343).ToArray();
+                        // outputFile.WriteLine("Dados encoded para atualizar");
+                        // for (int i = 0; i < 343; i++)
+                        //     outputFile.Write(cleanData[i].ToString("X2") + " ");
+                        // outputFile.WriteLine();
+                        // outputFile.WriteLine("----------------------");
+                        // outputFile.WriteLine();
+                        // outputFile.WriteLine("Dados encoded original do disco");
+                        // var encodedSec = memory.drive.Encode6_2(trkd, secd);
+                        // for (int i = 0; i < 343; i++)
+                        //     outputFile.Write(encodedSec[i].ToString("X2") + " ");
+                        // outputFile.WriteLine();
+                        // outputFile.WriteLine("----------------------");
+                        // outputFile.WriteLine();
+                        // outputFile.WriteLine("Dados decoded para atualizar o disco");
+                        var decsecData = memory.drive.Decode6_2(cleanData);
+                        // for (int i = 0; i < 256; i++)
+                        //     outputFile.Write(decsecData[i].ToString("X2") + " ");
+                        // outputFile.WriteLine();
+                        // outputFile.WriteLine("----------------------");
+                        // outputFile.WriteLine();
+
+                        // outputFile.WriteLine("Dados decoded original do disco");
+                        // var secData = memory.drive.GetSectorData(trkd, memory.drive.translateDos33Track[secd]);
+                        // for (int i = 0; i < 256; i++)
+                        // {
+                        //     outputFile.Write(secData[i].ToString("X2") + " ");
+                        // }
+                        // outputFile.WriteLine();
+                        // outputFile.WriteLine("----------------------");
+                        // outputFile.WriteLine();
+                        memory.drive.SetSectorData(trkd, memory.drive.translateDos33Track[secd], decsecData); 
+                        memory.drive.SaveImage();
+                    //}
+                    keysToClear.Add(key);
+                }
+            }
+
+            foreach (var keyd in keysToClear)
+            {
+                output.Remove(keyd);
+            }  
+
         }
         else if (address == 0xc08f + slotOffset)
         {
             memory.softswitches.DriveQ7H_L = true;
-            string? assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            if (assemblyPath != null)
-                assemblyPath += "/";
-            using (StreamWriter outputFile = new StreamWriter(Path.Combine(assemblyPath, "write.txt")))
-            {
-                foreach (var keyd in output)
-                {
-
-                    outputFile.WriteLine(keyd.Key + " ");
-                    foreach (var item in keyd.Value) //memory.drive.Decode6_2(output.ToArray(), trk, sec))
-                    {
-                        outputFile.Write(item.ToString("X2") + " ");
-                    }
-                    outputFile.WriteLine("----------------------");
-                    
-                }
-            }
-            
-            
         }
-
         else
         {
 
@@ -113,7 +150,7 @@ public class SlotsSoftSwitchesOvl : IOverLay
                         var sec = (byte)isec; // memory.drive.translateDos33Track[isec];
                         List<byte> b = new List<byte>();
                         // sector = newsector;
-                        Console.WriteLine("Track: " + track  + " Sector: " + sec);
+                        Console.WriteLine("Track: " + track + " Sector: " + sec);
                         selectedSector = new List<byte>() { 0xff, 0xff, 0xff };
                         selectedSector.AddRange(new List<byte>() { 0xd5, 0xaa, 0x96 }); // Prologe address
                         var volume = memory.drive.GetVolume();
@@ -131,7 +168,7 @@ public class SlotsSoftSwitchesOvl : IOverLay
                         selectedSector.AddRange(b); // Checksum
                         selectedSector.AddRange(new List<byte>() { 0xde, 0xaa, 0xeb }); // Epilogue address
                         selectedSector.AddRange(new List<byte>() { 0xd5, 0xaa, 0xad }); // Prologe data
-                        b = memory.drive.Encode6_2(track, sec).ToList();
+                        b = memory.drive.Encode6_2(track, memory.drive.translateDos33Track[sec]).ToList();
                         Console.WriteLine("Encode:");
                         Console.WriteLine(Print(b));
                         Console.WriteLine("Data:");

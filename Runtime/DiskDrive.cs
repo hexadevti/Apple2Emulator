@@ -6,7 +6,7 @@ public class DiskDrive
 {
     private Memory memory { get; set; }
 
-
+    private string diskPath { get; set;}
 
     public byte[] diskImage { get; set; }
 
@@ -39,6 +39,7 @@ public class DiskDrive
 
     public DiskDrive(string dskPath, Memory memory)
     {
+        diskPath = dskPath;
         this.memory = memory;
         this.disk_info = new byte[] {
                 0,       // unused
@@ -92,6 +93,11 @@ public class DiskDrive
         catalog_sector = diskImage[offset_to_disk_info + 2];
 
 
+    }
+
+    public void SaveImage()
+    {
+        File.WriteAllBytes(diskPath, diskImage);
     }
 
     public void MarkSectorUsed(int track, int sector)
@@ -295,6 +301,20 @@ public class DiskDrive
 
         return output;
     }
+
+    public void SetSectorData(int track, int sector, byte[] data)
+    {
+        byte[] output = new byte[256];
+        if (track < 35 && sector < 16)
+        {
+            var offset = GetOffset(track, sector);
+
+            for (int i = 0; i < 256; i++)
+            {
+                diskImage[offset + i] = data[i];
+            }
+        }
+    }
     
     public byte[] EncodeByte(byte data)
     {
@@ -368,7 +388,7 @@ public class DiskDrive
    
     public byte[] Encode6_2(int track, int sector)
     {
-        byte[] input = GetSectorData(track, translateDos33Track[sector]);
+        byte[] input = GetSectorData(track, sector);
         byte[] outputData = new byte[256];
         
         byte[] outputlast2 = new byte[0x56];
@@ -397,13 +417,16 @@ public class DiskDrive
                 var last2bits = ((bitsVolume[0] ? 2 : 0) + (bitsVolume[1] ? 1 : 0)) << 4;
                 outputlast2[i-172] = (byte)(outputlast2[i-172] | last2bits );
             }
-        }    
+        }
+        Console.WriteLine();
         var lastByte = 0;
         for (int i = 0; i < 86; i++)
         {
             outputlast2Encoded[i] = translateTable[(byte)(outputlast2[i] ^ lastByte)];
             lastByte = outputlast2[i];
+            //Console.WriteLine("BC" + i.ToString("X2") + ": " + outputlast2[i].ToString("B8"));
         }
+
         List<byte> agregate = outputlast2Encoded.ToList();
 
         for (int i = 0; i < 256; i++)
@@ -413,47 +436,119 @@ public class DiskDrive
         }
 
         agregate.AddRange(outputDataEncoded.ToList());
-
         List<byte> checksum = new List<byte>() { translateTable[lastByte] };
         agregate.AddRange(checksum.ToList());
 
         return agregate.ToArray();
     }
 
-    public byte[] Decode6_2(byte[] data, int track, int sector)
+    public byte detranlateTable(byte data)
     {
+        for (int j = 0; j < translateTable.Length; j++)  
+        {
+            if (translateTable[j] == data)
+            {
+                return (byte)j;
+            }
+        }
+        return 0;
+    }
+    public byte[] Decode6_2(byte[] diskData)
+    {
+        byte[] dataTranslated = new byte[343];
+        byte[] bufferData = new byte[343];
+        
+
         byte[] inputlast2Encoded = new byte[0x56];
         byte[] inputDataEncoded = new byte[256];
         byte[] inputDataDecoded = new byte[256];
+        byte[] outputlast2 = new byte[0x56];
+        byte[] outputData = new byte[256];
 
-        for (int i = 0; i< data.Length; i++)
+        // Console.WriteLine("Nibblized 2 and 6: ");
+        // Console.WriteLine();
+        // for (int i = 0; i< diskData.Length-1; i++)
+        // {
+        //     if (i < 86)
+        //     {
+        //         inputlast2Encoded[i] = diskData[i];
+        //         Console.Write(inputlast2Encoded[i].ToString("X2") + "|" + inputlast2Encoded[i].ToString("B8") + " ");
+        //     }
+        //     else 
+        //     {
+        //         if (i == 86)
+        //         {
+        //             Console.WriteLine(); 
+        //             Console.WriteLine();
+        //         }
+        //         inputDataEncoded[i - 86] = diskData[i];
+        //         Console.Write(inputDataEncoded[i - 86].ToString("X2") + "|" + inputDataEncoded[i - 86].ToString("B8") + " ");
+        //     }
+        // }
+
+        // Console.WriteLine();
+        // Console.WriteLine();
+        byte prevByte = 0;
+        for (int i = 0;i< diskData.Length;i++)
         {
-            if (i < 0x7)
-                continue;
-            else if (i < 0x56 + 0x7)
-                inputlast2Encoded[i - 0x7] = data[i];
-            else if (i < 0x56 + 0x7 + 0x100) 
-                inputDataEncoded[i - 0x56 - 0x7] = data[i];
+            dataTranslated[i] = detranlateTable(diskData[i]);
+            bufferData[i] = (byte)(dataTranslated[i] ^ prevByte);
+            prevByte = bufferData[i];
         }
 
-        for (int i = 0; i < inputlast2Encoded.Length;i++)
-        {
-            BitArray bitsData = new BitArray(new byte[] { inputlast2Encoded[i] });
 
-            inputDataDecoded[255-i] = (byte)((bitsData[1] ? 2 : 0) + (bitsData[0] ? 1 : 0));
-            inputDataDecoded[172-i] = (byte)((bitsData[3] ? 2 : 0) + (bitsData[2] ? 1 : 0));
-            inputDataDecoded[86-i] = (byte)((bitsData[5] ? 2 : 0) + (bitsData[4] ? 1 : 0));
+        for (int i = 0; i< bufferData.Length-1; i++)
+        {
+            if (i < 86)
+            {
+                inputlast2Encoded[i] = bufferData[i];
+                //Console.Write(inputlast2Encoded[i].ToString("X2") + "|" + inputlast2Encoded[i].ToString("B8") + " ");
+            }
+            else 
+            {
+                // if (i == 86)
+                // {
+                //     Console.WriteLine(); 
+                //     Console.WriteLine();
+                // }
+                inputDataEncoded[i - 86] = bufferData[i];
+                //Console.Write(inputDataEncoded[i - 86].ToString("X2") + "|" + inputDataEncoded[i - 86].ToString("B8") + " ");
+            }
         }
 
 
-        for (int i = 0; i < inputDataEncoded.Length; i++)
+
+        for (int i = 0;i<inputDataEncoded.Length;i++)
         {
-            BitArray bitsData = new BitArray(new byte[] { inputDataEncoded[i] });
-            inputDataDecoded[i] = (byte)((inputDataEncoded[i] << 2) + inputDataDecoded[i]);
+            outputData[i] = (byte)(inputDataEncoded[i] << 2);
+            
         }
+
+        for (int i = 0; i < outputData.Length;i++)
+        {
+            if (i < 86)
+            {
+                BitArray bitsVolume = new BitArray(new byte[] { inputlast2Encoded[i] });
+                inputDataDecoded[i] = (byte)(outputData[i] + (bitsVolume[0] ? 2 : 0) + (bitsVolume[1] ? 1 : 0));
+            } 
+            else if (i < 172)
+            {
+                BitArray bitsVolume = new BitArray(new byte[] { inputlast2Encoded[i-86] });
+                inputDataDecoded[i] = (byte)(outputData[i] + (bitsVolume[2] ? 2 : 0) + (bitsVolume[3] ? 1 : 0));
+            }
+            else
+            {
+                BitArray bitsVolume = new BitArray(new byte[] { inputlast2Encoded[i-172] });
+                inputDataDecoded[i] = (byte)(outputData[i] + (bitsVolume[4] ? 2 : 0) + (bitsVolume[5] ? 1 : 0));
+            }
+        }
+
 
         return inputDataDecoded;
     }
+
+
+  
 
     public int GetOffset(int track, int sector)
     {
