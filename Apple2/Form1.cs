@@ -81,7 +81,7 @@ public partial class Form1 : Form
 
         memory.LoadChars(File.ReadAllBytes(assemblyPath + "roms/CharROM.rom"));
 
-        memory.drive = new DiskDrive(assemblyPath + "roms/ProDOS_2_4_2.dsk", memory);
+        memory.drive = new DiskDrive(assemblyPath + "roms/teste.dsk", memory);
 
         List<Task> threads = new List<Task>();
         cpu = new CPU(state, memory, false);
@@ -183,9 +183,9 @@ public partial class Form1 : Form
 
     private void Form1_Resize(object sender, System.EventArgs e)
     {
-        Control control = (Control)sender;
-        pictureBox1.Width =  this.Width;
-        pictureBox1.Height = this.Height;
+        // Control control = (Control)sender;
+        // pictureBox1.Width =  this.Width;
+        // pictureBox1.Height = this.Height;
     }
 
 

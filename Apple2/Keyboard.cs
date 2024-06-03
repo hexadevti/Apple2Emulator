@@ -5,10 +5,10 @@ namespace Apple2;
 
 public class Keyboard
 {
-    public Runtime.Memory memory {get; set;}
-    public State state {get; set;}
+    public Runtime.Memory memory { get; set; }
+    public State state { get; set; }
 
-    public Object lockObj {get; set;}
+    public Object lockObj { get; set; }
 
     public Keyboard(Runtime.Memory memory, State state, Object lockObj)
     {
@@ -21,7 +21,7 @@ public class Keyboard
     {
         if (e.KeyChar < 32 || e.KeyChar >= 127)
             return;
-         memory.KeyPressed = (byte)(Encoding.ASCII.GetBytes( new[] { e.KeyChar.ToString().ToUpper()[0]})[0] | 0b10000000);
+        memory.KeyPressed = (byte)(Encoding.ASCII.GetBytes(new[] { e.KeyChar.ToString().ToUpper()[0] })[0] | 0b10000000);
     }
 
     public void OnKeyDown(object? sender, KeyEventArgs e)
@@ -30,22 +30,17 @@ public class Keyboard
         {
             switch (e.KeyCode)
             {
-                case Keys.C:
-                    memory.KeyPressed = 0x83;
-                    break;
-                case Keys.G:
-                    memory.KeyPressed = 0x87;
-                    break;
-                case Keys.B:
-                    memory.KeyPressed = 0x82;
-                    break;
                 case Keys.F12:
                     lock (lockObj)
                     {
                         Thread.Sleep(100);
                         state.PC = 0;
                     }
-                
+
+                    break;
+                default:
+                    if (e.KeyValue > 0x40 && e.KeyValue < 0x60)
+                        memory.KeyPressed = (byte)(e.KeyValue + 0x40);
                     break;
             }
         }
@@ -76,7 +71,7 @@ public class Keyboard
                     break;
             }
         }
-       
+
 
     }
 

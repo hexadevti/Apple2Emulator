@@ -418,7 +418,7 @@ public class DiskDrive
                 outputlast2[i-172] = (byte)(outputlast2[i-172] | last2bits );
             }
         }
-        Console.WriteLine();
+        
         var lastByte = 0;
         for (int i = 0; i < 86; i++)
         {

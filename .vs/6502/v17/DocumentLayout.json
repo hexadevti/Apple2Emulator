@@ -3,16 +3,28 @@
   "WorkspaceRootPath": "C:\\Users\\luciano\\repos\\6502\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{1091685E-4702-48B5-B778-61B075440669}|Apple2\\Apple2.csproj|c:\\users\\luciano\\repos\\6502\\apple2\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|c:\\users\\luciano\\repos\\6502\\runtime\\overlays\\slotssoftswitchesovl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|solutionrelative:runtime\\overlays\\slotssoftswitchesovl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1091685E-4702-48B5-B778-61B075440669}|Apple2\\Apple2.csproj|C:\\Users\\luciano\\repos\\6502\\apple2\\keyboard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1091685E-4702-48B5-B778-61B075440669}|Apple2\\Apple2.csproj|solutionrelative:apple2\\keyboard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1091685E-4702-48B5-B778-61B075440669}|Apple2\\Apple2.csproj|C:\\Users\\luciano\\repos\\6502\\apple2\\videogenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1091685E-4702-48B5-B778-61B075440669}|Apple2\\Apple2.csproj|solutionrelative:apple2\\videogenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1091685E-4702-48B5-B778-61B075440669}|Apple2\\Apple2.csproj|C:\\Users\\luciano\\repos\\6502\\apple2\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1091685E-4702-48B5-B778-61B075440669}|Apple2\\Apple2.csproj|solutionrelative:apple2\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|c:\\users\\luciano\\repos\\6502\\runtime\\memory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|solutionrelative:runtime\\memory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|C:\\Users\\luciano\\repos\\6502\\runtime\\cpu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|solutionrelative:runtime\\cpu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|c:\\users\\luciano\\repos\\6502\\runtime\\cpu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|solutionrelative:runtime\\cpu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|C:\\Users\\luciano\\repos\\6502\\runtime\\memory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|solutionrelative:runtime\\memory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,11 +34,48 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "SlotsSoftSwitchesOvl.cs",
+              "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Runtime\\Overlays\\SlotsSoftSwitchesOvl.cs",
+              "RelativeDocumentMoniker": "Runtime\\Overlays\\SlotsSoftSwitchesOvl.cs",
+              "ToolTip": "C:\\Users\\luciano\\repos\\6502\\Runtime\\Overlays\\SlotsSoftSwitchesOvl.cs",
+              "RelativeToolTip": "Runtime\\Overlays\\SlotsSoftSwitchesOvl.cs",
+              "ViewState": "AQIAACMAAAAAAAAAAAAIwDQAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-03T12:00:34.968Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "Keyboard.cs",
+              "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Apple2\\Keyboard.cs",
+              "RelativeDocumentMoniker": "Apple2\\Keyboard.cs",
+              "ToolTip": "C:\\Users\\luciano\\repos\\6502\\Apple2\\Keyboard.cs",
+              "RelativeToolTip": "Apple2\\Keyboard.cs",
+              "ViewState": "AQIAAAoAAAAAAAAAAAA0wCYAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-03T11:43:04.748Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "VideoGenerator.cs",
+              "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Apple2\\VideoGenerator.cs",
+              "RelativeDocumentMoniker": "Apple2\\VideoGenerator.cs",
+              "ToolTip": "C:\\Users\\luciano\\repos\\6502\\Apple2\\VideoGenerator.cs",
+              "RelativeToolTip": "Apple2\\VideoGenerator.cs",
+              "ViewState": "AQIAAHsAAAAAAAAAAAAqwJYAAAAYAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-03T11:24:54.999Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
               "Title": "Memory.cs",
               "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Runtime\\Memory.cs",
               "RelativeDocumentMoniker": "Runtime\\Memory.cs",
@@ -34,34 +83,31 @@
               "RelativeToolTip": "Runtime\\Memory.cs",
               "ViewState": "AQIAAAkAAAAAAAAAAAAAwCIAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-05-19T01:13:54.828Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-05-19T01:13:54.828Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 3,
               "Title": "Form1.cs",
               "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Apple2\\Form1.cs",
               "RelativeDocumentMoniker": "Apple2\\Form1.cs",
               "ToolTip": "C:\\Users\\luciano\\repos\\6502\\Apple2\\Form1.cs",
               "RelativeToolTip": "Apple2\\Form1.cs",
-              "ViewState": "AQIAABMAAAAAAAAAAAAQwCkAAAAiAAAA",
+              "ViewState": "AQIAADcAAAAAAAAAAAAwwE8AAAA7AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-05-18T20:11:35.287Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-05-18T20:11:35.287Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "CPU.cs",
               "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Runtime\\CPU.cs",
               "RelativeDocumentMoniker": "Runtime\\CPU.cs",
               "ToolTip": "C:\\Users\\luciano\\repos\\6502\\Runtime\\CPU.cs",
               "RelativeToolTip": "Runtime\\CPU.cs",
-              "ViewState": "AQIAAKUAAAAAAAAAAAAiwKEBAAAoAAAA",
+              "ViewState": "AQIAAGYBAAAAAAAAAAAqwHIBAABYAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-05-18T19:58:44.883Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-05-18T19:58:44.883Z"
             }
           ]
         }

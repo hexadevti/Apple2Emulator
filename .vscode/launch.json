@@ -25,7 +25,7 @@
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "requireExactSource": false,
-            "console": "integratedTerminal"
+            "console": "externalTerminal"
         },
         {
             "name": ".NET Core Launch (mac)",
