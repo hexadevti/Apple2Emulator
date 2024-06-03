@@ -19,7 +19,8 @@ public class CpuSoftswitchesOvl : IOverLay
     public int End { get; }
     public void Write(ushort address, byte b, Memory memory)
     {
-        
+        if (address==0xc010)
+            memory.KeyPressed = b;
     }
 
     public byte Read(ushort address, Memory memory, State state)

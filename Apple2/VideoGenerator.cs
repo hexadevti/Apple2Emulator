@@ -1,6 +1,7 @@
 
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+using NAudio.Wave;
 
 namespace Apple2;
 
@@ -8,12 +9,13 @@ public static class VideoGenerator
 {
     public static Bitmap Generate(Runtime.Memory memory, bool color)
     {
-        byte[] bmp = new byte[280 * 192];
         int byteid = 0;
         var cursorH = memory.baseRAM[0x24];
         var cursorV = memory.baseRAM[0x25];
         ushort graphicsPage = 0x2000;
         ushort textPage = 0x400;
+        int pixelSize = 2;
+        byte[] bmp = new byte[280 * pixelSize * 192 * pixelSize];
 
 
         int posH = 0;
@@ -28,6 +30,7 @@ public static class VideoGenerator
             posV = b * 8;
             for (int l = 0; l < 8; l++)
             {
+
                 linha = new byte[0x28];
                 if ((memory.softswitches.Graphics_Text && memory.softswitches.DisplayFull_Split) ||
                     (memory.softswitches.Graphics_Text && !memory.softswitches.DisplayFull_Split && (b < 2 || (b == 2 && l < 4))))
@@ -42,23 +45,28 @@ public static class VideoGenerator
 
                         for (int i = 0; i < 8; i++)
                         {
-                            for (int j = 0; j < 0x28; j++)
+                            for (int ps1 = 0; ps1 < pixelSize; ps1++)
                             {
-                                for (int k = 0; k < 7; k++)
+                                for (int j = 0; j < 0x28; j++)
                                 {
-                                    var firstColor = linha[j] & 0b11110000 >> 4;
-                                    var secondColor = linha[j] & 0b00001111;
-                                    if (i < 4)
+                                    for (int k = 0; k < 7; k++)
                                     {
-                                        bmp[byteid] = (byte)secondColor;
-                                        byteid++;
+                                        for (int ps2 = 0; ps2 < pixelSize; ps2++)
+                                        {
+                                            var firstColor = linha[j] & 0b11110000 >> 4;
+                                            var secondColor = linha[j] & 0b00001111;
+                                            if (i < 4)
+                                            {
+                                                bmp[byteid] = (byte)secondColor;
+                                                byteid++;
+                                            }
+                                            else
+                                            {
+                                                bmp[byteid] = (byte)firstColor;
+                                                byteid++;
+                                            }
+                                        }
                                     }
-                                    else
-                                    {
-                                        bmp[byteid] = (byte)firstColor;
-                                        byteid++;
-                                    }
-                                    
                                 }
                             }
                         }
@@ -67,64 +75,65 @@ public static class VideoGenerator
                     {
                         for (int block = 0; block < 8; block++)
                         {
-                            bool[] blocklineAnt = [false, false, false, false, false, false, false, false];
-                            for (ushort c = 0; c < 0x28; c++)
+                            for (int ps1 = 0; ps1 < pixelSize; ps1++)
                             {
-                                var chr = memory.baseRAM[(ushort)(((graphicsPage) + (b * 0x28) + (l * 0x80) + c) + block * 0x400)];
-                                bool[] blockline = memory.ConvertByteToBoolArray(chr);
-                                if (color)
+                                bool[] blocklineAnt = [false, false, false, false, false, false, false, false];
+                                for (ushort c = 0; c < 0x28; c++)
                                 {
-                                    int p1, p2, p3, p4, p5, p6, p7;
-                                    if (byteid % 2 == 0) // Odd
+                                    var chr = memory.baseRAM[(ushort)(((graphicsPage) + (b * 0x28) + (l * 0x80) + c) + block * 0x400)];
+                                    bool[] blockline = memory.ConvertByteToBoolArray(chr);
+                                    if (color)
                                     {
-                                        p1 = (blockline[0] ? 4 : 0) + (blockline[7] ? 2 : 0) + (blocklineAnt[1] ? 1 : 0);
-                                        p2 = (blockline[0] ? 4 : 0) + (blockline[7] ? 2 : 0) + (blockline[6] ? 1 : 0);
-                                        p3 = (blockline[0] ? 4 : 0) + (blockline[5] ? 2 : 0) + (blockline[6] ? 1 : 0);
-                                        p4 = (blockline[0] ? 4 : 0) + (blockline[5] ? 2 : 0) + (blockline[4] ? 1 : 0);
-                                        p5 = (blockline[0] ? 4 : 0) + (blockline[3] ? 2 : 0) + (blockline[4] ? 1 : 0);
-                                        p6 = (blockline[0] ? 4 : 0) + (blockline[3] ? 2 : 0) + (blockline[2] ? 1 : 0);
-                                        p7 = (blockline[0] ? 4 : 0) + (blockline[1] ? 2 : 0) + (blockline[2] ? 1 : 0);
-                                    }
-                                    else //Even
-                                    {
-                                        p1 = (blockline[0] ? 4 : 0) + (blocklineAnt[1] ? 2 : 0) + (blockline[7] ? 1 : 0);
-                                        p2 = (blockline[0] ? 4 : 0) + (blockline[6] ? 2 : 0) + (blockline[7] ? 1 : 0);
-                                        p3 = (blockline[0] ? 4 : 0) + (blockline[6] ? 2 : 0) + (blockline[5] ? 1 : 0);
-                                        p4 = (blockline[0] ? 4 : 0) + (blockline[4] ? 2 : 0) + (blockline[5] ? 1 : 0);
-                                        p5 = (blockline[0] ? 4 : 0) + (blockline[4] ? 2 : 0) + (blockline[3] ? 1 : 0);
-                                        p6 = (blockline[0] ? 4 : 0) + (blockline[2] ? 2 : 0) + (blockline[3] ? 1 : 0);
-                                        p7 = (blockline[0] ? 4 : 0) + (blockline[2] ? 2 : 0) + (blockline[1] ? 1 : 0);
-                                    }
-                                    bmp[byteid] = (byte)p1;
-                                    byteid++;
-                                    bmp[byteid] = (byte)p2;
-                                    byteid++;
-                                    bmp[byteid] = (byte)p3;
-                                    byteid++;
-                                    bmp[byteid] = (byte)p4;
-                                    byteid++;
-                                    bmp[byteid] = (byte)p5;
-                                    byteid++;
-                                    bmp[byteid] = (byte)p6;
-                                    byteid++;
-                                    bmp[byteid] = (byte)p7;
-                                    byteid++;
+                                        int[] pixels = new int[7];
+                                        if ((byteid / pixelSize) % 2 == 0) // Odd
+                                        {
+                                            pixels[0] = (blockline[0] ? 4 : 0) + (blockline[7] ? 2 : 0) + (blocklineAnt[1] ? 1 : 0);
+                                            pixels[1] = (blockline[0] ? 4 : 0) + (blockline[7] ? 2 : 0) + (blockline[6] ? 1 : 0);
+                                            pixels[2] = (blockline[0] ? 4 : 0) + (blockline[5] ? 2 : 0) + (blockline[6] ? 1 : 0);
+                                            pixels[3] = (blockline[0] ? 4 : 0) + (blockline[5] ? 2 : 0) + (blockline[4] ? 1 : 0);
+                                            pixels[4] = (blockline[0] ? 4 : 0) + (blockline[3] ? 2 : 0) + (blockline[4] ? 1 : 0);
+                                            pixels[5] = (blockline[0] ? 4 : 0) + (blockline[3] ? 2 : 0) + (blockline[2] ? 1 : 0);
+                                            pixels[6] = (blockline[0] ? 4 : 0) + (blockline[1] ? 2 : 0) + (blockline[2] ? 1 : 0);
+                                        }
+                                        else //Even
+                                        {
+                                            pixels[0] = (blockline[0] ? 4 : 0) + (blocklineAnt[1] ? 2 : 0) + (blockline[7] ? 1 : 0);
+                                            pixels[1] = (blockline[0] ? 4 : 0) + (blockline[6] ? 2 : 0) + (blockline[7] ? 1 : 0);
+                                            pixels[2] = (blockline[0] ? 4 : 0) + (blockline[6] ? 2 : 0) + (blockline[5] ? 1 : 0);
+                                            pixels[3] = (blockline[0] ? 4 : 0) + (blockline[4] ? 2 : 0) + (blockline[5] ? 1 : 0);
+                                            pixels[4] = (blockline[0] ? 4 : 0) + (blockline[4] ? 2 : 0) + (blockline[3] ? 1 : 0);
+                                            pixels[5] = (blockline[0] ? 4 : 0) + (blockline[2] ? 2 : 0) + (blockline[3] ? 1 : 0);
+                                            pixels[6] = (blockline[0] ? 4 : 0) + (blockline[2] ? 2 : 0) + (blockline[1] ? 1 : 0);
+                                        }
 
-                                    blocklineAnt = blockline;
-                                }
-                                else
-                                {
-                                    for (int i = 7; i > 0; i--)
+                                        for (int id = 0; id < 7; id++)
+                                        {
+                                            for (int ps2 = 0; ps2 < pixelSize; ps2++)
+                                            {
+                                                bmp[byteid] = (byte)pixels[id];
+                                                byteid++;
+                                            }
+                                        }
+                                        blocklineAnt = blockline;
+                                    }
+                                    else
                                     {
-                                        if (blockline[i])
-                                            bmp[byteid] = 0xff;
-                                        else
-                                            bmp[byteid] = 0x00;
-                                        byteid++;
+                                        for (int i = 7; i > 0; i--)
+                                        {
+                                            for (int ps2 = 0; ps2 < pixelSize; ps2++)
+                                            {
+                                                if (blockline[i])
+                                                    bmp[byteid] = 0xff;
+                                                else
+                                                    bmp[byteid] = 0x00;
+                                                byteid++;
+                                            }
+                                        }
                                     }
                                 }
 
                             }
+
                         }
                     }
                 }
@@ -142,33 +151,43 @@ public static class VideoGenerator
                         linha[c] = chr;
                     }
 
+
+
                     for (int i = 0; i < 8; i++)
                     {
-
-                        for (int j = 0; j < 0x28; j++)
+                        for (int ps1 = 0; ps1 < pixelSize; ps1++)
                         {
-                            for (int k = 0; k < 7; k++)
+                            for (int j = 0; j < 0x28; j++)
                             {
-                                object? objout = memory.charSet[linha[j]].GetValue(i, k);
-                                if (objout != null)
+
+                                for (int k = 0; k < 7; k++)
                                 {
-                                    if ((bool)objout)
-                                        bmp[byteid] = 0xff;
-                                    else
-                                        bmp[byteid] = 0x0;
+                                    object? objout = memory.charSet[linha[j]].GetValue(i, k);
+                                    for (int ps2 = 0; ps2 < pixelSize; ps2++)
+                                    {
+                                        if (objout != null)
+                                        {
+                                            if ((bool)objout)
+                                                bmp[byteid] = 0xff;
+                                            else
+                                                bmp[byteid] = 0x0;
+                                        }
+                                        else
+                                            bmp[byteid] = 0x0;
+                                        byteid++;
+                                    }
                                 }
-                                else
-                                    bmp[byteid] = 0x0;
-                                byteid++;
                             }
+
                         }
+                        posV = posV + 1;
                     }
-                    posV = posV + 1;
                 }
             }
         }
 
-        Bitmap bitmap = new Bitmap(280, 192, System.Drawing.Imaging.PixelFormat.Format8bppIndexed);
+
+        Bitmap bitmap = new Bitmap(280 * pixelSize, 192 * pixelSize, System.Drawing.Imaging.PixelFormat.Format8bppIndexed);
         ColorPalette pal = bitmap.Palette;
         if (memory.softswitches.LoRes_HiRes)
         {
@@ -202,12 +221,12 @@ public static class VideoGenerator
             pal.Entries[0x07] = Color.White;
             pal.Entries[0xff] = Color.White;
         }
-        
+
 
         bitmap.Palette = pal;
         BitmapData bmData = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, bitmap.PixelFormat);
         IntPtr pNative = bmData.Scan0;
-        Marshal.Copy(bmp, 0, pNative, 280 * 192);
+        Marshal.Copy(bmp, 0, pNative, 280 * pixelSize * 192 * pixelSize);
         bitmap.UnlockBits(bmData);
         return bitmap;
 

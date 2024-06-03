@@ -49,6 +49,7 @@ partial class Form1
         Controls.Add(pictureBox1);
         Name = "Form1";
         Text = "Form1";
+        BackColor = Color.Black;
         ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
         ResumeLayout(false);
     }

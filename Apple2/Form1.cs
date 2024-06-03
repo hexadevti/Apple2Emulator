@@ -20,8 +20,8 @@ public partial class Form1 : Form
 {
     private Memory memory { get; set; }
 
-    private CPU cpu { get; set;}
-    
+    private CPU cpu { get; set; }
+
     float zoom = 4.0f;
     int scrWidth = 280;
     int scrHeight = 192;
@@ -30,31 +30,33 @@ public partial class Form1 : Form
 
     Runtime.State state = new Runtime.State();
 
-    SoundPlayer sound = new SoundPlayer(); 
+    SoundPlayer sound = new SoundPlayer();
 
     int countTicks = 0;
     int ticksFreq = 0;
 
     SignalGenerator signalGenerator;
 
-    NAudio.Wave.WaveOut playAsio;
+    NAudio.Wave.WaveOut waveOut;
 
     NAudio.Wave.BufferedWaveProvider buffer;
 
-    
-    
-    [DllImport("kernel32.dll", SetLastError=true)]
-    static extern bool Beep(uint dwFreq, uint dwDuration);
+    DateTime lastClick = DateTime.MinValue;
+
+    DateTime actualClick = DateTime.MinValue;
+
+
     public Form1()
     {
         InitializeComponent();
         this.Width = (int)(scrWidth * zoom + 27);
         this.Height = (int)(scrHeight * zoom + 60);
-        pictureBox1.Width = (int)(scrWidth * zoom);
-        pictureBox1.Height = (int)(scrHeight * zoom);
+        pictureBox1.Width =  this.Width - 27;
+        pictureBox1.Height = this.Height - 60;
         pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
-        
-        string? assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        this.Resize += Form1_Resize;
+
+        string ? assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         if (assemblyPath != null)
             assemblyPath += "/";
 
@@ -63,7 +65,7 @@ public partial class Form1 : Form
 
         memory = new Memory(state);
 
-        
+
         memory.LoadROM(0xf800, File.ReadAllBytes(assemblyPath + "roms/ApplesoftF800.rom"));
         memory.LoadROM(0xf000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftF000.rom"));
         memory.LoadROM(0xe800, File.ReadAllBytes(assemblyPath + "roms/ApplesoftE800.rom"));
@@ -78,143 +80,113 @@ public partial class Form1 : Form
         memory.RegisterOverlay(new SlotsSoftSwitchesOvl());
 
         memory.LoadChars(File.ReadAllBytes(assemblyPath + "roms/CharROM.rom"));
-        
-        memory.drive = new DiskDrive(assemblyPath + "roms/teste.dsk", memory);
 
-        // var trk = 0;
-        // var sec = 0;
-        // Console.WriteLine("Data from " + trk + "," + sec);
-        // var dataOrig = memory.drive.GetSectorData(trk, sec);
-        // foreach (var sector in dataOrig) 
-        // {   
-        //     Console.Write(sector.ToString("X2") + " ");
-        // }
-        // var nibbled = memory.drive.Encode6_2(trk, sec);
-        // Console.WriteLine("-----------------------------------------------");
-        // Console.WriteLine("reconverted from " + trk + "," + sec);
-        // var reconverted = memory.drive.Decode6_2(nibbled);
-        // foreach (var sector in reconverted) 
-        // {   
-        //     Console.Write(sector.ToString("X2") + " ");
-        // }
-        // // Console.WriteLine("-----------------------------------------------");
-        // // Console.WriteLine("Nibbled from " + trk + "," + sec);
-        // // foreach (var sector in nibbled) 
-        // // {   
-        // //     Console.Write(sector.ToString("X2") + " ");
-        // // }
-
-
+        memory.drive = new DiskDrive(assemblyPath + "roms/ProDOS_2_4_2.dsk", memory);
 
         List<Task> threads = new List<Task>();
         cpu = new CPU(state, memory, false);
-        Keyboard keyboard= new Keyboard(memory, state, lockObj);
+        Keyboard keyboard = new Keyboard(memory, state, lockObj);
         this.KeyDown += keyboard.OnKeyDown;
-        this.KeyPress += keyboard.OnKeyPress;    
+        this.KeyPress += keyboard.OnKeyPress;
         cpu.Reset();
-        
-        // WaveOut waveOut;
-        // waveOut = new WaveOut();
-        // waveOut.DeviceNumber = 0;
-        // signalGenerator = new SignalGenerator();
-        // signalGenerator.Type = SignalGeneratorType.Square;
-        // signalGenerator.
-        // signalGenerator.Frequency = 400;
-        // signalGenerator.FrequencyEnd = 400;
-        // signalGenerator.SweepLengthSecs = 1;
-        // waveOut.Init(signalGenerator);
-        // waveOut.Play();
-        
-        playAsio = new NAudio.Wave.WaveOut();
-        
-        NAudio.Wave.WaveFormat formato = new NAudio.Wave.WaveFormat();
-        
-        buffer = new NAudio.Wave.BufferedWaveProvider(formato);
-        playAsio.Init(buffer);
-        playAsio.Play();
-        
-        
 
-        threads.Add(Task.Run(() => {
+
+        // waveOut = new NAudio.Wave.WaveOut();
+        // NAudio.Wave.WaveFormat format = new NAudio.Wave.WaveFormat();
+        // buffer = new NAudio.Wave.BufferedWaveProvider(format);
+        // signalGenerator = new SignalGenerator()
+        // {
+        //     Frequency = 0,
+        //     Gain = 0.2,
+        //     Type = SignalGeneratorType.Square
+        // };
+        // var sampleRate = 16000;
+        // var frequency = 500;
+        // var amplitude = 0.2;
+        // var seconds = 5;
+
+        // var raw = new byte[sampleRate * seconds * 2];
+
+        // var multiple = 2.0*frequency/sampleRate;
+        // for (int n = 0; n < sampleRate * seconds; n++)
+        // {
+        //     var sampleSaw = ((n*multiple)%2) - 1;
+        //     var sampleValue = sampleSaw > 0 ? amplitude : -amplitude;
+        //     var sample = (short)(sampleValue * Int16.MaxValue);
+        //     var bytes = BitConverter.GetBytes(sample);
+        //     raw[n*2] = bytes[0];
+        //     raw[n*2 + 1] = bytes[1];
+        // }
+
+        // var ms = new MemoryStream(raw);
+        // var rs = new RawSourceWaveStream(ms, new WaveFormat(sampleRate, 16, 1));
+
+        // var wo = new WaveOutEvent();
+        // wo.Init(rs);
+        // wo.Play();
+        // while (wo.PlaybackState == PlaybackState.Playing)
+        // {
+        //     Thread.Sleep(500);
+        // }
+        // wo.Dispose();
+
+        // waveOut.Init(rs);
+        // waveOut.Play();
+
+
+        threads.Add(Task.Run(() =>
+        {
             while (running)
             {
-                lock (lockObj) {
+                lock (lockObj)
+                {
                     cpu.RunCycle();
                 }
             }
         }));
-        
-        threads.Add(Task.Run(() => {
+
+        threads.Add(Task.Run(() =>
+        {
             while (running)
             {
-                try 
-                {
-                    pictureBox1.Image = VideoGenerator.Generate(memory, true);
-                    Thread.Sleep(50);
-                }
-                catch (Exception ex) 
-                {
-                    
-                }
-                Thread.Sleep(10);
+                pictureBox1.Image = VideoGenerator.Generate(memory, true);
+                Thread.Sleep(50);
             }
-         }));
-         threads.Add(Task.Run(() => {
-            while (running)
-            {
-                if (memory.softswitches.SoundClick)
-                {
-                    byte[] buf = new byte[] { 0,0,0,0,0,0,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,15,15,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0,0,0,0,0,0 };
-                    buffer.AddSamples(buf, 0, buf.Length);
-                    Console.WriteLine(playAsio.Volume);
-                    memory.softswitches.SoundClick = false;
-                }
-            }
-         }));
-        //  threads.Add(Task.Run(() => {
-        //     int newTicks = 0;
-        //     uint freq = 0;
+        }));
+        // threads.Add(Task.Run(() =>
+        // {
         //     while (running)
         //     {
-        //         int intervalAnalysis = 100;
-        //         if (countTicks > newTicks) {
-        //             Console.WriteLine("Ticks = " + countTicks);
-        //             if (countTicks > 0)
+        //         if (memory.softswitches.SoundClick)
+        //         {
+        //             actualClick = DateTime.Now;
+        //             TimeSpan interval = actualClick - lastClick;
+        //             if (interval.Milliseconds < 1000)
         //             {
-        //                 freq = Convert.ToUInt16((float)countTicks/((float)intervalAnalysis/1000f));
-        //                 Console.WriteLine("Hz = " + freq);
-        //                 //PlayBeep((ushort)freq, 100);
-
-                        
-        //                 byte[] buf = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0xff, 0, 0xff, 0xff, 0xff, 0, 0, 0xff, 0, 0xff, 0, 0xff,
-        //                 0, 0, 0, 0, 0, 0, 0, 0, 0xff, 0, 0xff, 0xff, 0xff, 0, 0, 0xff, 0, 0xff, 0, 0xff,0, 0, 0, 0, 0, 0, 0, 0, 0xff, 0, 0xff, 0xff, 0xff, 0, 0, 0xff, 0, 0xff, 0, 0xff,0, 0, 0, 0, 0, 0, 0, 0, 0xff, 0, 0xff, 0xff, 0xff, 0, 0, 0xff, 0, 0xff, 0, 0xff,0, 0, 0, 0, 0, 0, 0, 0, 0xff, 0, 0xff, 0xff, 0xff, 0, 0, 0xff, 0, 0xff, 0, 0xff,0, 0, 0, 0, 0, 0, 0, 0, 0xff, 0, 0xff, 0xff, 0xff, 0, 0, 0xff, 0, 0xff, 0, 0xff,0, 0, 0, 0, 0, 0, 0, 0, 0xff, 0, 0xff, 0xff, 0xff, 0, 0, 0xff, 0, 0xff, 0, 0xff,0, 0, 0, 0, 0, 0, 0, 0, 0xff, 0, 0xff, 0xff, 0xff, 0, 0, 0xff, 0, 0xff, 0, 0xff,0, 0, 0, 0, 0, 0, 0, 0, 0xff, 0, 0xff, 0xff, 0xff, 0, 0, 0xff, 0, 0xff, 0, 0xff,0, 0, 0, 0, 0, 0, 0, 0, 0xff, 0, 0xff, 0xff, 0xff, 0, 0, 0xff, 0, 0xff, 0, 0xff,0, 0, 0, 0, 0, 0, 0, 0, 0xff, 0, 0xff, 0xff, 0xff, 0, 0, 0xff, 0, 0xff, 0, 0xff,0, 0, 0, 0, 0, 0, 0, 0, 0xff, 0, 0xff, 0xff, 0xff, 0, 0, 0xff, 0, 0xff, 0, 0xff,0, 0, 0, 0, 0, 0, 0, 0, 0xff, 0, 0xff, 0xff, 0xff, 0, 0, 0xff, 0, 0xff, 0, 0xff,0, 0, 0, 0, 0, 0, 0, 0, 0xff, 0, 0xff, 0xff, 0xff, 0, 0, 0xff, 0, 0xff, 0, 0xff,0, 0, 0, 0, 0, 0, 0, 0, 0xff, 0, 0xff, 0xff, 0xff, 0, 0, 0xff, 0, 0xff, 0, 0xff,0, 0, 0, 0, 0, 0, 0, 0, 0xff, 0, 0xff, 0xff, 0xff, 0, 0, 0xff, 0, 0xff, 0, 0xff,0, 0, 0, 0, 0, 0, 0, 0, 0xff, 0, 0xff, 0xff, 0xff, 0, 0, 0xff, 0, 0xff, 0, 0xff,0, 0, 0, 0, 0, 0, 0, 0, 0xff, 0, 0xff, 0xff, 0xff, 0, 0, 0xff, 0, 0xff, 0, 0xff,0, 0, 0, 0, 0, 0, 0, 0, 0xff, 0, 0xff, 0xff, 0xff, 0, 0, 0xff, 0, 0xff, 0, 0xff,0, 0, 0, 0, 0, 0, 0, 0, 0xff, 0, 0xff, 0xff, 0xff, 0, 0, 0xff, 0, 0xff, 0, 0xff,
-        //                  };
-                        
-        //                     //Aggiungo in coda al buffer
-        //                     buffer.AddSamples(buf, 0, buf.Length);
-                        
-                        
-                        
-        //                 // signalGenerator = new SignalGenerator();
-        //                 // signalGenerator.Type = SignalGeneratorType.Square;
-        //                 // signalGenerator.Frequency = freq;
-        //                 // signalGenerator.FrequencyEnd = freq;
-        //                 // signalGenerator.SweepLengthSecs = 1;
-
-        //                 // waveOut.Init(signalGenerator);
-        //                 // waveOut.Play();
-        //                 // waveOut.Stop();
-                        
+        //                 Console.WriteLine("Ticks interval (ms) = " + interval.TotalMilliseconds);
+        //                 var freq = 1000f / interval.TotalMilliseconds;
+        //                 Console.WriteLine("freq (hz) = " + freq);
         //             }
-                    
-        //             countTicks = 0;
+        //             else
+        //             {
+        //             }
+
+
+        //             memory.softswitches.SoundClick = false;
+        //             lastClick = actualClick;
+
         //         }
-        //         newTicks = countTicks;
-                
-        //         Thread.Sleep(intervalAnalysis);
         //     }
-        //  }));
+        // }));
+
     }
 
-    
+    private void Form1_Resize(object sender, System.EventArgs e)
+    {
+        Control control = (Control)sender;
+        pictureBox1.Width =  this.Width;
+        pictureBox1.Height = this.Height;
+    }
+
+
 }
