@@ -6,9 +6,11 @@ public class DiskDrive
 {
     private Memory memory { get; set; }
 
-    private string diskPath { get; set;}
+    private string diskPath { get; set; }
 
     public byte[] diskImage { get; set; }
+
+    public byte[][] diskRawData = new byte[35][];
 
     public int offset { get; set; }
     public int catalog_track { get; set; }
@@ -28,66 +30,66 @@ public class DiskDrive
                             0xF7,0xF9,0xFA,0xFB,0xFC,0xFD,0xFE,0xFF
                         };
 
-/* DO logical order  0 1 2 3 4 5 6 7 8 9 A B C D E F */
-/*    physical order 0 D B 9 7 5 3 1 E C A 8 6 4 2 F */
+    /* DO logical order  0 1 2 3 4 5 6 7 8 9 A B C D E F */
+    /*    physical order 0 D B 9 7 5 3 1 E C A 8 6 4 2 F */
 
-/* PO logical order  0 E D C B A 9 8 7 6 5 4 3 2 1 F */
-/*    physical order 0 2 4 6 8 A C E 1 3 5 7 9 B D F */
+    /* PO logical order  0 E D C B A 9 8 7 6 5 4 3 2 1 F */
+    /*    physical order 0 2 4 6 8 A C E 1 3 5 7 9 B D F */
 
-    public byte[] translateDos33Track = new byte[] { 
+    public byte[] translateDos33Track = new byte[] {
         0x00, 0x07, 0x0e, 0x06, 0x0d, 0x05, 0x0c, 0x04, 0x0b, 0x03, 0x0a, 0x02, 0x09, 0x01, 0x08, 0x0f };
 
     public DiskDrive(string dskPath, Memory memory)
     {
         diskPath = dskPath;
         this.memory = memory;
-        this.disk_info = new byte[] {
-                0,       // unused
-                17, 15,  // track/sector
-                3,       // release number
-                0, 0,    // unused
-                254,     // volume number
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0,
-                122,     // max number of track/sector pairs
-                0, 0, 0, 0, 0, 0, 0, 0,
-                18,      // last track sectors were allocated
-                1,       // direction of track allocation
-                0, 0,
-                35, 16,  // max tracks, max sectors per track
-        };
+        // this.disk_info = new byte[] {
+        //         0,       // unused
+        //         17, 15,  // track/sector
+        //         3,       // release number
+        //         0, 0,    // unused
+        //         254,     // volume number
+        //         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        //         0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0,
+        //         122,     // max number of track/sector pairs
+        //         0, 0, 0, 0, 0, 0, 0, 0,
+        //         18,      // last track sectors were allocated
+        //         1,       // direction of track allocation
+        //         0, 0,
+        //         35, 16,  // max tracks, max sectors per track
+        // };
 
         this.diskImage = File.ReadAllBytes(dskPath);
         offset_to_disk_info = GetOffset(17, 0);
         offset = offset_to_disk_info;
 
-        for (int i = 0; i < disk_info.Length; i++)
-        {
-            diskImage[offset + i] = disk_info[i];
-        }
+        // for (int i = 0; i < disk_info.Length; i++)
+        // {
+        //     diskImage[offset + i] = disk_info[i];
+        // }
 
 
-        for (int i = 0x38; i < 0xc4; i += 4)
-        {
-            diskImage[offset + i + 0] = 0xff;
-            diskImage[offset + i + 1] = 0xff;
+        // for (int i = 0x38; i < 0xc4; i += 4)
+        // {
+        //     diskImage[offset + i + 0] = 0xff;
+        //     diskImage[offset + i + 1] = 0xff;
 
-        }
+        // }
 
-        MarkSectorUsed(17, 0);
+        // MarkSectorUsed(17, 0);
 
-        for (int sector = 15; sector >= 1; sector--)
-        {
-            offset = GetOffset(17, sector);
+        // for (int sector = 15; sector >= 1; sector--)
+        // {
+        //     offset = GetOffset(17, sector);
 
-            if (sector != 1)
-            {
-                diskImage[offset + 1] = 17;
-                diskImage[offset + 2] = (byte)(sector - 1);
-            }
+        //     if (sector != 1)
+        //     {
+        //         diskImage[offset + 1] = 17;
+        //         diskImage[offset + 2] = (byte)(sector - 1);
+        //     }
 
-            MarkSectorUsed(17, sector);
-        }
+        //     MarkSectorUsed(17, sector);
+        // }
 
         catalog_track = diskImage[offset_to_disk_info + 1];
         catalog_sector = diskImage[offset_to_disk_info + 2];
@@ -315,7 +317,7 @@ public class DiskDrive
             }
         }
     }
-    
+
     public byte[] EncodeByte(byte data)
     {
         byte[] output = new byte[2];
@@ -385,40 +387,40 @@ public class DiskDrive
         }
         return output;
     }
-   
+
     public byte[] Encode6_2(int track, int sector)
     {
         byte[] input = GetSectorData(track, sector);
         byte[] outputData = new byte[256];
-        
+
         byte[] outputlast2 = new byte[0x56];
-        
+
         byte[] outputlast2Encoded = new byte[0x56];
         byte[] outputDataEncoded = new byte[256];
 
-        for (int i = 0;i<input.Length;i++)
+        for (int i = 0; i < input.Length; i++)
         {
             outputData[i] = (byte)(input[i] >> 2);
             if (i < 86)
             {
                 BitArray bitsVolume = new BitArray(new byte[] { input[i] });
                 var last2bits = (bitsVolume[0] ? 2 : 0) + (bitsVolume[1] ? 1 : 0);
-                outputlast2[i] = (byte)(outputlast2[i] | last2bits );
-            } 
+                outputlast2[i] = (byte)(outputlast2[i] | last2bits);
+            }
             else if (i < 172)
             {
                 BitArray bitsVolume = new BitArray(new byte[] { input[i] });
                 var last2bits = ((bitsVolume[0] ? 2 : 0) + (bitsVolume[1] ? 1 : 0)) << 2;
-                outputlast2[i-86] = (byte)(outputlast2[i-86] | last2bits );
+                outputlast2[i - 86] = (byte)(outputlast2[i - 86] | last2bits);
             }
             else
             {
                 BitArray bitsVolume = new BitArray(new byte[] { input[i] });
                 var last2bits = ((bitsVolume[0] ? 2 : 0) + (bitsVolume[1] ? 1 : 0)) << 4;
-                outputlast2[i-172] = (byte)(outputlast2[i-172] | last2bits );
+                outputlast2[i - 172] = (byte)(outputlast2[i - 172] | last2bits);
             }
         }
-        
+
         var lastByte = 0;
         for (int i = 0; i < 86; i++)
         {
@@ -444,7 +446,7 @@ public class DiskDrive
 
     public byte detranlateTable(byte data)
     {
-        for (int j = 0; j < translateTable.Length; j++)  
+        for (int j = 0; j < translateTable.Length; j++)
         {
             if (translateTable[j] == data)
             {
@@ -457,7 +459,7 @@ public class DiskDrive
     {
         byte[] dataTranslated = new byte[343];
         byte[] bufferData = new byte[343];
-        
+
 
         byte[] inputlast2Encoded = new byte[0x56];
         byte[] inputDataEncoded = new byte[256];
@@ -489,7 +491,7 @@ public class DiskDrive
         // Console.WriteLine();
         // Console.WriteLine();
         byte prevByte = 0;
-        for (int i = 0;i< diskData.Length;i++)
+        for (int i = 0; i < diskData.Length; i++)
         {
             dataTranslated[i] = detranlateTable(diskData[i]);
             bufferData[i] = (byte)(dataTranslated[i] ^ prevByte);
@@ -497,14 +499,14 @@ public class DiskDrive
         }
 
 
-        for (int i = 0; i< bufferData.Length-1; i++)
+        for (int i = 0; i < bufferData.Length - 1; i++)
         {
             if (i < 86)
             {
                 inputlast2Encoded[i] = bufferData[i];
                 //Console.Write(inputlast2Encoded[i].ToString("X2") + "|" + inputlast2Encoded[i].ToString("B8") + " ");
             }
-            else 
+            else
             {
                 // if (i == 86)
                 // {
@@ -518,27 +520,27 @@ public class DiskDrive
 
 
 
-        for (int i = 0;i<inputDataEncoded.Length;i++)
+        for (int i = 0; i < inputDataEncoded.Length; i++)
         {
             outputData[i] = (byte)(inputDataEncoded[i] << 2);
-            
+
         }
 
-        for (int i = 0; i < outputData.Length;i++)
+        for (int i = 0; i < outputData.Length; i++)
         {
             if (i < 86)
             {
                 BitArray bitsVolume = new BitArray(new byte[] { inputlast2Encoded[i] });
                 inputDataDecoded[i] = (byte)(outputData[i] + (bitsVolume[0] ? 2 : 0) + (bitsVolume[1] ? 1 : 0));
-            } 
+            }
             else if (i < 172)
             {
-                BitArray bitsVolume = new BitArray(new byte[] { inputlast2Encoded[i-86] });
+                BitArray bitsVolume = new BitArray(new byte[] { inputlast2Encoded[i - 86] });
                 inputDataDecoded[i] = (byte)(outputData[i] + (bitsVolume[2] ? 2 : 0) + (bitsVolume[3] ? 1 : 0));
             }
             else
             {
-                BitArray bitsVolume = new BitArray(new byte[] { inputlast2Encoded[i-172] });
+                BitArray bitsVolume = new BitArray(new byte[] { inputlast2Encoded[i - 172] });
                 inputDataDecoded[i] = (byte)(outputData[i] + (bitsVolume[4] ? 2 : 0) + (bitsVolume[5] ? 1 : 0));
             }
         }
@@ -547,8 +549,38 @@ public class DiskDrive
         return inputDataDecoded;
     }
 
+    public void TrackRawData(int track, bool update = false)
+    {
+        if (diskRawData[track] == null || update)
+        {
+            List<byte> selectedSector = new List<byte>();
 
-  
+            foreach (byte isec in new byte[] { 0xa, 0xb, 0xc, 0xd, 0xe, 0xf, 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9 })
+            {
+                List<byte> b = new List<byte>();
+                Console.WriteLine(DateTime.Now.ToString("HH:mm:ss.ff") + " Load Track: " + track + " Sector: " + isec);
+                selectedSector.AddRange(new List<byte>() { 0xff, 0xff, 0xff });
+                selectedSector.AddRange(new List<byte>() { 0xd5, 0xaa, 0x96 }); // Prologe address
+                var volume = memory.drive.GetVolume();
+                b = memory.drive.EncodeByte(volume).ToList();
+                selectedSector.AddRange(b); // Volume
+                b = memory.drive.EncodeByte((byte)track).ToList();
+                selectedSector.AddRange(b); // Track
+                b = memory.drive.EncodeByte(isec).ToList();
+                selectedSector.AddRange(b); // Sector
+                b = memory.drive.Checksum(volume, (byte)track, isec).ToList();
+                selectedSector.AddRange(b); // Checksum
+                selectedSector.AddRange(new List<byte>() { 0xde, 0xaa, 0xeb }); // Epilogue address
+                selectedSector.AddRange(new List<byte>() { 0xd5, 0xaa, 0xad }); // Prologe data
+                b = memory.drive.Encode6_2(track, memory.drive.translateDos33Track[isec]).ToList();
+                selectedSector.AddRange(b); // Data field + checksum
+                selectedSector.AddRange(new List<byte>() { 0xde, 0xaa, 0xeb }); // Epilogue
+                
+            }
+            diskRawData[track] = selectedSector.ToArray();
+        }
+    }
+
 
     public int GetOffset(int track, int sector)
     {

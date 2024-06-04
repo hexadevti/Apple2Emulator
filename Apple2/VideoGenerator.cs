@@ -53,7 +53,7 @@ public static class VideoGenerator
                                     {
                                         for (int ps2 = 0; ps2 < pixelSize; ps2++)
                                         {
-                                            var firstColor = linha[j] & 0b11110000 >> 4;
+                                            var firstColor =  (linha[j] & 0b11110000) >> 4;
                                             var secondColor = linha[j] & 0b00001111;
                                             if (i < 4)
                                             {
@@ -66,6 +66,7 @@ public static class VideoGenerator
                                                 byteid++;
                                             }
                                         }
+
                                     }
                                 }
                             }
