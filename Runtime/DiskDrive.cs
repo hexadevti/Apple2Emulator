@@ -43,53 +43,14 @@ public class DiskDrive
     {
         diskPath = dskPath;
         this.memory = memory;
-        // this.disk_info = new byte[] {
-        //         0,       // unused
-        //         17, 15,  // track/sector
-        //         3,       // release number
-        //         0, 0,    // unused
-        //         254,     // volume number
-        //         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        //         0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0,
-        //         122,     // max number of track/sector pairs
-        //         0, 0, 0, 0, 0, 0, 0, 0,
-        //         18,      // last track sectors were allocated
-        //         1,       // direction of track allocation
-        //         0, 0,
-        //         35, 16,  // max tracks, max sectors per track
-        // };
 
-        this.diskImage = File.ReadAllBytes(dskPath);
+        if (!string.IsNullOrEmpty(diskPath))
+            this.diskImage = File.ReadAllBytes(dskPath);
+        else
+            this.diskImage = new byte[143360];
         offset_to_disk_info = GetOffset(17, 0);
         offset = offset_to_disk_info;
 
-        // for (int i = 0; i < disk_info.Length; i++)
-        // {
-        //     diskImage[offset + i] = disk_info[i];
-        // }
-
-
-        // for (int i = 0x38; i < 0xc4; i += 4)
-        // {
-        //     diskImage[offset + i + 0] = 0xff;
-        //     diskImage[offset + i + 1] = 0xff;
-
-        // }
-
-        // MarkSectorUsed(17, 0);
-
-        // for (int sector = 15; sector >= 1; sector--)
-        // {
-        //     offset = GetOffset(17, sector);
-
-        //     if (sector != 1)
-        //     {
-        //         diskImage[offset + 1] = 17;
-        //         diskImage[offset + 2] = (byte)(sector - 1);
-        //     }
-
-        //     MarkSectorUsed(17, sector);
-        // }
 
         catalog_track = diskImage[offset_to_disk_info + 1];
         catalog_sector = diskImage[offset_to_disk_info + 2];
@@ -561,22 +522,24 @@ public class DiskDrive
                 Console.WriteLine(DateTime.Now.ToString("HH:mm:ss.ff") + " Load Track: " + track + " Sector: " + isec);
                 selectedSector.AddRange(new List<byte>() { 0xff, 0xff, 0xff });
                 selectedSector.AddRange(new List<byte>() { 0xd5, 0xaa, 0x96 }); // Prologe address
-                var volume = memory.drive.GetVolume();
-                b = memory.drive.EncodeByte(volume).ToList();
+                var volume = memory.drive1.GetVolume();
+                b = this.EncodeByte(volume).ToList();
                 selectedSector.AddRange(b); // Volume
-                b = memory.drive.EncodeByte((byte)track).ToList();
+                b = this.EncodeByte((byte)track).ToList();
                 selectedSector.AddRange(b); // Track
-                b = memory.drive.EncodeByte(isec).ToList();
+                b = this.EncodeByte(isec).ToList();
                 selectedSector.AddRange(b); // Sector
-                b = memory.drive.Checksum(volume, (byte)track, isec).ToList();
+                b = this.Checksum(volume, (byte)track, isec).ToList();
                 selectedSector.AddRange(b); // Checksum
                 selectedSector.AddRange(new List<byte>() { 0xde, 0xaa, 0xeb }); // Epilogue address
                 selectedSector.AddRange(new List<byte>() { 0xd5, 0xaa, 0xad }); // Prologe data
-                b = memory.drive.Encode6_2(track, memory.drive.translateDos33Track[isec]).ToList();
+                b = this.Encode6_2(track, this.translateDos33Track[isec]).ToList(); // DOS
+                //b = this.Encode6_2(track, isec).ToList(); // PRODOS
                 selectedSector.AddRange(b); // Data field + checksum
                 selectedSector.AddRange(new List<byte>() { 0xde, 0xaa, 0xeb }); // Epilogue
                 
             }
+            Console.WriteLine(Print(selectedSector));
             diskRawData[track] = selectedSector.ToArray();
         }
     }
@@ -590,5 +553,24 @@ public class DiskDrive
     public int GetInt16(byte[] data, int offset)
     {
         return (data[offset]) | ((data[offset + 1]) << 8);
+    }
+
+    string Print(List<byte> bytes)
+    {
+        string ret = "";
+        for (int i = 0; i < bytes.Count; i = i + 16)
+        {
+            ret += i.ToString("X4") + ": ";
+            foreach (byte b in bytes.Skip(i).Take(16))
+            {
+                ret += b.ToString("X2") + " ";
+            }
+            // foreach (byte b in bytes.Skip(i).Take(16))
+            // {
+            //     ret += Convert.ToChar((byte)(b - 0x80));
+            // }
+            ret += "\r\n";
+        }
+        return ret;
     }
 }

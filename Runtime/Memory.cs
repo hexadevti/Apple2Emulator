@@ -8,6 +8,8 @@ namespace Runtime;
 
 public class Memory
 {
+    public object displayLock = new object();
+    public object cpuLock = new object();
     public const ushort _ResetVector = 65532;
     public const ushort _IRQVector = 0xFFFE;
     private const byte ZeroByte = (byte)0;
@@ -26,7 +28,9 @@ public class Memory
 
     public Softswitches softswitches { get; set; }
 
-    public DiskDrive drive { get; set; }
+    public DiskDrive drive1 { get; set; }
+
+    public DiskDrive drive2 { get; set; }
 
     public bool UpdateScreen { get; set; }
 
@@ -278,6 +282,16 @@ public class Memory
         };
 
         return BitConverter.ToUInt16(bytes);
+    }
+
+    public byte[] MemoryDump(ushort startAddress, ushort endAddress)
+    {
+        byte[] ret = new byte[endAddress-startAddress];
+        for (ushort i = startAddress; i < endAddress; i++)
+        {
+            ret[i - startAddress] = ReadMemory(i);
+        }
+        return ret;
     }
 
 }

@@ -22,6 +22,8 @@ public class SlotsSoftSwitchesOvl : IOverLay
     int pointer = 0;
 
     int trackSize = 5856;
+
+    bool FlagDos_Prodos = true;
     
     Dictionary<string, List<byte>> output = new Dictionary<string, List<byte>>();
 
@@ -34,7 +36,7 @@ public class SlotsSoftSwitchesOvl : IOverLay
         string key = trk + "_" + sec;
         if (address == 0xc08d + slotOffset)
         {
-            if (memory.drive != null && (memory.softswitches.DriveQ6H_L == false && memory.softswitches.DriveQ7H_L == true))
+            if (memory.softswitches.DriveQ6H_L == false && memory.softswitches.DriveQ7H_L == true)
             {
                 if (output.ContainsKey(key))
                 {
@@ -68,7 +70,7 @@ public class SlotsSoftSwitchesOvl : IOverLay
         string key = trk + "_" + sec;
         if (address == 0xc08c + slotOffset)
         {
-            if (memory.drive != null && (memory.softswitches.DriveQ6H_L == false && memory.softswitches.DriveQ7H_L == false))
+            if (memory.softswitches.DriveQ6H_L == false && memory.softswitches.DriveQ7H_L == false)
             {
                 byte track = 0;
                 if (state.PC > 0xc000 + slot * 0x100 && state.PC < (0xc000 + slot * 0x100) + 0x100)
@@ -77,7 +79,10 @@ public class SlotsSoftSwitchesOvl : IOverLay
                 }
                 else
                 {
-                    track = memory.ReadByte(0x478);
+                    if (FlagDos_Prodos)
+                        track = memory.ReadByte(0x478); // DOS
+                    else
+                        track = memory.ReadMemory(0x40); // PRODOS
                 }
 
                 if ((int)track > 34)
@@ -85,16 +90,20 @@ public class SlotsSoftSwitchesOvl : IOverLay
                     track = 0;
                 }
 
-                memory.drive.TrackRawData(track);
-
-                
+                if (memory.softswitches.Drive1_2)
+                    memory.drive1.TrackRawData(track);
+                else
+                    memory.drive2.TrackRawData(track);
 
                 if (pointer > trackSize - 1)
                     pointer = 0;
 
-                return memory.drive.diskRawData[track][pointer++];
+                if (memory.softswitches.Drive1_2)
+                    return memory.drive1.diskRawData[track][pointer++];
+                else
+                    return memory.drive2.diskRawData[track][pointer++];
             }
-            else if (memory.drive != null && (memory.softswitches.DriveQ6H_L == false && memory.softswitches.DriveQ7H_L == true))
+            else if (memory.softswitches.DriveQ6H_L == false && memory.softswitches.DriveQ7H_L == true)
             {
                 List<string> keysToClear = new List<string>();
                 foreach (var data in output)
@@ -104,13 +113,29 @@ public class SlotsSoftSwitchesOvl : IOverLay
                         int trkd = int.Parse(data.Key.Split('_')[0]);
                         int secd = int.Parse(data.Key.Split('_')[1]);
                         Console.WriteLine(DateTime.Now.ToString("HH:mm:ss.ff") + " Save Track: " + trkd + " Sector: " + secd);
-                        var cleanData = data.Value.Skip(7).Take(343).ToArray();
-                        var decsecData = memory.drive.Decode6_2(cleanData);
-                        if (trkd == 17 && secd == 15)
-                            Console.WriteLine(Print(decsecData.ToList()));
-                        memory.drive.SetSectorData(trkd, memory.drive.translateDos33Track[secd], decsecData); 
-                        memory.drive.SaveImage();
-                        memory.drive.TrackRawData(trkd, true);
+
+                        byte[] cleanData = data.Value.Skip(7).Take(343).ToArray();
+
+                        if (memory.softswitches.Drive1_2)
+                        {
+                            byte[] decsecData = memory.drive1.Decode6_2(cleanData);
+                            if (FlagDos_Prodos)
+                                memory.drive1.SetSectorData(trkd, memory.drive1.translateDos33Track[secd], decsecData); // DOS
+                            else 
+                                memory.drive1.SetSectorData(trkd, secd, decsecData); // PRODOS
+                            memory.drive1.SaveImage();
+                            memory.drive1.TrackRawData(trkd, true);
+                        }
+                        else
+                        {
+                            byte[] decsecData = memory.drive2.Decode6_2(cleanData);
+                            if (FlagDos_Prodos) 
+                                memory.drive2.SetSectorData(trkd, memory.drive2.translateDos33Track[secd], decsecData); //  DOS
+                            else
+                                memory.drive2.SetSectorData(trkd, memory.drive2.translateDos33Track[secd], decsecData); //  PRODOS
+                            memory.drive2.SaveImage();
+                            memory.drive2.TrackRawData(trkd, true);
+                        }
                         keysToClear.Add(key);
                     }
                 }
@@ -123,25 +148,43 @@ public class SlotsSoftSwitchesOvl : IOverLay
             }
         }
         if (address == 0xc080 + slotOffset)
+        {
             memory.softswitches.DrivePhase0ON_OFF = false;
+            return 0x96;
+        }
         if (address == 0xc081 + slotOffset)
             memory.softswitches.DrivePhase0ON_OFF = true;
         if (address == 0xc082 + slotOffset)
+        {
             memory.softswitches.DrivePhase1ON_OFF = false;
+            return 0x96;
+        }
         if (address == 0xc083 + slotOffset)
+        {
             memory.softswitches.DrivePhase1ON_OFF = true;
+            return 0xa0;
+        }
         if (address == 0xc084 + slotOffset)
             memory.softswitches.DrivePhase2ON_OFF = false;
         if (address == 0xc085 + slotOffset)
+        {
             memory.softswitches.DrivePhase2ON_OFF = true;
+            return 0xa0;
+        }
         if (address == 0xc086 + slotOffset)
             memory.softswitches.DrivePhase3ON_OFF = false;
         if (address == 0xc087 + slotOffset)
             memory.softswitches.DrivePhase3ON_OFF = true;
         if (address == 0xc088 + slotOffset)
+        {
             memory.softswitches.DriveMotorON_OFF = false;
+            return 0x96;
+        }
         if (address == 0xc089 + slotOffset)
+        {
             memory.softswitches.DriveMotorON_OFF = true;
+            return 0xa0;
+        }
         if (address == 0xc08a + slotOffset)
             memory.softswitches.Drive1_2 = true;
         if (address == 0xc08b + slotOffset)
@@ -163,22 +206,5 @@ public class SlotsSoftSwitchesOvl : IOverLay
         return 0;
     }
 
-    string Print(List<byte> bytes)
-    {
-        string ret = "";
-        for (int i = 0; i < bytes.Count; i = i + 16)
-        {
-
-            foreach (byte b in bytes.Skip(i).Take(16))
-            {
-                ret += b.ToString("X2") + " ";
-            }
-            foreach (byte b in bytes.Skip(i).Take(16))
-            {
-                ret += Convert.ToChar((byte)(b - 0x80));
-            }
-            ret += "\r\n";
-        }
-        return ret;
-    }
+    
 }

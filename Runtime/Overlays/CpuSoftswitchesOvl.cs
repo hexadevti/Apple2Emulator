@@ -9,10 +9,8 @@ public class CpuSoftswitchesOvl : IOverLay
      
     public CpuSoftswitchesOvl()
     {
-
         Start = 0xc000;
         End = 0xc08f;
-          
     }
 
     public int Start { get; }
@@ -39,9 +37,19 @@ public class CpuSoftswitchesOvl : IOverLay
         if (address==0xc053)
             memory.softswitches.DisplayFull_Split = false;
         if (address==0xc054)
-            memory.softswitches.TextPage1_Page2 = true;
-        if (address==0xc055)
-            memory.softswitches.TextPage1_Page2 = false;
+        {
+            lock (memory.displayLock)
+            {
+                memory.softswitches.TextPage1_Page2 = true;
+            }
+        }
+        if (address == 0xc055)
+        {
+            lock (memory.displayLock)
+            {
+                memory.softswitches.TextPage1_Page2 = false;
+            }
+        }
         if (address==0xc056)
             memory.softswitches.LoRes_HiRes = true;
         if (address==0xc057)

@@ -7,14 +7,13 @@ namespace Apple2;
 
 public static class VideoGenerator
 {
-    public static Bitmap Generate(Runtime.Memory memory, bool color)
+    public static Bitmap Generate(Runtime.Memory memory, int pixelSize, bool color)
     {
         int byteid = 0;
         var cursorH = memory.baseRAM[0x24];
         var cursorV = memory.baseRAM[0x25];
         ushort graphicsPage = 0x2000;
         ushort textPage = 0x400;
-        int pixelSize = 2;
         byte[] bmp = new byte[280 * pixelSize * 192 * pixelSize];
 
 
@@ -147,12 +146,10 @@ public static class VideoGenerator
                         var chr = memory.baseRAM[(ushort)(textPage + (b * 0x28) + (l * 0x80) + c)];
 
                         if (posV == cursorV && posH == cursorH)
-                            chr = DateTime.Now.Millisecond > 500 ? chr : (byte)(chr | 0b10000000);
+                            chr = Math.Floor((float)(DateTime.Now.Millisecond / 100)) % 2 == 0 ? chr : (byte)(chr | 0b10000000);
 
                         linha[c] = chr;
                     }
-
-
 
                     for (int i = 0; i < 8; i++)
                     {
@@ -160,7 +157,6 @@ public static class VideoGenerator
                         {
                             for (int j = 0; j < 0x28; j++)
                             {
-
                                 for (int k = 0; k < 7; k++)
                                 {
                                     object? objout = memory.charSet[linha[j]].GetValue(i, k);
@@ -179,10 +175,9 @@ public static class VideoGenerator
                                     }
                                 }
                             }
-
                         }
-                        posV = posV + 1;
                     }
+                    posV = posV + 1;
                 }
             }
         }
@@ -223,14 +218,12 @@ public static class VideoGenerator
             pal.Entries[0xff] = Color.White;
         }
 
-
         bitmap.Palette = pal;
         BitmapData bmData = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, bitmap.PixelFormat);
         IntPtr pNative = bmData.Scan0;
         Marshal.Copy(bmp, 0, pNative, 280 * pixelSize * 192 * pixelSize);
         bitmap.UnlockBits(bmData);
         return bitmap;
-
 
     }
 }

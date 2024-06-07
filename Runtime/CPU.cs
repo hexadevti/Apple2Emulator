@@ -57,6 +57,7 @@ public class CPU
 
     public void RunCycle()
     {
+        var lastPC = state.PC;
         if (state.PC == 0)
         {
             state.PC = memory.ReadAddressLLHH(0xfffc) ?? 0;
@@ -66,7 +67,7 @@ public class CPU
         OpCodePart? opCodePart = OpCodes.GetOpCode(instruction);
         if (debug)
         {
-            op = opCodePart?.Operation + (opCodePart?.Addressing != null ? "_" + opCodePart?.Addressing : "") + (opCodePart?.Register != null ? "_" + opCodePart?.Register : "");
+            op = opCodePart?.Operation + (opCodePart?.Addressing != null ? "_" + opCodePart?.Addressing : "") + (opCodePart?.Addressing != null ? "_" + opCodePart?.Register : "");
             pc = state.PC.ToString("x4");
             axy = state.A.ToString("X") + " " + state.X.ToString("X") + " " + state.Y.ToString("X");
             fl = (state.N ? "1" : "0") + "" + (state.V ? "1" : "0") + (state.B ? "1" : "0")
@@ -183,56 +184,15 @@ public class CPU
             if (debug)
                 ad = (refAddress.HasValue ? refAddress.Value.ToString("x4") : "null");
 
-            
-            if (pc == "b988") // Extrai dados do address header do setor
+            if (lastPC == 0x0a5a) // && refAddress.HasValue && refAddress.Value == 0x13ff)
                 Thread.Sleep(1);
-            if (pc == "be14") // Compara volume 
+            if (lastPC == 0x0a7a && refAddress.HasValue && refAddress.Value == 0x13ff)
                 Thread.Sleep(1);
-
-            if (pc == "be2e") // Compara setor descoberto com o setor solicitado
+            if (lastPC == 0x0985) // saida da rotina de movimentação do braço
+                 Thread.Sleep(1);
+            if (lastPC == 0x09f5 && state.A == 0xd5) // Encontra setor
                 Thread.Sleep(1);
-
-            if (pc == "b911") // Buffer 1 - 2 bits 
-                Thread.Sleep(1);
-
-            if (pc == "b922") // Buffer 2 - 6 bits
-                Thread.Sleep(1);
-            // leitura
-            if (pc == "b8d4" && state.Y == 0x80 && state.X == 0x2b) // Processa buffer 1 e 2 e grava dado em memoria (Acumulador)
-                Thread.Sleep(1);
-
-            // gravaÃ§ao
-            if (pc == "b83f") // entra em write16
-                Thread.Sleep(1);
-
-            if (pc == "b866") // 2 bits
-                Thread.Sleep(1);
-
-            if (pc == "b872") // 2 bits
-                Thread.Sleep(1);
-
-            if (pc == "a397") // Command SAVE
-                Thread.Sleep(1);
-    
-            if (pc == "b80f") // buffer STA NBUF1 
-                Thread.Sleep(1); // 51
-
-            if (pc == "b823") // buffer STA NBUF2 
-                Thread.Sleep(1);
-
-            if (pc == "b866") // buffer LDA NBUF2 
-                Thread.Sleep(1);
-
-            if (pc == "b87e") // buffer LDA NBUF1 
-                Thread.Sleep(1);
-
-            if (pc == "b87e" && memory.baseRAM[0x2e] == 19) // 6 bits
-                Thread.Sleep(1);
-
-            if (pc == "b87e") // checksum
-                Thread.Sleep(1);
-
-            if (pc == "b89a") // checksum
+            if (lastPC == 0x0a19) // carrega nova trilha no 0x40 --- Nesse ponto ele acha 0x96, 
                 Thread.Sleep(1);
 
 

@@ -13,6 +13,9 @@ using System.Media;
 using System.Net;
 using NAudio.Wave.SampleProviders;
 using NAudio.Wave;
+using System.Diagnostics;
+using System.Security;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace Apple2;
 
@@ -22,45 +25,52 @@ public partial class Form1 : Form
 
     private CPU cpu { get; set; }
 
-    float zoom = 4.0f;
-    int scrWidth = 280;
-    int scrHeight = 192;
-
-    object lockObj = new object();
-
     Runtime.State state = new Runtime.State();
 
-    SoundPlayer sound = new SoundPlayer();
 
-    int countTicks = 0;
-    int ticksFreq = 0;
 
-    SignalGenerator signalGenerator;
+    bool running = true;
 
-    NAudio.Wave.WaveOut waveOut;
+    string? assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
-    NAudio.Wave.BufferedWaveProvider buffer;
+    List<Task> threads = new List<Task>();
 
-    DateTime lastClick = DateTime.MinValue;
+    int pixelSize = 2;
 
-    DateTime actualClick = DateTime.MinValue;
-
+    private DirectSoundOut output = null;
+    private BlockAlignReductionStream stream = null;
 
     public Form1()
     {
         InitializeComponent();
-        this.Width = (int)(scrWidth * zoom + 27);
-        this.Height = (int)(scrHeight * zoom + 60);
-        pictureBox1.Width =  this.Width - 27;
-        pictureBox1.Height = this.Height - 60;
-        pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
-        this.Resize += Form1_Resize;
 
-        string ? assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        //pictureBox1.Width = (int)(280 * pixelSize * 1.2);
+        //pictureBox1.Height = (int)(192 * pixelSize * 1.2);
+        pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+
         if (assemblyPath != null)
             assemblyPath += "/";
 
-        bool running = true;
+        disk1.Text = assemblyPath + "roms/teste.dsk";
+        PowerOn();
+
+
+
+        this.Shown += Form1_Shown;
+    }
+
+    public void PowerOn()
+    {
+
+        
+        waveViewer1.SamplesPerPixel = 10;
+        waveViewer1.AutoScroll = true;
+        waveViewer1.AutoSize = true;
+        
+        output = new DirectSoundOut();
+
+
+        running = true;
 
 
         memory = new Memory(state);
@@ -81,112 +91,180 @@ public partial class Form1 : Form
 
         memory.LoadChars(File.ReadAllBytes(assemblyPath + "roms/CharROM.rom"));
 
-        memory.drive = new DiskDrive(assemblyPath + "roms/teste.dsk", memory);
 
-        List<Task> threads = new List<Task>();
+        memory.drive1 = new DiskDrive(disk1.Text, memory);
+        memory.drive2 = new DiskDrive(disk2.Text, memory);
+
+
+
         cpu = new CPU(state, memory, false);
-        Keyboard keyboard = new Keyboard(memory, state, lockObj);
-        this.KeyDown += keyboard.OnKeyDown;
-        this.KeyPress += keyboard.OnKeyPress;
+        Keyboard keyboard = new Keyboard(memory, state);
+
+
+        richTextBox1.KeyDown += keyboard.OnKeyDown;
+        richTextBox1.KeyPress += keyboard.OnKeyPress;
+        richTextBox1.TextChanged += keyboard.Keyb_TextChanged;
+
+
+
         cpu.Reset();
 
-
-        // waveOut = new NAudio.Wave.WaveOut();
-        // NAudio.Wave.WaveFormat format = new NAudio.Wave.WaveFormat();
-        // buffer = new NAudio.Wave.BufferedWaveProvider(format);
-        // signalGenerator = new SignalGenerator()
-        // {
-        //     Frequency = 0,
-        //     Gain = 0.2,
-        //     Type = SignalGeneratorType.Square
-        // };
-        // var sampleRate = 16000;
-        // var frequency = 500;
-        // var amplitude = 0.2;
-        // var seconds = 5;
-
-        // var raw = new byte[sampleRate * seconds * 2];
-
-        // var multiple = 2.0*frequency/sampleRate;
-        // for (int n = 0; n < sampleRate * seconds; n++)
-        // {
-        //     var sampleSaw = ((n*multiple)%2) - 1;
-        //     var sampleValue = sampleSaw > 0 ? amplitude : -amplitude;
-        //     var sample = (short)(sampleValue * Int16.MaxValue);
-        //     var bytes = BitConverter.GetBytes(sample);
-        //     raw[n*2] = bytes[0];
-        //     raw[n*2 + 1] = bytes[1];
-        // }
-
-        // var ms = new MemoryStream(raw);
-        // var rs = new RawSourceWaveStream(ms, new WaveFormat(sampleRate, 16, 1));
-
-        // var wo = new WaveOutEvent();
-        // wo.Init(rs);
-        // wo.Play();
-        // while (wo.PlaybackState == PlaybackState.Playing)
-        // {
-        //     Thread.Sleep(500);
-        // }
-        // wo.Dispose();
-
-        // waveOut.Init(rs);
-        // waveOut.Play();
-
+        threads.Add(Task.Run(() =>
+        {
+            while (running)
+            {
+                cpu.RunCycle();
+            }
+        }));
 
         threads.Add(Task.Run(() =>
         {
             while (running)
             {
-                lock (lockObj)
+                lock (memory.displayLock)
                 {
-                    cpu.RunCycle();
+                    try
+                    {
+                        pictureBox1.Image = VideoGenerator.Generate(memory, pixelSize, true);
+                    }
+                    catch { }   
                 }
+                Thread.Sleep(10);
             }
         }));
 
-        threads.Add(Task.Run(() =>
-        {
-            while (running)
-            {
-                pictureBox1.Image = VideoGenerator.Generate(memory, true);
-                Thread.Sleep(50);
-            }
-        }));
-        // threads.Add(Task.Run(() =>
-        // {
-        //     while (running)
-        //     {
-        //         if (memory.softswitches.SoundClick)
-        //         {
-        //             actualClick = DateTime.Now;
-        //             TimeSpan interval = actualClick - lastClick;
-        //             if (interval.Milliseconds < 1000)
-        //             {
-        //                 Console.WriteLine("Ticks interval (ms) = " + interval.TotalMilliseconds);
-        //                 var freq = 1000f / interval.TotalMilliseconds;
-        //                 Console.WriteLine("freq (hz) = " + freq);
-        //             }
-        //             else
-        //             {
-        //             }
+        //threads.Add(Task.Run(() =>
+        //{
+        //    while (running)
+        //    {
+        //        if (memory.softswitches.SoundClick)
+        //        {
+        //            tone = new WaveTone(400, 1);
+        //            stream = new BlockAlignReductionStream(tone);
+        //            waveViewer1.WaveStream = stream;
+        //            output.Init(stream);
+        //            output.Play();
+        //            memory.softswitches.SoundClick = false;
+        //        }
+        //        Thread.Sleep(5);
+        //    }
+        //}));
+    }
 
-
-        //             memory.softswitches.SoundClick = false;
-        //             lastClick = actualClick;
-
-        //         }
-        //     }
-        // }));
-
+    private void Form1_Shown(object? sender, EventArgs e)
+    {
+        richTextBox1.Focus();
     }
 
     private void Form1_Resize(object sender, System.EventArgs e)
     {
-        // Control control = (Control)sender;
-        // pictureBox1.Width =  this.Width;
-        // pictureBox1.Height = this.Height;
     }
 
 
+    private void button_dsk1_Click(object sender, EventArgs e)
+    {
+        if (openFileDialog1.ShowDialog() == DialogResult.OK)
+        {
+            disk1.Text = openFileDialog1.FileName;
+            memory.drive1 = new DiskDrive(disk1.Text, memory);
+            richTextBox1.Focus();
+        }
+    }
+    private void button_dsk2_Click(object sender, EventArgs e)
+    {
+        if (openFileDialog1.ShowDialog() == DialogResult.OK)
+        {
+            disk2.Text = openFileDialog1.FileName;
+            memory.drive2 = new DiskDrive(disk2.Text, memory);
+            richTextBox1.Focus();
+        }
+    }
+
+    private void pictureBox1_Click(object sender, EventArgs e)
+    {
+        richTextBox1.Focus();
+    }
+
+    private void btn_restart_Click(object sender, EventArgs e)
+    {
+        running = false;
+        foreach (var item in threads)
+        {
+            if (item != null)
+                item.Wait();
+        }
+        PowerOn();
+        richTextBox1.Focus();
+    }
+
+    WaveTone tone = new WaveTone(400, 1);
+
+
+    private void button1_Click(object sender, EventArgs e)
+    {
+        tone = new WaveTone(100, 1);
+        stream = new BlockAlignReductionStream(tone);
+        waveViewer1.WaveStream = stream;
+        output.Init(stream);
+        output.Play();
+    }
+
+    private void button2_Click(object sender, EventArgs e)
+    {
+        if (output != null) output.Stop();
+
+    }
+
+    private void button3_Click(object sender, EventArgs e)
+    {
+        tone.frequency = tone.frequency + 200;
+        stream = new BlockAlignReductionStream(tone);
+        waveViewer1.WaveStream = stream;
+    }
+}
+
+public class WaveTone : WaveStream
+{
+    public double frequency { get; set; }
+    private double amplitude;
+    private double time;
+    public WaveTone(double f, double a)
+    {
+        this.time = 0;
+        this.frequency = f;
+        this.amplitude = a;
+    }
+    public override WaveFormat WaveFormat
+    {
+        get
+        {
+            return new WaveFormat(44100, 8, 1);
+        }
+    }
+
+    public override long Length 
+    {
+        get
+        {
+            return 1;
+        }
+    }
+
+    public override long Position { get; set; }
+
+    public override int Read(byte[] buffer, int offset, int count)
+    {
+        int samples = count; // / 2;
+        for (int i = 0; i < samples; i++)
+        {
+            amplitude = amplitude * 0.9992f;
+            double sine = amplitude * Math.Sin(Math.PI * 2 * frequency * time);
+            time += 1.0 / 44100;
+            short truncated = (short)Math.Round(sine * (Math.Pow(2, 7) - 1));
+            buffer[i] = (byte)truncated;
+            //buffer[i * 2 + 1] = (byte)((truncated & 0xff00) >> 8);
+        }
+
+        return count;
+    }
 }
