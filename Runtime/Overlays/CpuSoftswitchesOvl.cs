@@ -17,26 +17,31 @@ public class CpuSoftswitchesOvl : IOverLay
     public int End { get; }
     public void Write(ushort address, byte b, Memory memory)
     {
-        if (address==0xc010)
-            memory.KeyPressed = b;
+        ProcessSwitch(address, b, memory, null);
     }
 
     public byte Read(ushort address, Memory memory, State state)
     {
+
+        return ProcessSwitch(address, 0x00, memory, state);
+    }
+
+    private byte ProcessSwitch(ushort address, byte b, Memory memory, State? state)
+    {
         
-        if (address==0xc010)
-            memory.KeyPressed = 0x00;
-        if (address==0xc030)
+        if (address == 0xc010)
+            memory.KeyPressed = b;
+        if (address == 0xc030)
             memory.softswitches.SoundClick = true;
-        if (address==0xc050)
+        if (address == 0xc050)
             memory.softswitches.Graphics_Text = true;
-        if (address==0xc051)
+        if (address == 0xc051)
             memory.softswitches.Graphics_Text = false;
-        if (address==0xc052)
+        if (address == 0xc052)
             memory.softswitches.DisplayFull_Split = true;
-        if (address==0xc053)
+        if (address == 0xc053)
             memory.softswitches.DisplayFull_Split = false;
-        if (address==0xc054)
+        if (address == 0xc054)
         {
             lock (memory.displayLock)
             {
@@ -50,12 +55,12 @@ public class CpuSoftswitchesOvl : IOverLay
                 memory.softswitches.TextPage1_Page2 = false;
             }
         }
-        if (address==0xc056)
+        if (address == 0xc056)
             memory.softswitches.LoRes_HiRes = true;
-        if (address==0xc057)
+        if (address == 0xc057)
             memory.softswitches.LoRes_HiRes = false;
 
-        if (address>=0xc080)
+        if (address >= 0xc080)
         {
             var last4bits = (address & 0b00001111);
             BitArray bits = new BitArray(new byte[] { (byte)last4bits });
@@ -63,25 +68,26 @@ public class CpuSoftswitchesOvl : IOverLay
             if (bits[1] && bits[0])
             {
                 memory.softswitches.MemoryBankReadRAM_ROM = true;
-                memory.softswitches.MemoryBankWriteRAM_ROM = true;
+                memory.softswitches.MemoryBankWriteRAM_NoWrite = true;
             }
-            else if (!bits[1] && bits[0])    
+            else if (!bits[1] && bits[0])
             {
                 memory.softswitches.MemoryBankReadRAM_ROM = false;
-                memory.softswitches.MemoryBankWriteRAM_ROM = true;
-            } 
-            else if (bits[1] && !bits[0])    
+                memory.softswitches.MemoryBankWriteRAM_NoWrite = true;
+            }
+            else if (bits[1] && !bits[0])
             {
                 memory.softswitches.MemoryBankReadRAM_ROM = false;
-                memory.softswitches.MemoryBankWriteRAM_ROM = false;
-            } 
-            else if (!bits[1] && !bits[0])    
+                memory.softswitches.MemoryBankWriteRAM_NoWrite = false;
+            }
+            else if (!bits[1] && !bits[0])
             {
                 memory.softswitches.MemoryBankReadRAM_ROM = true;
-                memory.softswitches.MemoryBankWriteRAM_ROM = false;
+                memory.softswitches.MemoryBankWriteRAM_NoWrite = false;
             }
         }
 
-        return 0x00;
+        return 0;
+
     }
 }

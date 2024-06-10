@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Sockets;
 using System.Text;
@@ -95,6 +96,26 @@ public class CPU
 
         ushort? refAddress = null;
 
+        if (instruction == 0x69)
+            Thread.Sleep(0);
+        if (instruction == 0x65)
+            Thread.Sleep(0);
+        if (instruction == 0x75 && state.A == 0x79)
+            Thread.Sleep(0);
+        if (instruction == 0x6D)
+            Thread.Sleep(0);
+        if (instruction == 0x7D)
+            Thread.Sleep(0);
+        if (instruction == 0x79)
+            Thread.Sleep(0);
+        if (instruction == 0x61)
+            Thread.Sleep(0);
+        if (instruction == 0x71)
+            Thread.Sleep(0);
+        if (lastPC == 0x61eb)
+            Thread.Sleep(0);
+
+
         if (opCodePart != null)
         {
             switch (opCodePart.Addressing)
@@ -152,7 +173,7 @@ public class CPU
                             }
                             else
                             {
-                                refAddress = memory.ReadAddressLLHH((ushort)(refAddress + state.X));
+                                refAddress = memory.ReadAddressLLHH((byte)((byte)refAddress + (byte)state.X));
                             }
                         }
                         state.PC++;
@@ -184,17 +205,7 @@ public class CPU
             if (debug)
                 ad = (refAddress.HasValue ? refAddress.Value.ToString("x4") : "null");
 
-            if (lastPC == 0x0a5a) // && refAddress.HasValue && refAddress.Value == 0x13ff)
-                Thread.Sleep(1);
-            if (lastPC == 0x0a7a && refAddress.HasValue && refAddress.Value == 0x13ff)
-                Thread.Sleep(1);
-            if (lastPC == 0x0985) // saida da rotina de movimentação do braço
-                 Thread.Sleep(1);
-            if (lastPC == 0x09f5 && state.A == 0xd5) // Encontra setor
-                Thread.Sleep(1);
-            if (lastPC == 0x0a19) // carrega nova trilha no 0x40 --- Nesse ponto ele acha 0x96, 
-                Thread.Sleep(1);
-
+            
 
             switch (opCodePart.Operation)
             {

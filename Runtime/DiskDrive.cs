@@ -17,6 +17,8 @@ public class DiskDrive
     public int catalog_sector { get; set; }
     public byte[] disk_info { get; set; }
 
+    public bool FlagDos_Prodos { get; set; }
+
     public int offset_to_disk_info { get; set; }
 
     public byte[] translateTable = new byte[] {
@@ -39,10 +41,12 @@ public class DiskDrive
     public byte[] translateDos33Track = new byte[] {
         0x00, 0x07, 0x0e, 0x06, 0x0d, 0x05, 0x0c, 0x04, 0x0b, 0x03, 0x0a, 0x02, 0x09, 0x01, 0x08, 0x0f };
 
-    public DiskDrive(string dskPath, Memory memory)
+    public DiskDrive(string dskPath, Memory memory, bool flagDos_Prodos)
     {
+
         diskPath = dskPath;
         this.memory = memory;
+        FlagDos_Prodos = flagDos_Prodos;
 
         if (!string.IsNullOrEmpty(diskPath))
             this.diskImage = File.ReadAllBytes(dskPath);
@@ -516,7 +520,8 @@ public class DiskDrive
         {
             List<byte> selectedSector = new List<byte>();
 
-            foreach (byte isec in new byte[] { 0xa, 0xb, 0xc, 0xd, 0xe, 0xf, 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9 })
+            //foreach (byte isec in new byte[] { 0xa, 0xb, 0xc, 0xd, 0xe, 0xf, 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9 }) // DOS
+            foreach (byte isec in new byte[] { 0x0, 0x2, 0x4, 0x6, 0x8, 0xa, 0xc, 0xe, 0x1, 0x3, 0x5, 0x7, 0x9, 0xb, 0xd, 0xf }) // PRODOS
             {
                 List<byte> b = new List<byte>();
                 Console.WriteLine(DateTime.Now.ToString("HH:mm:ss.ff") + " Load Track: " + track + " Sector: " + isec);
@@ -533,8 +538,7 @@ public class DiskDrive
                 selectedSector.AddRange(b); // Checksum
                 selectedSector.AddRange(new List<byte>() { 0xde, 0xaa, 0xeb }); // Epilogue address
                 selectedSector.AddRange(new List<byte>() { 0xd5, 0xaa, 0xad }); // Prologe data
-                b = this.Encode6_2(track, this.translateDos33Track[isec]).ToList(); // DOS
-                //b = this.Encode6_2(track, isec).ToList(); // PRODOS
+                b = this.Encode6_2(track, this.translateDos33Track[isec]).ToList();
                 selectedSector.AddRange(b); // Data field + checksum
                 selectedSector.AddRange(new List<byte>() { 0xde, 0xaa, 0xeb }); // Epilogue
                 

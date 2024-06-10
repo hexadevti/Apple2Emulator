@@ -1,4 +1,5 @@
 
+using System.Net;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
@@ -22,8 +23,6 @@ public class SlotsSoftSwitchesOvl : IOverLay
     int pointer = 0;
 
     int trackSize = 5856;
-
-    bool FlagDos_Prodos = true;
     
     Dictionary<string, List<byte>> output = new Dictionary<string, List<byte>>();
 
@@ -50,15 +49,8 @@ public class SlotsSoftSwitchesOvl : IOverLay
                 }
             }
         }
-        else if (address == 0xc08e + slotOffset)
-        {
-            memory.softswitches.DriveQ7H_L = false;
-            
-        }
-        else if (address == 0xc08f + slotOffset)
-        {
-            memory.softswitches.DriveQ7H_L = true;
-        }
+
+        ProcessSwitchc080(address, b, memory, null, slotOffset);
         
     }
 
@@ -79,10 +71,16 @@ public class SlotsSoftSwitchesOvl : IOverLay
                 }
                 else
                 {
-                    if (FlagDos_Prodos)
+                    if ((memory.softswitches.Drive1_2 && memory.drive1.FlagDos_Prodos) || (!memory.softswitches.Drive1_2 && memory.drive2.FlagDos_Prodos))
                         track = memory.ReadByte(0x478); // DOS
                     else
-                        track = memory.ReadMemory(0x40); // PRODOS
+                    {
+                        if (state.PC > 0xd000)
+                            track = memory.ReadMemory(0xd356);
+                        else
+                            track = memory.ReadMemory(0x41); // PRODOS
+
+                    }
                 }
 
                 if ((int)track > 34)
@@ -119,7 +117,7 @@ public class SlotsSoftSwitchesOvl : IOverLay
                         if (memory.softswitches.Drive1_2)
                         {
                             byte[] decsecData = memory.drive1.Decode6_2(cleanData);
-                            if (FlagDos_Prodos)
+                            if (memory.drive1.FlagDos_Prodos)
                                 memory.drive1.SetSectorData(trkd, memory.drive1.translateDos33Track[secd], decsecData); // DOS
                             else 
                                 memory.drive1.SetSectorData(trkd, secd, decsecData); // PRODOS
@@ -129,10 +127,10 @@ public class SlotsSoftSwitchesOvl : IOverLay
                         else
                         {
                             byte[] decsecData = memory.drive2.Decode6_2(cleanData);
-                            if (FlagDos_Prodos) 
+                            if (memory.drive2.FlagDos_Prodos) 
                                 memory.drive2.SetSectorData(trkd, memory.drive2.translateDos33Track[secd], decsecData); //  DOS
                             else
-                                memory.drive2.SetSectorData(trkd, memory.drive2.translateDos33Track[secd], decsecData); //  PRODOS
+                                memory.drive2.SetSectorData(trkd, secd, decsecData); //  PRODOS
                             memory.drive2.SaveImage();
                             memory.drive2.TrackRawData(trkd, true);
                         }
@@ -147,29 +145,31 @@ public class SlotsSoftSwitchesOvl : IOverLay
 
             }
         }
+
+        return ProcessSwitchc080(address, 0, memory, state, slotOffset);
+    }
+
+    private byte ProcessSwitchc080(ushort address, byte b, Memory memory, State? state, int slotOffset)
+    {
         if (address == 0xc080 + slotOffset)
         {
             memory.softswitches.DrivePhase0ON_OFF = false;
-            return 0x96;
         }
         if (address == 0xc081 + slotOffset)
             memory.softswitches.DrivePhase0ON_OFF = true;
         if (address == 0xc082 + slotOffset)
         {
             memory.softswitches.DrivePhase1ON_OFF = false;
-            return 0x96;
         }
         if (address == 0xc083 + slotOffset)
         {
             memory.softswitches.DrivePhase1ON_OFF = true;
-            return 0xa0;
         }
         if (address == 0xc084 + slotOffset)
             memory.softswitches.DrivePhase2ON_OFF = false;
         if (address == 0xc085 + slotOffset)
         {
             memory.softswitches.DrivePhase2ON_OFF = true;
-            return 0xa0;
         }
         if (address == 0xc086 + slotOffset)
             memory.softswitches.DrivePhase3ON_OFF = false;
@@ -178,12 +178,10 @@ public class SlotsSoftSwitchesOvl : IOverLay
         if (address == 0xc088 + slotOffset)
         {
             memory.softswitches.DriveMotorON_OFF = false;
-            return 0x96;
         }
         if (address == 0xc089 + slotOffset)
         {
             memory.softswitches.DriveMotorON_OFF = true;
-            return 0xa0;
         }
         if (address == 0xc08a + slotOffset)
             memory.softswitches.Drive1_2 = true;
@@ -202,7 +200,6 @@ public class SlotsSoftSwitchesOvl : IOverLay
         {
             memory.softswitches.DriveQ7H_L = true;
         }
-
         return 0;
     }
 

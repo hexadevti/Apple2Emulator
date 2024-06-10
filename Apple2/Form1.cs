@@ -51,7 +51,8 @@ public partial class Form1 : Form
         if (assemblyPath != null)
             assemblyPath += "/";
 
-        disk1.Text = assemblyPath + "roms/teste.dsk";
+        disk1.Text = assemblyPath + "roms/Apple Core 525 ProDOS RC2.dsk";
+        disk1prodos.Checked = true;
         PowerOn();
 
 
@@ -62,11 +63,11 @@ public partial class Form1 : Form
     public void PowerOn()
     {
 
-        
+
         waveViewer1.SamplesPerPixel = 10;
         waveViewer1.AutoScroll = true;
         waveViewer1.AutoSize = true;
-        
+
         output = new DirectSoundOut();
 
 
@@ -84,16 +85,24 @@ public partial class Form1 : Form
         memory.LoadROM(0xd000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftD000.rom"));
 
         memory.LoadInterfaceROM(0xc600, File.ReadAllBytes(assemblyPath + "roms/diskinterface.rom"));
+        memory.LoadInterfaceROM(0xc300, new byte[] { 0xa0, 0xa0, 0xa0, 0xa0 });
 
         memory.RegisterOverlay(new KeyboardOvl());
         memory.RegisterOverlay(new CpuSoftswitchesOvl());
         memory.RegisterOverlay(new SlotsSoftSwitchesOvl());
+        memory.RegisterOverlay(new EmptySlot1Ovl());
+        memory.RegisterOverlay(new EmptySlot2Ovl());
+        memory.RegisterOverlay(new EmptySlot3Ovl());
+        memory.RegisterOverlay(new EmptySlot4Ovl());
+        memory.RegisterOverlay(new EmptySlot5Ovl());
+        memory.RegisterOverlay(new EmptySlot7Ovl());
 
-        memory.LoadChars(File.ReadAllBytes(assemblyPath + "roms/CharROM.rom"));
+
+        memory.LoadChars(File.ReadAllBytes(assemblyPath + "roms/Apple II+ - Lowercase Character Generator - 2716.bin"));
 
 
-        memory.drive1 = new DiskDrive(disk1.Text, memory);
-        memory.drive2 = new DiskDrive(disk2.Text, memory);
+        memory.drive1 = new DiskDrive(disk1.Text, memory, disk1dos.Checked);
+        memory.drive2 = new DiskDrive(disk2.Text, memory, disk2dos.Checked);
 
 
 
@@ -127,7 +136,7 @@ public partial class Form1 : Form
                     {
                         pictureBox1.Image = VideoGenerator.Generate(memory, pixelSize, true);
                     }
-                    catch { }   
+                    catch { }
                 }
                 Thread.Sleep(10);
             }
@@ -166,7 +175,7 @@ public partial class Form1 : Form
         if (openFileDialog1.ShowDialog() == DialogResult.OK)
         {
             disk1.Text = openFileDialog1.FileName;
-            memory.drive1 = new DiskDrive(disk1.Text, memory);
+            memory.drive1 = new DiskDrive(disk1.Text, memory, false);
             richTextBox1.Focus();
         }
     }
@@ -175,7 +184,7 @@ public partial class Form1 : Form
         if (openFileDialog1.ShowDialog() == DialogResult.OK)
         {
             disk2.Text = openFileDialog1.FileName;
-            memory.drive2 = new DiskDrive(disk2.Text, memory);
+            memory.drive2 = new DiskDrive(disk2.Text, memory, true);
             richTextBox1.Focus();
         }
     }

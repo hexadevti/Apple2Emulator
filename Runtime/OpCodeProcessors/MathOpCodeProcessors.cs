@@ -26,8 +26,10 @@ internal static class MathOpCodeProcessors
         processorState.Z = (byte)result == 0;
         processorState.N = ((byte)result).IsNegative();
     }
-    private static int GetAddToAccWithCarryResult(State processorState, byte value) => 
-        processorState.A + value + RegisterFunctions.ReadCarryFlag(processorState);
+    private static int GetAddToAccWithCarryResult(State processorState, byte value)
+    {
+        return processorState.A + value + RegisterFunctions.ReadCarryFlag(processorState);
+    }
 
     private static byte ReadAndInvertByte(ushort address, Memory memory) 
     {

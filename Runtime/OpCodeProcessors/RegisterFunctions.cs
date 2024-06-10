@@ -27,7 +27,7 @@ internal static class RegisterFunctions
         processorState.Z = (sr & 0x02) == 0x02;
         processorState.I = (sr & 0x04) == 0x04;
         processorState.D = (sr & 0x08) == 0x08;
-        // processorState.B = (sr & 0x10) == 0x10;
+        processorState.B = (sr & 0x10) == 0x10;
         processorState.V = (sr & 0x40) == 0x40;
         processorState.N = (sr & 0x80) == 0x80;
     }
