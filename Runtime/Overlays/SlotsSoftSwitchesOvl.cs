@@ -47,6 +47,46 @@ public class SlotsSoftSwitchesOvl : IOverLay
                 {
                     output.Add(key, new List<byte>() { b });
                 }
+
+                List<string> keysToClear = new List<string>();
+                foreach (var data in output)
+                {
+                    if (data.Value.Count == 354)
+                    {
+                        int trkd = int.Parse(data.Key.Split('_')[0]);
+                        int secd = int.Parse(data.Key.Split('_')[1]);
+                        Console.WriteLine(DateTime.Now.ToString("HH:mm:ss.ff") + " Save Track: " + trkd + " Sector: " + secd);
+
+                        byte[] cleanData = data.Value.Skip(7).Take(343).ToArray();
+
+                        if (memory.softswitches.Drive1_2)
+                        {
+                            byte[] decsecData = memory.drive1.Decode6_2(cleanData);
+                            if (memory.drive1.FlagDos_Prodos)
+                                memory.drive1.SetSectorData(trkd, memory.drive1.translateDos33Track[secd], decsecData); // DOS
+                            else
+                                memory.drive1.SetSectorData(trkd, secd, decsecData); // PRODOS
+                            memory.drive1.SaveImage();
+                            memory.drive1.TrackRawData(trkd, true);
+                        }
+                        else
+                        {
+                            byte[] decsecData = memory.drive2.Decode6_2(cleanData);
+                            if (memory.drive2.FlagDos_Prodos)
+                                memory.drive2.SetSectorData(trkd, memory.drive2.translateDos33Track[secd], decsecData); //  DOS
+                            else
+                                memory.drive2.SetSectorData(trkd, secd, decsecData); //  PRODOS
+                            memory.drive2.SaveImage();
+                            memory.drive2.TrackRawData(trkd, true);
+                        }
+                        keysToClear.Add(key);
+                    }
+                }
+
+                foreach (var keyd in keysToClear)
+                {
+                    output.Remove(keyd);
+                }
             }
         }
 
@@ -103,45 +143,7 @@ public class SlotsSoftSwitchesOvl : IOverLay
             }
             else if (memory.softswitches.DriveQ6H_L == false && memory.softswitches.DriveQ7H_L == true)
             {
-                List<string> keysToClear = new List<string>();
-                foreach (var data in output)
-                {
-                    if (data.Value.Count == 354)
-                    {
-                        int trkd = int.Parse(data.Key.Split('_')[0]);
-                        int secd = int.Parse(data.Key.Split('_')[1]);
-                        Console.WriteLine(DateTime.Now.ToString("HH:mm:ss.ff") + " Save Track: " + trkd + " Sector: " + secd);
-
-                        byte[] cleanData = data.Value.Skip(7).Take(343).ToArray();
-
-                        if (memory.softswitches.Drive1_2)
-                        {
-                            byte[] decsecData = memory.drive1.Decode6_2(cleanData);
-                            if (memory.drive1.FlagDos_Prodos)
-                                memory.drive1.SetSectorData(trkd, memory.drive1.translateDos33Track[secd], decsecData); // DOS
-                            else 
-                                memory.drive1.SetSectorData(trkd, secd, decsecData); // PRODOS
-                            memory.drive1.SaveImage();
-                            memory.drive1.TrackRawData(trkd, true);
-                        }
-                        else
-                        {
-                            byte[] decsecData = memory.drive2.Decode6_2(cleanData);
-                            if (memory.drive2.FlagDos_Prodos) 
-                                memory.drive2.SetSectorData(trkd, memory.drive2.translateDos33Track[secd], decsecData); //  DOS
-                            else
-                                memory.drive2.SetSectorData(trkd, secd, decsecData); //  PRODOS
-                            memory.drive2.SaveImage();
-                            memory.drive2.TrackRawData(trkd, true);
-                        }
-                        keysToClear.Add(key);
-                    }
-                }
-
-                foreach (var keyd in keysToClear)
-                {
-                    output.Remove(keyd);
-                }
+                
 
             }
         }

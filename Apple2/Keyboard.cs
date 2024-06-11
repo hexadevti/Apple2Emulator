@@ -37,7 +37,7 @@ public class Keyboard
                     state.PC = 0;
                     break;
                 case Keys.V:
-                    break;
+                    return;
                 default:
                     if (e.KeyValue > 0x40 && e.KeyValue < 0x60)
                         memory.KeyPressed = (byte)(e.KeyValue + 0x40);

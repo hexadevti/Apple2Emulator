@@ -51,8 +51,8 @@ public partial class Form1 : Form
         if (assemblyPath != null)
             assemblyPath += "/";
 
-        disk1.Text = assemblyPath + "roms/Apple Core 525 ProDOS RC2.dsk";
-        disk1prodos.Checked = true;
+        disk1.Text = assemblyPath + "roms/teste.dsk";
+        disk1dos.Checked = true;
         PowerOn();
 
 
@@ -98,7 +98,7 @@ public partial class Form1 : Form
         memory.RegisterOverlay(new EmptySlot7Ovl());
 
 
-        memory.LoadChars(File.ReadAllBytes(assemblyPath + "roms/Apple II+ - Lowercase Character Generator - 2716.bin"));
+        memory.LoadChars(File.ReadAllBytes(assemblyPath + "roms/CharROM.bin"));
 
 
         memory.drive1 = new DiskDrive(disk1.Text, memory, disk1dos.Checked);

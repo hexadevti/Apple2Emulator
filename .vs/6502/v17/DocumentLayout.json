@@ -3,36 +3,56 @@
   "WorkspaceRootPath": "C:\\Users\\luciano\\repos\\6502\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{1091685E-4702-48B5-B778-61B075440669}|Apple2\\Apple2.csproj|C:\\Users\\luciano\\repos\\6502\\apple2\\videogenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1091685E-4702-48B5-B778-61B075440669}|Apple2\\Apple2.csproj|solutionrelative:apple2\\videogenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|C:\\Users\\luciano\\repos\\6502\\runtime\\cpu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|solutionrelative:runtime\\cpu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1091685E-4702-48B5-B778-61B075440669}|Apple2\\Apple2.csproj|c:\\users\\luciano\\repos\\6502\\apple2\\bin\\debug\\net8.0-windows\\roms\\apple ii\u002B - lowercase character generator - 2716.bin||{25834150-CD7E-11D0-92DF-00A0C9138C45}",
-      "RelativeMoniker": "D:0:0:{1091685E-4702-48B5-B778-61B075440669}|Apple2\\Apple2.csproj|solutionrelative:apple2\\bin\\debug\\net8.0-windows\\roms\\apple ii\u002B - lowercase character generator - 2716.bin||{25834150-CD7E-11D0-92DF-00A0C9138C45}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1091685E-4702-48B5-B778-61B075440669}|Apple2\\Apple2.csproj|c:\\users\\luciano\\repos\\6502\\apple2\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{1091685E-4702-48B5-B778-61B075440669}|Apple2\\Apple2.csproj|solutionrelative:apple2\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|c:\\users\\luciano\\repos\\6502\\runtime\\state.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|solutionrelative:runtime\\state.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1091685E-4702-48B5-B778-61B075440669}|Apple2\\Apple2.csproj|c:\\users\\luciano\\repos\\6502\\apple2\\apple ii character rom - 341-0036.bin||{25834150-CD7E-11D0-92DF-00A0C9138C45}",
-      "RelativeMoniker": "D:0:0:{1091685E-4702-48B5-B778-61B075440669}|Apple2\\Apple2.csproj|solutionrelative:apple2\\apple ii character rom - 341-0036.bin||{25834150-CD7E-11D0-92DF-00A0C9138C45}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|C:\\Users\\luciano\\repos\\6502\\runtime\\memory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|solutionrelative:runtime\\memory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{1091685E-4702-48B5-B778-61B075440669}|Apple2\\Apple2.csproj|c:\\users\\luciano\\repos\\6502\\apple2\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1091685E-4702-48B5-B778-61B075440669}|Apple2\\Apple2.csproj|solutionrelative:apple2\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1091685E-4702-48B5-B778-61B075440669}|Apple2\\Apple2.csproj|C:\\Users\\luciano\\repos\\6502\\apple2\\videogenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1091685E-4702-48B5-B778-61B075440669}|Apple2\\Apple2.csproj|solutionrelative:apple2\\videogenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1091685E-4702-48B5-B778-61B075440669}|Apple2\\Apple2.csproj|C:\\Users\\luciano\\repos\\6502\\apple2\\keyboard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1091685E-4702-48B5-B778-61B075440669}|Apple2\\Apple2.csproj|solutionrelative:apple2\\keyboard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1091685E-4702-48B5-B778-61B075440669}|Apple2\\Apple2.csproj|c:\\users\\luciano\\repos\\6502\\apple2\\bin\\debug\\net8.0-windows\\roms\\charrom.bin||{25834150-CD7E-11D0-92DF-00A0C9138C45}",
+      "RelativeMoniker": "D:0:0:{1091685E-4702-48B5-B778-61B075440669}|Apple2\\Apple2.csproj|solutionrelative:apple2\\bin\\debug\\net8.0-windows\\roms\\charrom.bin||{25834150-CD7E-11D0-92DF-00A0C9138C45}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|C:\\Users\\luciano\\repos\\6502\\runtime\\diskdrive.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|solutionrelative:runtime\\diskdrive.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|c:\\users\\luciano\\repos\\6502\\runtime\\overlays\\keyboardovl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|solutionrelative:runtime\\overlays\\keyboardovl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1091685E-4702-48B5-B778-61B075440669}|Apple2\\Apple2.csproj|c:\\users\\luciano\\repos\\6502\\apple2\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{1091685E-4702-48B5-B778-61B075440669}|Apple2\\Apple2.csproj|solutionrelative:apple2\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|C:\\Users\\luciano\\repos\\6502\\runtime\\overlays\\slotssoftswitchesovl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|solutionrelative:runtime\\overlays\\slotssoftswitchesovl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1091685E-4702-48B5-B778-61B075440669}|Apple2\\Apple2.csproj|c:\\users\\luciano\\repos\\6502\\apple2\\bin\\debug\\net8.0-windows\\roms\\apple ii\u002B - pig font character generator - 2716.bin||{25834150-CD7E-11D0-92DF-00A0C9138C45}",
+      "RelativeMoniker": "D:0:0:{1091685E-4702-48B5-B778-61B075440669}|Apple2\\Apple2.csproj|solutionrelative:apple2\\bin\\debug\\net8.0-windows\\roms\\apple ii\u002B - pig font character generator - 2716.bin||{25834150-CD7E-11D0-92DF-00A0C9138C45}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|c:\\users\\luciano\\repos\\6502\\runtime\\overlays\\applescreenovl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|solutionrelative:runtime\\overlays\\applescreenovl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|C:\\Users\\luciano\\repos\\6502\\runtime\\cpu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|solutionrelative:runtime\\cpu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|c:\\users\\luciano\\repos\\6502\\runtime\\state.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|solutionrelative:runtime\\state.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|c:\\users\\luciano\\repos\\6502\\runtime\\opcodeprocessors\\mathopcodeprocessors.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -43,28 +63,12 @@
       "RelativeMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|solutionrelative:runtime\\opcodeprocessors\\registerfunctions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|C:\\Users\\luciano\\repos\\6502\\runtime\\diskdrive.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|solutionrelative:runtime\\diskdrive.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{1091685E-4702-48B5-B778-61B075440669}|Apple2\\Apple2.csproj|C:\\Users\\luciano\\repos\\6502\\apple2\\form1.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1091685E-4702-48B5-B778-61B075440669}|Apple2\\Apple2.csproj|solutionrelative:apple2\\form1.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|C:\\Users\\luciano\\repos\\6502\\runtime\\overlays\\slotssoftswitchesovl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|solutionrelative:runtime\\overlays\\slotssoftswitchesovl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|c:\\users\\luciano\\repos\\6502\\runtime\\overlays\\applescreenovl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|solutionrelative:runtime\\overlays\\applescreenovl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|c:\\users\\luciano\\repos\\6502\\runtime\\overlays\\cpusoftswitchesovl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|solutionrelative:runtime\\overlays\\cpusoftswitchesovl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1091685E-4702-48B5-B778-61B075440669}|Apple2\\Apple2.csproj|C:\\Users\\luciano\\repos\\6502\\apple2\\keyboard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1091685E-4702-48B5-B778-61B075440669}|Apple2\\Apple2.csproj|solutionrelative:apple2\\keyboard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{1091685E-4702-48B5-B778-61B075440669}|Apple2\\Apple2.csproj|c:\\users\\luciano\\repos\\6502\\apple2\\write_17_15.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
@@ -82,33 +86,35 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 8,
+          "SelectedChildIndex": 7,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Apple II\u002B - Lowercase Character Generator - 2716.bin",
-              "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Apple2\\bin\\Debug\\net8.0-windows\\roms\\Apple II\u002B - Lowercase Character Generator - 2716.bin",
-              "RelativeDocumentMoniker": "Apple2\\bin\\Debug\\net8.0-windows\\roms\\Apple II\u002B - Lowercase Character Generator - 2716.bin",
-              "ToolTip": "C:\\Users\\luciano\\repos\\6502\\Apple2\\bin\\Debug\\net8.0-windows\\roms\\Apple II\u002B - Lowercase Character Generator - 2716.bin",
-              "RelativeToolTip": "Apple2\\bin\\Debug\\net8.0-windows\\roms\\Apple II\u002B - Lowercase Character Generator - 2716.bin",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2024-06-10T12:53:07.661Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "Apple II Character ROM - 341-0036.bin",
-              "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Apple2\\Apple II Character ROM - 341-0036.bin",
-              "RelativeDocumentMoniker": "Apple2\\Apple II Character ROM - 341-0036.bin",
-              "ToolTip": "C:\\Users\\luciano\\repos\\6502\\Apple2\\Apple II Character ROM - 341-0036.bin",
-              "RelativeToolTip": "Apple2\\Apple II Character ROM - 341-0036.bin",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2024-06-10T12:52:09.951Z"
+              "DocumentIndex": 6,
+              "Title": "KeyboardOvl.cs",
+              "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Runtime\\Overlays\\KeyboardOvl.cs",
+              "RelativeDocumentMoniker": "Runtime\\Overlays\\KeyboardOvl.cs",
+              "ToolTip": "C:\\Users\\luciano\\repos\\6502\\Runtime\\Overlays\\KeyboardOvl.cs",
+              "RelativeToolTip": "Runtime\\Overlays\\KeyboardOvl.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-10T18:57:15.444Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 4,
+              "Title": "CharROM.bin",
+              "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Apple2\\bin\\Debug\\net8.0-windows\\roms\\CharROM.bin",
+              "RelativeDocumentMoniker": "Apple2\\bin\\Debug\\net8.0-windows\\roms\\CharROM.bin",
+              "ToolTip": "C:\\Users\\luciano\\repos\\6502\\Apple2\\bin\\Debug\\net8.0-windows\\roms\\CharROM.bin",
+              "RelativeToolTip": "Apple2\\bin\\Debug\\net8.0-windows\\roms\\CharROM.bin",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2024-06-10T17:50:18.114Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
               "Title": "State.cs",
               "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Runtime\\State.cs",
               "RelativeDocumentMoniker": "Runtime\\State.cs",
@@ -121,7 +127,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 7,
               "Title": "Form1.cs [Design]",
               "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Apple2\\Form1.cs",
               "RelativeDocumentMoniker": "Apple2\\Form1.cs",
@@ -133,7 +139,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 10,
               "Title": "AppleScreenOvl.cs",
               "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Runtime\\Overlays\\AppleScreenOvl.cs",
               "RelativeDocumentMoniker": "Runtime\\Overlays\\AppleScreenOvl.cs",
@@ -146,20 +152,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 1,
               "Title": "Form1.cs",
               "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Apple2\\Form1.cs",
               "RelativeDocumentMoniker": "Apple2\\Form1.cs",
               "ToolTip": "C:\\Users\\luciano\\repos\\6502\\Apple2\\Form1.cs",
               "RelativeToolTip": "Apple2\\Form1.cs",
-              "ViewState": "AQIAAEUAAAAAAAAAAAAqwGQAAAAUAAAA",
+              "ViewState": "AQIAAEEAAAAAAAAAAAAUwGQAAABHAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-05-18T20:11:35.287Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 11,
               "Title": "CPU.cs",
               "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Runtime\\CPU.cs",
               "RelativeDocumentMoniker": "Runtime\\CPU.cs",
@@ -172,33 +178,46 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 0,
+              "Title": "Memory.cs",
+              "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Runtime\\Memory.cs",
+              "RelativeDocumentMoniker": "Runtime\\Memory.cs",
+              "ToolTip": "C:\\Users\\luciano\\repos\\6502\\Runtime\\Memory.cs",
+              "RelativeToolTip": "Runtime\\Memory.cs",
+              "ViewState": "AQIAACUAAAAAAAAAAAA/wEwAAACFAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-19T01:13:54.828Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
               "Title": "SlotsSoftSwitchesOvl.cs",
               "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Runtime\\Overlays\\SlotsSoftSwitchesOvl.cs",
               "RelativeDocumentMoniker": "Runtime\\Overlays\\SlotsSoftSwitchesOvl.cs",
               "ToolTip": "C:\\Users\\luciano\\repos\\6502\\Runtime\\Overlays\\SlotsSoftSwitchesOvl.cs",
               "RelativeToolTip": "Runtime\\Overlays\\SlotsSoftSwitchesOvl.cs",
-              "ViewState": "AQIAADYAAAAAAAAAAAAswHAAAAAWAAAA",
+              "ViewState": "AQIAACkAAAAAAAAAAAAqwGMAAAAnAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-06-03T12:00:34.968Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "VideoGenerator.cs",
               "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Apple2\\VideoGenerator.cs",
               "RelativeDocumentMoniker": "Apple2\\VideoGenerator.cs",
               "ToolTip": "C:\\Users\\luciano\\repos\\6502\\Apple2\\VideoGenerator.cs",
               "RelativeToolTip": "Apple2\\VideoGenerator.cs",
-              "ViewState": "AQIAAKcAAAAAAAAAAAArwJQAAABkAAAA",
+              "ViewState": "AQIAABAAAAAAAAAAAAAQwJUAAAAZAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-06-03T11:24:54.999Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 14,
               "Title": "RegisterFunctions.cs",
               "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Runtime\\OpCodeProcessors\\RegisterFunctions.cs",
               "RelativeDocumentMoniker": "Runtime\\OpCodeProcessors\\RegisterFunctions.cs",
@@ -211,20 +230,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 5,
               "Title": "DiskDrive.cs",
               "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Runtime\\DiskDrive.cs",
               "RelativeDocumentMoniker": "Runtime\\DiskDrive.cs",
               "ToolTip": "C:\\Users\\luciano\\repos\\6502\\Runtime\\DiskDrive.cs",
               "RelativeToolTip": "Runtime\\DiskDrive.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAuwBsAAABEAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAuwAsAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-06-04T12:21:44.922Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 18,
               "Title": "SoundGenerator.cs",
               "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Apple2\\SoundGenerator.cs",
               "RelativeDocumentMoniker": "Apple2\\SoundGenerator.cs",
@@ -236,20 +255,31 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "Memory.cs",
-              "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Runtime\\Memory.cs",
-              "RelativeDocumentMoniker": "Runtime\\Memory.cs",
-              "ToolTip": "C:\\Users\\luciano\\repos\\6502\\Runtime\\Memory.cs",
-              "RelativeToolTip": "Runtime\\Memory.cs",
-              "ViewState": "AQIAAE4AAAAAAAAAAAAQwF4AAAAcAAAA",
+              "DocumentIndex": 3,
+              "Title": "Keyboard.cs",
+              "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Apple2\\Keyboard.cs",
+              "RelativeDocumentMoniker": "Apple2\\Keyboard.cs",
+              "ToolTip": "C:\\Users\\luciano\\repos\\6502\\Apple2\\Keyboard.cs",
+              "RelativeToolTip": "Apple2\\Keyboard.cs",
+              "ViewState": "AQIAABYAAAAAAAAAAAAUwCsAAAAaAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-05-19T01:13:54.828Z",
+              "WhenOpened": "2024-06-03T11:43:04.748Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
+              "Title": "Apple II\u002B - Pig Font Character Generator - 2716.bin",
+              "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Apple2\\bin\\Debug\\net8.0-windows\\roms\\Apple II\u002B - Pig Font Character Generator - 2716.bin",
+              "RelativeDocumentMoniker": "Apple2\\bin\\Debug\\net8.0-windows\\roms\\Apple II\u002B - Pig Font Character Generator - 2716.bin",
+              "ToolTip": "C:\\Users\\luciano\\repos\\6502\\Apple2\\bin\\Debug\\net8.0-windows\\roms\\Apple II\u002B - Pig Font Character Generator - 2716.bin",
+              "RelativeToolTip": "Apple2\\bin\\Debug\\net8.0-windows\\roms\\Apple II\u002B - Pig Font Character Generator - 2716.bin",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2024-06-10T17:19:45.392Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
               "Title": "MathOpCodeProcessors.cs",
               "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Runtime\\OpCodeProcessors\\MathOpCodeProcessors.cs",
               "RelativeDocumentMoniker": "Runtime\\OpCodeProcessors\\MathOpCodeProcessors.cs",
@@ -262,7 +292,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 15,
               "Title": "Form1.Designer.cs",
               "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Apple2\\Form1.Designer.cs",
               "RelativeDocumentMoniker": "Apple2\\Form1.Designer.cs",
@@ -275,7 +305,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 16,
               "Title": "CpuSoftswitchesOvl.cs",
               "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Runtime\\Overlays\\CpuSoftswitchesOvl.cs",
               "RelativeDocumentMoniker": "Runtime\\Overlays\\CpuSoftswitchesOvl.cs",
@@ -288,7 +318,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 17,
               "Title": "write_17_15.txt",
               "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Apple2\\write_17_15.txt",
               "RelativeDocumentMoniker": "Apple2\\write_17_15.txt",
@@ -297,19 +327,6 @@
               "ViewState": "AQIAAAAAAAAAAAAAAAAAACEAAAA1AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
               "WhenOpened": "2024-06-07T11:02:53.844Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "Keyboard.cs",
-              "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Apple2\\Keyboard.cs",
-              "RelativeDocumentMoniker": "Apple2\\Keyboard.cs",
-              "ToolTip": "C:\\Users\\luciano\\repos\\6502\\Apple2\\Keyboard.cs",
-              "RelativeToolTip": "Apple2\\Keyboard.cs",
-              "ViewState": "AQIAABEAAAAAAAAAAAAIwB0AAAAFAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-03T11:43:04.748Z",
               "EditorCaption": ""
             }
           ]
