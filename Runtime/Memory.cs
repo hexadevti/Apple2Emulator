@@ -18,7 +18,7 @@ public class Memory
 
     public byte[] baseRAM = new byte[0xc000];
     public byte[] ROM = new byte[0x4000];
-    public byte[] interfaceROM = new byte[0x1000];
+    public byte[] extendedRAM = new byte[0x800];
     public byte[] memoryBankSwitchedRAM1 = new byte[0x3000];
 
     public byte[] memoryBankSwitchedRAM2_1 = new byte[0x1000];
@@ -133,43 +133,44 @@ public class Memory
 
     }
 
-    public void LoadInterfaceROM(ushort startAddress, byte[] rom)
-    {
-        for (int i = 0; i < rom.Length; i++)
-        {
-            interfaceROM[startAddress - 0xc000 + i] = rom[i];
-        }
+    // public void LoadInterfaceROM(ushort startAddress, byte[] rom)
+    // {
+    //     for (int i = 0; i < rom.Length; i++)
+    //     {
+    //         interfaceROM[startAddress - 0xc000 + i] = rom[i];
+    //     }
 
-    }
+    // }
 
     public byte ReadMemory(ushort address)
     {
         byte ret;
-        if (address > 0xc000)
+        if (address >= 0xd000)
         {
-            if (address < 0xd000)
+            if (softswitches.MemoryBankReadRAM_ROM)
             {
-                ret = interfaceROM[address - 0xc000];
+                if (address >= 0xd000 && address < 0xe000)
+                {
+                    if (softswitches.MemoryBankBankSelect1_2)
+                        ret = memoryBankSwitchedRAM2_1[address - 0xd000];
+                    else
+                        ret = memoryBankSwitchedRAM2_2[address - 0xd000];
+                }
+                else
+                    ret = memoryBankSwitchedRAM1[address - 0xe000];
             }
             else
             {
-                if (softswitches.MemoryBankReadRAM_ROM)
-                {
-                    if (address >= 0xd000 && address < 0xe000)
-                    {
-                        if (softswitches.MemoryBankBankSelect1_2)
-                            ret = memoryBankSwitchedRAM2_1[address - 0xd000];
-                        else
-                            ret = memoryBankSwitchedRAM2_2[address - 0xd000];
-                    }
-                    else
-                        ret = memoryBankSwitchedRAM1[address - 0xe000];
-                }
-                else
-                {
-                    ret = ROM[address - 0xd000];
-                }
+                ret = ROM[address - 0xd000];
             }
+        }
+        else if (address >= 0xc800)
+        {
+            ret = 0; //extendedRAM[address - 0xc800];
+        }
+        else if (address >= 0xc000)
+        {
+            ret = 0;
         }
         else
         {
@@ -180,23 +181,28 @@ public class Memory
 
     public void WriteMemory(ushort address, byte value)
     {
-        if (address > 0xc000)
+        if (address >= 0xd000)
         {
-            if (address >= 0xd000)
+            if (this.softswitches.MemoryBankReadRAM_ROM)
             {
-                if (this.softswitches.MemoryBankReadRAM_ROM)
+                if (address >= 0xd000 && address < 0xe000)
                 {
-                    if (address >= 0xd000 && address < 0xe000)
-                    {
-                        if (this.softswitches.MemoryBankBankSelect1_2)
-                            this.memoryBankSwitchedRAM2_1[address - 0xd000] = value;
-                        else
-                            this.memoryBankSwitchedRAM2_2[address - 0xd000] = value;
-                    }
+                    if (this.softswitches.MemoryBankBankSelect1_2)
+                        this.memoryBankSwitchedRAM2_1[address - 0xd000] = value;
                     else
-                        this.memoryBankSwitchedRAM1[address - 0xe000] = value;
+                        this.memoryBankSwitchedRAM2_2[address - 0xd000] = value;
                 }
+                else
+                    this.memoryBankSwitchedRAM1[address - 0xe000] = value;
             }
+        }
+        else if (address >= 0xc800)
+        {
+            extendedRAM[address - 0xc800] = value;
+        }
+        else if (address >= 0xc000)
+        {
+
         }
         else
         {
@@ -249,7 +255,7 @@ public class Memory
     public ushort? ReadAddressLLHH(ushort? address)
     {
         if (address != null)
-            return (ushort)(ReadMemory((ushort)(address.Value + 1)) << 8 | ReadMemory(address.Value));
+            return (ushort)(ReadByte((ushort)(address.Value + 1)) << 8 | ReadByte(address.Value));
         else
             return null;
     }
@@ -269,7 +275,7 @@ public class Memory
     {
         if (address != null)
         {
-            return (ushort)(ReadMemory(address.Value) << 8 | ReadMemory((ushort)(address.Value + 1)));
+            return (ushort)(ReadByte(address.Value) << 8 | ReadByte((ushort)(address.Value + 1)));
         }
         else
             return null;
@@ -296,8 +302,8 @@ public class Memory
     {
         var bytes = new byte[]
         {
-            ReadMemory(_IRQVector),
-            ReadMemory(_IRQVector + 1)
+            ReadByte(_IRQVector),
+            ReadByte(_IRQVector + 1)
         };
 
         return BitConverter.ToUInt16(bytes);
@@ -308,7 +314,7 @@ public class Memory
         byte[] ret = new byte[endAddress-startAddress];
         for (ushort i = startAddress; i < endAddress; i++)
         {
-            ret[i - startAddress] = ReadMemory(i);
+            ret[i - startAddress] = ReadByte(i);
         }
         return ret;
     }

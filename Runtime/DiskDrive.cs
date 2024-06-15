@@ -524,9 +524,9 @@ public class DiskDrive
             foreach (byte isec in new byte[] { 0x0, 0x2, 0x4, 0x6, 0x8, 0xa, 0xc, 0xe, 0x1, 0x3, 0x5, 0x7, 0x9, 0xb, 0xd, 0xf }) // PRODOS
             {
                 List<byte> b = new List<byte>();
-                Console.WriteLine(DateTime.Now.ToString("HH:mm:ss.ff") + " Load Track: " + track + " Sector: " + isec);
+                //Console.WriteLine(DateTime.Now.ToString("HH:mm:ss.ff") + " Load Track: " + track + " Sector: " + isec);
                 selectedSector.AddRange(new List<byte>() { 0xff, 0xff, 0xff });
-                selectedSector.AddRange(new List<byte>() { 0xd5, 0xaa, 0x96 }); // Prologe address
+                selectedSector.AddRange(new List<byte>() { 0xd5, 0xaa, 0x96 }); // Prologue address
                 var volume = memory.drive1.GetVolume();
                 b = this.EncodeByte(volume).ToList();
                 selectedSector.AddRange(b); // Volume
@@ -537,13 +537,13 @@ public class DiskDrive
                 b = this.Checksum(volume, (byte)track, isec).ToList();
                 selectedSector.AddRange(b); // Checksum
                 selectedSector.AddRange(new List<byte>() { 0xde, 0xaa, 0xeb }); // Epilogue address
-                selectedSector.AddRange(new List<byte>() { 0xd5, 0xaa, 0xad }); // Prologe data
+                selectedSector.AddRange(new List<byte>() { 0xd5, 0xaa, 0xad }); // Prologue data
                 b = this.Encode6_2(track, this.translateDos33Track[isec]).ToList();
                 selectedSector.AddRange(b); // Data field + checksum
                 selectedSector.AddRange(new List<byte>() { 0xde, 0xaa, 0xeb }); // Epilogue
                 
             }
-            Console.WriteLine(Print(selectedSector));
+            //Console.WriteLine(Print(selectedSector));
             diskRawData[track] = selectedSector.ToArray();
         }
     }

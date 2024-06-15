@@ -8,3 +8,7 @@ Apple2/obj/*
 .vs/6502/DesignTimeBuild/*
 .vs/6502/v17/*
 .vs/ProjectEvaluation/*
+.vs/6502/*
+Apple2Web/obj/*
+Apple2Web/bin/*
+

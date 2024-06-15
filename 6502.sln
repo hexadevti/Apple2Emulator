@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Runtime", "Runtime\Runtime.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apple2", "Apple2\Apple2.csproj", "{1091685E-4702-48B5-B778-61B075440669}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apple2Web", "Apple2Web\Apple2Web.csproj", "{4AF85E9B-8314-485C-A8C2-90AE23057938}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{1091685E-4702-48B5-B778-61B075440669}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1091685E-4702-48B5-B778-61B075440669}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1091685E-4702-48B5-B778-61B075440669}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4AF85E9B-8314-485C-A8C2-90AE23057938}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4AF85E9B-8314-485C-A8C2-90AE23057938}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4AF85E9B-8314-485C-A8C2-90AE23057938}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4AF85E9B-8314-485C-A8C2-90AE23057938}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
