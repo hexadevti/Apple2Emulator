@@ -5,3 +5,6 @@ Runtime/obj/*
 Apple2/bin/*
 Apple2/obj/*
 .vs/6502/*
+.vs/6502/DesignTimeBuild/*
+.vs/6502/v17/*
+.vs/ProjectEvaluation/*
