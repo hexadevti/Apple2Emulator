@@ -5,3 +5,6 @@ Runtime/obj/*
 Apple2/bin/*
 Apple2/obj/*
 .vs/6502/*
+Apple2Web/obj/*
+Apple2Web/bin/*
+

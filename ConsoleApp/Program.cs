@@ -45,7 +45,7 @@ namespace ConsoleApp
             memory.RegisterOverlay(new DiskIISlot6Ovl());
             memory.RegisterOverlay(new EmptySlot7Ovl());
 
-            memory.drive1 = new DiskDrive(assemblyPath + "roms/EMPTY DOS33.dsk", memory, true);
+            memory.drive1 = new DiskDrive(assemblyPath + "roms/ProDOS 1.2.dsk", memory, false);
             memory.drive2 = new DiskDrive(assemblyPath + "roms/EMPTY DOS33.dsk", memory, true);
 
 
