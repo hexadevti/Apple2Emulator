@@ -96,24 +96,9 @@ public class CPU
 
         ushort? refAddress = null;
 
-        if (instruction == 0x69)
+        if (state.PC == 0xd5e9)
             Thread.Sleep(0);
-        if (instruction == 0x65)
-            Thread.Sleep(0);
-        if (instruction == 0x75 && state.A == 0x79)
-            Thread.Sleep(0);
-        if (instruction == 0x6D)
-            Thread.Sleep(0);
-        if (instruction == 0x7D)
-            Thread.Sleep(0);
-        if (instruction == 0x79)
-            Thread.Sleep(0);
-        if (instruction == 0x61)
-            Thread.Sleep(0);
-        if (instruction == 0x71)
-            Thread.Sleep(0);
-        if (lastPC == 0x61eb)
-            Thread.Sleep(0);
+
 
 
         if (opCodePart != null)

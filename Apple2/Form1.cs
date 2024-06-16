@@ -51,8 +51,8 @@ public partial class Form1 : Form
         if (assemblyPath != null)
             assemblyPath += "/";
 
-        disk1.Text = assemblyPath + "roms/teste.dsk";
-        disk1dos.Checked = true;
+        disk1.Text = assemblyPath + "roms/ProDOS 1.2.dsk";
+        disk1prodos.Checked = true;
         PowerOn();
 
 
@@ -83,10 +83,6 @@ public partial class Form1 : Form
         memory.LoadROM(0xe000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftE000.rom"));
         memory.LoadROM(0xd800, File.ReadAllBytes(assemblyPath + "roms/ApplesoftD800.rom"));
         memory.LoadROM(0xd000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftD000.rom"));
-
-        memory.LoadInterfaceROM(0xc600, File.ReadAllBytes(assemblyPath + "roms/diskinterface.rom"));
-        memory.LoadInterfaceROM(0xc300, new byte[] { 0xa0, 0xa0, 0xa0, 0xa0 });
-
         memory.RegisterOverlay(new KeyboardOvl());
         memory.RegisterOverlay(new CpuSoftswitchesOvl());
         memory.RegisterOverlay(new SlotsSoftSwitchesOvl());
@@ -95,6 +91,7 @@ public partial class Form1 : Form
         memory.RegisterOverlay(new EmptySlot3Ovl());
         memory.RegisterOverlay(new EmptySlot4Ovl());
         memory.RegisterOverlay(new EmptySlot5Ovl());
+        memory.RegisterOverlay(new DiskIISlot6Ovl());
         memory.RegisterOverlay(new EmptySlot7Ovl());
 
 

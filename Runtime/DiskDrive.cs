@@ -41,6 +41,8 @@ public class DiskDrive
     public byte[] translateDos33Track = new byte[] {
         0x00, 0x07, 0x0e, 0x06, 0x0d, 0x05, 0x0c, 0x04, 0x0b, 0x03, 0x0a, 0x02, 0x09, 0x01, 0x08, 0x0f };
 
+    ushort[] secoffset = new ushort[] { 0, 0x700, 0xe00, 0x600, 0xd00, 0x500, 0xc00, 0x400, 0xb00, 0x300, 0xa00, 0x200, 0x900, 0x100, 0x800, 0xf00 };
+
     public DiskDrive(string dskPath, Memory memory, bool flagDos_Prodos)
     {
 
@@ -275,6 +277,20 @@ public class DiskDrive
         if (track < 35 && sector < 16)
         {
             var offset = GetOffset(track, sector);
+
+            for (int i = 0; i < 256; i++)
+            {
+                diskImage[offset + i] = data[i];
+            }
+        }
+    }
+
+    public void SetBlockData(int track, int sector, byte[] data)
+    {
+        byte[] output = new byte[256];
+        if (track < 35 && sector < 16)
+        {
+            var offset = (track * 0x1000) + secoffset[sector];
 
             for (int i = 0; i < 256; i++)
             {
@@ -554,12 +570,13 @@ public class DiskDrive
         return (sector * 256) + (track * (256 * 16));
     }
 
+
     public int GetInt16(byte[] data, int offset)
     {
         return (data[offset]) | ((data[offset + 1]) << 8);
     }
 
-    string Print(List<byte> bytes)
+    public string Print(List<byte> bytes)
     {
         string ret = "";
         for (int i = 0; i < bytes.Count; i = i + 16)

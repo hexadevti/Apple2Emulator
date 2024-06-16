@@ -27,6 +27,9 @@
     <Content Include="roms\diskinterface.rom">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="roms\ProDOS 1.2.dsk">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <ProjectReference Include="..\Runtime\Runtime.csproj" />
   </ItemGroup>
   <ItemGroup>

@@ -53,19 +53,30 @@ public class SlotsSoftSwitchesOvl : IOverLay
                 {
                     if (data.Value.Count == 354)
                     {
-                        int trkd = int.Parse(data.Key.Split('_')[0]);
+                        int trkd = 0;
                         int secd = int.Parse(data.Key.Split('_')[1]);
-                        Console.WriteLine(DateTime.Now.ToString("HH:mm:ss.ff") + " Save Track: " + trkd + " Sector: " + secd);
+                        
 
                         byte[] cleanData = data.Value.Skip(7).Take(343).ToArray();
 
                         if (memory.softswitches.Drive1_2)
                         {
+
                             byte[] decsecData = memory.drive1.Decode6_2(cleanData);
                             if (memory.drive1.FlagDos_Prodos)
+                            {
+                                Console.WriteLine(DateTime.Now.ToString("HH:mm:ss.ff") + " Save Track: " + trkd + " Sector: " + secd);
+                                trkd = int.Parse(data.Key.Split('_')[0]);
                                 memory.drive1.SetSectorData(trkd, memory.drive1.translateDos33Track[secd], decsecData); // DOS
+                            }
                             else
-                                memory.drive1.SetSectorData(trkd, secd, decsecData); // PRODOS
+                            {
+                                trkd = memory.ReadMemory(0xd356);
+                                secd = memory.ReadMemory(0xd357);
+                                Console.WriteLine(DateTime.Now.ToString("HH:mm:ss.ff") + " Save Track: " + trkd + " Sector: " + secd);
+                                Console.WriteLine(memory.drive1.Print(decsecData.ToList()));
+                                memory.drive1.SetBlockData(trkd, secd, decsecData); // PRODOS
+                            }
                             memory.drive1.SaveImage();
                             memory.drive1.TrackRawData(trkd, true);
                         }
