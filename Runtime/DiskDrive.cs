@@ -1,4 +1,6 @@
 using System.Collections;
+using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks.Dataflow;
 
 namespace Runtime;
 
@@ -32,20 +34,52 @@ public class DiskDrive
                             0xF7,0xF9,0xFA,0xFB,0xFC,0xFD,0xFE,0xFF
                         };
 
+    public int track { get; set;}
     /* DO logical order  0 1 2 3 4 5 6 7 8 9 A B C D E F */
     /*    physical order 0 D B 9 7 5 3 1 E C A 8 6 4 2 F */
 
     /* PO logical order  0 E D C B A 9 8 7 6 5 4 3 2 1 F */
     /*    physical order 0 2 4 6 8 A C E 1 3 5 7 9 B D F */
 
+    
+    public byte[] odd_even_asc = new byte[] { 0x31, 0x20, 0x01, 0x30 };
+    public byte[] even_odd_asc = new byte[] { 0x11, 0x00, 0x21, 0x10 };
+    public byte[] odd_even_desc = new byte[] { 0x11, 0x20, 0x01, 0x10 };
+    public byte[] even_odd_desc = new byte[] { 0x31, 0x00, 0x21, 0x30 };
+
+    public byte[] start_sequence_1 = new byte[] { 0x31, 0x30, 0x21, 0x20 };
+    public byte[] start_sequence_2 = new byte[] { 0x11, 0x10, 0x01, 0x00 };
+
+    public Queue<byte> phaseBuffer = new Queue<byte>(4);
+    
+    public void AddPhase(byte phase)
+    {
+        phaseBuffer.Enqueue(phase);
+        if (phaseBuffer.Count > 4)
+            phaseBuffer.Dequeue();
+
+        if (track % 2 == 0 && phaseBuffer.SequenceEqual(even_odd_asc))
+            track++;
+        else if (track % 2 != 0 && phaseBuffer.SequenceEqual(odd_even_asc))
+            track++;
+        else if (track % 2 == 0 && phaseBuffer.SequenceEqual(even_odd_desc) && track > 0)
+            track--;
+        else if (track % 2 != 0 && phaseBuffer.SequenceEqual(odd_even_desc) && track > 0)
+            track--;
+        else if (track > 0 && (phaseBuffer.SequenceEqual(start_sequence_1) || phaseBuffer.SequenceEqual(start_sequence_2)))
+            track--;
+    }
+
+
     public byte[] translateDos33Track = new byte[] {
+        //0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f };
         0x00, 0x07, 0x0e, 0x06, 0x0d, 0x05, 0x0c, 0x04, 0x0b, 0x03, 0x0a, 0x02, 0x09, 0x01, 0x08, 0x0f };
 
     ushort[] secoffset = new ushort[] { 0, 0x700, 0xe00, 0x600, 0xd00, 0x500, 0xc00, 0x400, 0xb00, 0x300, 0xa00, 0x200, 0x900, 0x100, 0x800, 0xf00 };
 
     public DiskDrive(string dskPath, Memory memory, bool flagDos_Prodos)
     {
-
+        track = 0;
         diskPath = dskPath;
         this.memory = memory;
         FlagDos_Prodos = flagDos_Prodos;
@@ -536,8 +570,8 @@ public class DiskDrive
         {
             List<byte> selectedSector = new List<byte>();
 
-            //foreach (byte isec in new byte[] { 0xa, 0xb, 0xc, 0xd, 0xe, 0xf, 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9 }) // DOS
-            foreach (byte isec in new byte[] { 0x0, 0x2, 0x4, 0x6, 0x8, 0xa, 0xc, 0xe, 0x1, 0x3, 0x5, 0x7, 0x9, 0xb, 0xd, 0xf }) // PRODOS
+            foreach (byte isec in new byte[] { 0xa, 0xb, 0xc, 0xd, 0xe, 0xf, 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9 }) // DOS
+            //foreach (byte isec in new byte[] { 0x0, 0x2, 0x4, 0x6, 0x8, 0xa, 0xc, 0xe, 0x1, 0x3, 0x5, 0x7, 0x9, 0xb, 0xd, 0xf }) // PRODOS
             {
                 List<byte> b = new List<byte>();
                 //Console.WriteLine(DateTime.Now.ToString("HH:mm:ss.ff") + " Load Track: " + track + " Sector: " + isec);

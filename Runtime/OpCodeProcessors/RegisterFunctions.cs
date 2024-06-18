@@ -18,6 +18,11 @@ internal static class RegisterFunctions
         return (value1 & 64) == 64;
     }
 
+    public static byte GetNegative(this byte value)
+    {
+        return (byte)(value & 0x7f);
+    }
+
     public static byte ReadCarryFlag(State processorState) => 
         processorState.C ? (byte)0x01 : (byte)0x00;
 

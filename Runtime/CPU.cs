@@ -96,9 +96,7 @@ public class CPU
 
         ushort? refAddress = null;
 
-        if (state.PC == 0xd5e9)
-            Thread.Sleep(0);
-
+        
 
 
         if (opCodePart != null)
@@ -191,6 +189,32 @@ public class CPU
                 ad = (refAddress.HasValue ? refAddress.Value.ToString("x4") : "null");
 
             
+            if (lastPC == 0x5e7e && memory.baseRAM[0xa3] == 0x7f)
+                Thread.Sleep(0);
+            if (lastPC == 0x61bd)
+                Thread.Sleep(0); // teste
+            if (lastPC == 0x61e7)
+                Thread.Sleep(0); // teste supostamente com falha
+
+
+            if (lastPC == 0x602d && state.A == 0)
+                Thread.Sleep(0); // teste ADC
+            if (lastPC == 0x6045 && state.A == 0)
+                Thread.Sleep(0); // teste SBC
+            if (lastPC == 0x66b2)
+                Thread.Sleep(0); // falha
+            if (lastPC == 0x5e7a)
+                Thread.Sleep(0); // sucesso
+
+
+
+
+            if (lastPC == 0x5e80)
+                Thread.Sleep(0);
+            if (lastPC == 0x5e9a)
+                Thread.Sleep(0);
+
+
 
             switch (opCodePart.Operation)
             {

@@ -51,7 +51,7 @@ public partial class Form1 : Form
         if (assemblyPath != null)
             assemblyPath += "/";
 
-        disk1.Text = assemblyPath + "roms/ProDOS 1.2.dsk";
+        disk1.Text = assemblyPath + "roms/Apple Core 525 ProDOS RC2.dsk";
         disk1prodos.Checked = true;
         PowerOn();
 
