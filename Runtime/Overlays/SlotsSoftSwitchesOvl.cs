@@ -31,7 +31,7 @@ public class SlotsSoftSwitchesOvl : IOverLay
     {
         int slotOffset = slot * 0x10;
         var sec = memory.softswitches.Drive1_2 ? (memory.drive1.FlagDos_Prodos ? memory.ReadMemory(0x2d) : memory.ReadMemory(0xd357)) : (memory.drive2.FlagDos_Prodos ? memory.ReadMemory(0x2d) : memory.ReadMemory(0xd357));
-        var trk = memory.softswitches.Drive1_2 ? (memory.drive1.FlagDos_Prodos ? memory.ReadMemory(0x2e) : memory.ReadMemory(0xd356)) : (memory.drive2.FlagDos_Prodos ? memory.ReadMemory(0x2e) : memory.ReadMemory(0xd356));
+        var trk = memory.softswitches.Drive1_2 ? memory.drive1.track : memory.drive2.track;
         string key = trk + "_" + sec;
         if (address == 0xc08d + slotOffset)
         {
@@ -48,7 +48,7 @@ public class SlotsSoftSwitchesOvl : IOverLay
                     output.Add(key, new List<byte>() { b });
                 }
 
-                Console.WriteLine(DateTime.Now.ToString("HH:mm:ss.ff") + " Save Track: " + trk + " Sector: " + sec);
+                Console.WriteLine(DateTime.Now.ToString("HH:mm:ss.ff") + " Save Track: " + trk + " Sector DOS: " + memory.ReadMemory(0x2d) + " Sector PRODOS: " + memory.ReadMemory(0xd357));
 
                 List<string> keysToClear = new List<string>();
                 foreach (var data in output)
@@ -94,7 +94,6 @@ public class SlotsSoftSwitchesOvl : IOverLay
         
     }
 
-    int lastTrack = 0;
 
     public byte Read(ushort address, Memory memory, State state)
     {
@@ -133,7 +132,6 @@ public class SlotsSoftSwitchesOvl : IOverLay
                 memory.drive1.AddPhase(0x00);
             else
                 memory.drive2.AddPhase(0x00);
-            Console.WriteLine("Phase 0: OFF");
         }
         if (address == 0xc081 + slotOffset)
         {
@@ -142,7 +140,6 @@ public class SlotsSoftSwitchesOvl : IOverLay
                 memory.drive1.AddPhase(0x01);
             else
                 memory.drive2.AddPhase(0x01);
-            Console.WriteLine("Phase 0: ON");
         }
         if (address == 0xc082 + slotOffset)
         {
@@ -151,7 +148,6 @@ public class SlotsSoftSwitchesOvl : IOverLay
                 memory.drive1.AddPhase(0x10);
             else
                 memory.drive2.AddPhase(0x10);
-            Console.WriteLine("Phase 1: OFF");
         }
         if (address == 0xc083 + slotOffset)
         {
@@ -160,7 +156,6 @@ public class SlotsSoftSwitchesOvl : IOverLay
                 memory.drive1.AddPhase(0x11);
             else
                 memory.drive2.AddPhase(0x11);
-            Console.WriteLine("Phase 1: ON");
         }
         if (address == 0xc084 + slotOffset)
         {
@@ -169,7 +164,6 @@ public class SlotsSoftSwitchesOvl : IOverLay
                 memory.drive1.AddPhase(0x20);
             else
                 memory.drive2.AddPhase(0x20);
-            Console.WriteLine("Phase 2: OFF");
         }
         if (address == 0xc085 + slotOffset)
         {
@@ -178,7 +172,6 @@ public class SlotsSoftSwitchesOvl : IOverLay
                 memory.drive1.AddPhase(0x21);
             else
                 memory.drive2.AddPhase(0x21);
-            Console.WriteLine("Phase 2: ON");
         }
         if (address == 0xc086 + slotOffset)
         {
@@ -187,7 +180,6 @@ public class SlotsSoftSwitchesOvl : IOverLay
                 memory.drive1.AddPhase(0x30);
             else
                 memory.drive2.AddPhase(0x30);
-            Console.WriteLine("Phase 3: OFF");
         }
         if (address == 0xc087 + slotOffset)
         {
@@ -196,7 +188,6 @@ public class SlotsSoftSwitchesOvl : IOverLay
                 memory.drive1.AddPhase(0x31);
             else
                 memory.drive2.AddPhase(0x31);
-            Console.WriteLine("Phase 3: ON");
         }
         if (address == 0xc088 + slotOffset)
         {

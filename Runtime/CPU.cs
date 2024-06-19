@@ -30,6 +30,16 @@ public class CPU
     public string ad { get; set; }
     public string inst { get; set; }
 
+    public ushort lastPC = 0;
+    public int PCCount = 0;
+    public DateTime last1mhz = DateTime.MinValue;
+    public DateTime actual1mhz = DateTime.MinValue;
+
+    public int delayCycle = 0;
+
+    public bool adjust1Mhz = false;
+
+
     public CPU(State state, Memory memory, bool debug = false)
     {
         this.memory = memory;
@@ -42,12 +52,14 @@ public class CPU
         {
             Graphics_Text = false
         };
-
+        last1mhz = DateTime.Now;
     }
 
     public void Reset()
     {
+        lastPC = 0;
         state.PC = 0;
+        state.PC = memory.ReadAddressLLHH(0xfffc) ?? 0;
     }
 
     public void InitConsole()
@@ -56,96 +68,83 @@ public class CPU
         Console.WindowHeight = 700;
     }
 
-    public void RunCycle()
+    public void IncPC()
     {
-        var lastPC = state.PC;
-        if (state.PC == 0)
+        lastPC = state.PC;
+        state.PC++;
+        if (PCCount == 1000000)
         {
-            state.PC = memory.ReadAddressLLHH(0xfffc) ?? 0;
+            PCCount = 0;
+            TimeSpan cycle = DateTime.Now - last1mhz;
+            if (adjust1Mhz)
+            {
+                if (cycle.TotalMilliseconds < 1000)
+                    delayCycle += Convert.ToInt16((1000 - cycle.TotalMilliseconds) / 2);
+                else
+                {
+                    delayCycle -= Convert.ToInt16((cycle.TotalMilliseconds - 1000) / 2);
+                    if (delayCycle < 0)
+                        delayCycle = 0;
+                }
+            }
+            else
+                delayCycle = 0;
+            last1mhz = actual1mhz = DateTime.Now;
+            Console.WriteLine(cycle.TotalMilliseconds);
+        }
+        PCCount++;
+        for (int i = 0; i < delayCycle; i++)
+        {
+            var a = i;
         }
 
+    }
+
+    public void RunCycle(bool adjust1mhz)
+    {
+        adjust1Mhz = adjust1mhz;
         byte instruction = memory.ReadByte(state.PC);
         OpCodePart? opCodePart = OpCodes.GetOpCode(instruction);
-        if (debug)
-        {
-            op = opCodePart?.Operation + (opCodePart?.Addressing != null ? "_" + opCodePart?.Addressing : "") + (opCodePart?.Addressing != null ? "_" + opCodePart?.Register : "");
-            pc = state.PC.ToString("x4");
-            axy = state.A.ToString("X") + " " + state.X.ToString("X") + " " + state.Y.ToString("X");
-            fl = (state.N ? "1" : "0") + "" + (state.V ? "1" : "0") + (state.B ? "1" : "0")
-                + (state.D ? "1" : "0") + (state.I ? "1" : "0") + (state.Z ? "1" : "0")
-                + (state.C ? "1" : "0");
-            inst = pc + ": " + instruction.ToString("x2");
-            ushort nextbytes = 0;
-            if (opCodePart?.Addressing == Addressing.immediate)
-                nextbytes = 1;
-            if (opCodePart?.Addressing == Addressing.absolute)
-                nextbytes = 2;
-            if (opCodePart?.Addressing == Addressing.zeropage)
-                nextbytes = 1;
-            if (opCodePart?.Addressing == Addressing.indirect && opCodePart.Register != null)
-                nextbytes = 1;
-            if (opCodePart?.Addressing == Addressing.indirect && opCodePart.Register == null)
-                nextbytes = 2;
-            if (opCodePart?.Addressing == Addressing.relative)
-                nextbytes = 1;
-            for (int i = 1; i <= nextbytes; i++)
-            {
-                inst = inst + " " + memory.ReadByte((ushort)(state.PC + i)).ToString("x");
-            }
-        }
-
         ushort? refAddress = null;
-
-        
-
-
         if (opCodePart != null)
         {
             switch (opCodePart.Addressing)
             {
                 case Addressing.immediate:
-                    state.PC++;
+                    IncPC();
                     refAddress = state.PC;
-                    state.PC++;
+                    IncPC();
                     break;
                 case Addressing.absolute:
-                    state.PC++;
+                    IncPC();
                     refAddress = memory.ReadAddressLLHH(state.PC);
                     if (opCodePart.Register != null)
                     {
                         if (opCodePart.Register == Register.Y)
-                        {
                             refAddress = (ushort)((refAddress ?? 0) + state.Y);
-                        }
                         else
-                        {
                             refAddress = (ushort)((refAddress ?? 0) + state.X);
-                        }
                     }
-                    state.PC++;
-                    state.PC++;
+                    IncPC();
+                    IncPC();
                     break;
                 case Addressing.zeropage:
-                    state.PC++;
+                    IncPC();
                     refAddress = memory.ReadZeroPageAddress(state.PC);
 
                     if (refAddress != null && opCodePart.Register != null)
                     {
                         if (opCodePart.Register == Register.Y)
-                        {
                             refAddress = (byte)(refAddress + state.Y);
-                        }
                         else
-                        {
                             refAddress = (byte)(refAddress + state.X);
-                        }
                     }
-                    state.PC++;
+                    IncPC();
                     break;
                 case Addressing.indirect:
                     if (opCodePart.Register != null)
                     {
-                        state.PC++;
+                        IncPC();
                         refAddress = memory.ReadZeroPageAddress(state.PC);
                         if (refAddress != null)
                         {
@@ -155,67 +154,31 @@ public class CPU
                                 refAddress = (ushort?)(pointer + state.Y);
                             }
                             else
-                            {
                                 refAddress = memory.ReadAddressLLHH((byte)((byte)refAddress + (byte)state.X));
-                            }
                         }
-                        state.PC++;
+                        IncPC();
                     }
                     else
                     {
-                        state.PC++;
+                        IncPC();
                         var indirectAddress = memory.ReadAddressLLHH(state.PC);
                         if (indirectAddress != null)
                             refAddress = memory.ReadAddressLLHH(indirectAddress);
-                        state.PC++;
-                        state.PC++;
+                        IncPC();
+                        IncPC();
                     }
                     break;
                 case Addressing.relative:
-                    state.PC++;
+                    IncPC();
                     var b = memory.ReadByte(state.PC);
                     var offset = unchecked((sbyte)b);
                     refAddress = (ushort)(state.PC + 1 + offset);
-                    state.PC++;
+                    IncPC();
                     break;
                 default:
-                    state.PC++;
+                    IncPC();
                     break;
             }
-
-
-
-            if (debug)
-                ad = (refAddress.HasValue ? refAddress.Value.ToString("x4") : "null");
-
-            
-            if (lastPC == 0x5e7e && memory.baseRAM[0xa3] == 0x7f)
-                Thread.Sleep(0);
-            if (lastPC == 0x61bd)
-                Thread.Sleep(0); // teste
-            if (lastPC == 0x61e7)
-                Thread.Sleep(0); // teste supostamente com falha
-
-
-            if (lastPC == 0x602d && state.A == 0)
-                Thread.Sleep(0); // teste ADC
-            if (lastPC == 0x6045 && state.A == 0)
-                Thread.Sleep(0); // teste SBC
-            if (lastPC == 0x66b2)
-                Thread.Sleep(0); // falha
-            if (lastPC == 0x5e7a)
-                Thread.Sleep(0); // sucesso
-
-
-
-
-            if (lastPC == 0x5e80)
-                Thread.Sleep(0);
-            if (lastPC == 0x5e9a)
-                Thread.Sleep(0);
-
-
-
             switch (opCodePart.Operation)
             {
                 case "CLC":
@@ -386,13 +349,9 @@ public class CPU
                 default:
                     break;
             }
-
-
         }
         else
-        {
-            state.PC++;
-        }
+            IncPC();
     }
 
     public void RefreshScreen()

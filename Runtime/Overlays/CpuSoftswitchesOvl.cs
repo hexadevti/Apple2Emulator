@@ -22,13 +22,11 @@ public class CpuSoftswitchesOvl : IOverLay
 
     public byte Read(ushort address, Memory memory, State state)
     {
-
         return ProcessSwitch(address, 0x00, memory, state);
     }
 
     private byte ProcessSwitch(ushort address, byte b, Memory memory, State? state)
     {
-        
         if (address == 0xc010)
             memory.KeyPressed = b;
         if (address == 0xc030)

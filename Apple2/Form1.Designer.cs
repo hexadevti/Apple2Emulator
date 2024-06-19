@@ -31,15 +31,11 @@ partial class Form1
         pictureBox1 = new PictureBox();
         disk1 = new TextBox();
         groupBox1 = new GroupBox();
-        disk1prodos = new RadioButton();
-        disk1dos = new RadioButton();
         button_dsk1 = new Button();
         openFileDialog1 = new OpenFileDialog();
         btn_restart = new Button();
         groupBox2 = new GroupBox();
-        disk2prodos = new RadioButton();
         button_dsk2 = new Button();
-        disk2dos = new RadioButton();
         disk2 = new TextBox();
         richTextBox1 = new RichTextBox();
         waveViewer1 = new NAudio.Gui.WaveViewer();
@@ -47,6 +43,8 @@ partial class Form1
         button2 = new Button();
         button3 = new Button();
         button4 = new Button();
+        btnClockAdjust = new Button();
+        openFileDialog2 = new OpenFileDialog();
         ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
         groupBox1.SuspendLayout();
         groupBox2.SuspendLayout();
@@ -72,45 +70,20 @@ partial class Form1
         // 
         // groupBox1
         // 
-        groupBox1.Controls.Add(disk1prodos);
-        groupBox1.Controls.Add(disk1dos);
         groupBox1.Controls.Add(button_dsk1);
         groupBox1.Controls.Add(disk1);
         groupBox1.Location = new Point(16, 855);
         groupBox1.Margin = new Padding(4, 5, 4, 5);
         groupBox1.Name = "groupBox1";
         groupBox1.Padding = new Padding(4, 5, 4, 5);
-        groupBox1.Size = new Size(1025, 100);
+        groupBox1.Size = new Size(1026, 100);
         groupBox1.TabIndex = 2;
         groupBox1.TabStop = false;
         groupBox1.Text = "DISK 1";
         // 
-        // disk1prodos
-        // 
-        disk1prodos.AutoSize = true;
-        disk1prodos.Location = new Point(877, 60);
-        disk1prodos.Name = "disk1prodos";
-        disk1prodos.Size = new Size(109, 29);
-        disk1prodos.TabIndex = 4;
-        disk1prodos.TabStop = true;
-        disk1prodos.Text = "PRODOS";
-        disk1prodos.UseVisualStyleBackColor = true;
-        // 
-        // disk1dos
-        // 
-        disk1dos.AutoSize = true;
-        disk1dos.Checked = true;
-        disk1dos.Location = new Point(877, 25);
-        disk1dos.Name = "disk1dos";
-        disk1dos.Size = new Size(74, 29);
-        disk1dos.TabIndex = 3;
-        disk1dos.TabStop = true;
-        disk1dos.Text = "DOS";
-        disk1dos.UseVisualStyleBackColor = true;
-        // 
         // button_dsk1
         // 
-        button_dsk1.Location = new Point(758, 34);
+        button_dsk1.Location = new Point(759, 33);
         button_dsk1.Margin = new Padding(4, 5, 4, 5);
         button_dsk1.Name = "button_dsk1";
         button_dsk1.Size = new Size(107, 38);
@@ -136,33 +109,20 @@ partial class Form1
         // 
         // groupBox2
         // 
-        groupBox2.Controls.Add(disk2prodos);
         groupBox2.Controls.Add(button_dsk2);
-        groupBox2.Controls.Add(disk2dos);
         groupBox2.Controls.Add(disk2);
         groupBox2.Location = new Point(16, 958);
         groupBox2.Margin = new Padding(4, 5, 4, 5);
         groupBox2.Name = "groupBox2";
         groupBox2.Padding = new Padding(4, 5, 4, 5);
-        groupBox2.Size = new Size(1025, 100);
+        groupBox2.Size = new Size(1026, 100);
         groupBox2.TabIndex = 6;
         groupBox2.TabStop = false;
         groupBox2.Text = "DISK 2";
         // 
-        // disk2prodos
-        // 
-        disk2prodos.AutoSize = true;
-        disk2prodos.Location = new Point(877, 54);
-        disk2prodos.Name = "disk2prodos";
-        disk2prodos.Size = new Size(109, 29);
-        disk2prodos.TabIndex = 6;
-        disk2prodos.TabStop = true;
-        disk2prodos.Text = "PRODOS";
-        disk2prodos.UseVisualStyleBackColor = true;
-        // 
         // button_dsk2
         // 
-        button_dsk2.Location = new Point(758, 30);
+        button_dsk2.Location = new Point(759, 30);
         button_dsk2.Margin = new Padding(4, 5, 4, 5);
         button_dsk2.Name = "button_dsk2";
         button_dsk2.Size = new Size(107, 38);
@@ -170,18 +130,6 @@ partial class Form1
         button_dsk2.Text = "Select...";
         button_dsk2.UseVisualStyleBackColor = true;
         button_dsk2.Click += button_dsk2_Click;
-        // 
-        // disk2dos
-        // 
-        disk2dos.AutoSize = true;
-        disk2dos.Checked = true;
-        disk2dos.Location = new Point(877, 19);
-        disk2dos.Name = "disk2dos";
-        disk2dos.Size = new Size(74, 29);
-        disk2dos.TabIndex = 5;
-        disk2dos.TabStop = true;
-        disk2dos.Text = "DOS";
-        disk2dos.UseVisualStyleBackColor = true;
         // 
         // disk2
         // 
@@ -196,13 +144,13 @@ partial class Form1
         richTextBox1.Location = new Point(0, 0);
         richTextBox1.Margin = new Padding(0);
         richTextBox1.Name = "richTextBox1";
-        richTextBox1.Size = new Size(0, 0);
+        richTextBox1.Size = new Size(0, 1);
         richTextBox1.TabIndex = 7;
         richTextBox1.Text = "";
         // 
         // waveViewer1
         // 
-        waveViewer1.Location = new Point(978, 0);
+        waveViewer1.Location = new Point(979, 0);
         waveViewer1.Name = "waveViewer1";
         waveViewer1.SamplesPerPixel = 128;
         waveViewer1.Size = new Size(881, 295);
@@ -214,7 +162,7 @@ partial class Form1
         // 
         button1.Location = new Point(1004, 323);
         button1.Name = "button1";
-        button1.Size = new Size(112, 34);
+        button1.Size = new Size(111, 33);
         button1.TabIndex = 9;
         button1.Text = "button1";
         button1.UseVisualStyleBackColor = true;
@@ -224,7 +172,7 @@ partial class Form1
         // 
         button2.Location = new Point(1134, 325);
         button2.Name = "button2";
-        button2.Size = new Size(112, 34);
+        button2.Size = new Size(111, 33);
         button2.TabIndex = 10;
         button2.Text = "button2";
         button2.UseVisualStyleBackColor = true;
@@ -232,9 +180,9 @@ partial class Form1
         // 
         // button3
         // 
-        button3.Location = new Point(1265, 323);
+        button3.Location = new Point(1266, 323);
         button3.Name = "button3";
-        button3.Size = new Size(112, 34);
+        button3.Size = new Size(111, 33);
         button3.TabIndex = 11;
         button3.Text = "button3";
         button3.UseVisualStyleBackColor = true;
@@ -244,16 +192,31 @@ partial class Form1
         // 
         button4.Location = new Point(1400, 325);
         button4.Name = "button4";
-        button4.Size = new Size(112, 34);
+        button4.Size = new Size(111, 33);
         button4.TabIndex = 12;
         button4.Text = "button4";
         button4.UseVisualStyleBackColor = true;
+        // 
+        // btnClockAdjust
+        // 
+        btnClockAdjust.Location = new Point(130, 809);
+        btnClockAdjust.Name = "btnClockAdjust";
+        btnClockAdjust.Size = new Size(112, 34);
+        btnClockAdjust.TabIndex = 13;
+        btnClockAdjust.Text = "1Mhz";
+        btnClockAdjust.UseVisualStyleBackColor = true;
+        btnClockAdjust.Click += btnClockAdjust_Click;
+        // 
+        // openFileDialog2
+        // 
+        openFileDialog2.FileName = "openFileDialog1";
         // 
         // Form1
         // 
         AutoScaleDimensions = new SizeF(10F, 25F);
         AutoScaleMode = AutoScaleMode.Font;
-        ClientSize = new Size(1861, 1115);
+        ClientSize = new Size(1861, 1062);
+        Controls.Add(btnClockAdjust);
         Controls.Add(button4);
         Controls.Add(button3);
         Controls.Add(button2);
@@ -291,8 +254,6 @@ partial class Form1
     private Button button2;
     private Button button3;
     private Button button4;
-    private RadioButton disk1prodos;
-    private RadioButton disk1dos;
-    private RadioButton disk2prodos;
-    private RadioButton disk2dos;
+    private Button btnClockAdjust;
+    private OpenFileDialog openFileDialog2;
 }

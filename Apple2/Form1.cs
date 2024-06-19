@@ -40,6 +40,8 @@ public partial class Form1 : Form
     private DirectSoundOut output = null;
     private BlockAlignReductionStream stream = null;
 
+    private bool adjust1mhz = false;
+
     public Form1()
     {
         InitializeComponent();
@@ -51,8 +53,10 @@ public partial class Form1 : Form
         if (assemblyPath != null)
             assemblyPath += "/";
 
-        disk1.Text = assemblyPath + "roms/Apple Core 525 ProDOS RC2.dsk";
-        disk1prodos.Checked = true;
+        openFileDialog1.FileName = assemblyPath + "roms/Apple Core 525 ProDOS RC2.dsk";
+        string[] parts = openFileDialog1.FileName.Split('\\');
+        disk1.Text = parts[parts.Length-1];
+        openFileDialog2.FileName = "";
         PowerOn();
 
 
@@ -86,20 +90,20 @@ public partial class Form1 : Form
         memory.RegisterOverlay(new KeyboardOvl());
         memory.RegisterOverlay(new CpuSoftswitchesOvl());
         memory.RegisterOverlay(new SlotsSoftSwitchesOvl());
-        memory.RegisterOverlay(new EmptySlot1Ovl());
-        memory.RegisterOverlay(new EmptySlot2Ovl());
-        memory.RegisterOverlay(new EmptySlot3Ovl());
-        memory.RegisterOverlay(new EmptySlot4Ovl());
-        memory.RegisterOverlay(new EmptySlot5Ovl());
+        // memory.RegisterOverlay(new EmptySlot1Ovl());
+        // memory.RegisterOverlay(new EmptySlot2Ovl());
+        // memory.RegisterOverlay(new EmptySlot3Ovl());
+        // memory.RegisterOverlay(new EmptySlot4Ovl());
+        // memory.RegisterOverlay(new EmptySlot5Ovl());
         memory.RegisterOverlay(new DiskIISlot6Ovl());
-        memory.RegisterOverlay(new EmptySlot7Ovl());
+        // memory.RegisterOverlay(new EmptySlot7Ovl());
 
 
         memory.LoadChars(File.ReadAllBytes(assemblyPath + "roms/CharROM.bin"));
 
 
-        memory.drive1 = new DiskDrive(disk1.Text, memory, disk1dos.Checked);
-        memory.drive2 = new DiskDrive(disk2.Text, memory, disk2dos.Checked);
+        memory.drive1 = new DiskDrive(openFileDialog1.FileName, memory);
+        memory.drive2 = new DiskDrive(openFileDialog2.FileName, memory);
 
 
 
@@ -111,6 +115,8 @@ public partial class Form1 : Form
         richTextBox1.KeyPress += keyboard.OnKeyPress;
         richTextBox1.TextChanged += keyboard.Keyb_TextChanged;
 
+        
+
 
 
         cpu.Reset();
@@ -119,7 +125,7 @@ public partial class Form1 : Form
         {
             while (running)
             {
-                cpu.RunCycle();
+                cpu.RunCycle(adjust1mhz);
             }
         }));
 
@@ -135,7 +141,7 @@ public partial class Form1 : Form
                     }
                     catch { }
                 }
-                Thread.Sleep(10);
+                Thread.Sleep(20);
             }
         }));
 
@@ -171,17 +177,19 @@ public partial class Form1 : Form
     {
         if (openFileDialog1.ShowDialog() == DialogResult.OK)
         {
-            disk1.Text = openFileDialog1.FileName;
-            memory.drive1 = new DiskDrive(disk1.Text, memory, false);
+            string[] parts = openFileDialog1.FileName.Split('\\');
+            disk1.Text = parts[parts.Length-1];
+            memory.drive1 = new DiskDrive(openFileDialog1.FileName, memory);
             richTextBox1.Focus();
         }
     }
     private void button_dsk2_Click(object sender, EventArgs e)
     {
-        if (openFileDialog1.ShowDialog() == DialogResult.OK)
+        if (openFileDialog2.ShowDialog() == DialogResult.OK)
         {
-            disk2.Text = openFileDialog1.FileName;
-            memory.drive2 = new DiskDrive(disk2.Text, memory, true);
+            string[] parts = openFileDialog2.FileName.Split('\\');
+            disk2.Text = parts[parts.Length-1];
+            memory.drive2 = new DiskDrive(openFileDialog2.FileName, memory);
             richTextBox1.Focus();
         }
     }
@@ -226,6 +234,16 @@ public partial class Form1 : Form
         tone.frequency = tone.frequency + 200;
         stream = new BlockAlignReductionStream(tone);
         waveViewer1.WaveStream = stream;
+    }
+
+    private void btnClockAdjust_Click(object sender, EventArgs e)
+    {
+        adjust1mhz = !adjust1mhz;
+        if (adjust1mhz)
+            btnClockAdjust.Text = "Max";
+        else
+            btnClockAdjust.Text = "1Mhz";
+        richTextBox1.Focus();
     }
 }
 

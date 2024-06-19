@@ -23,7 +23,7 @@ namespace Runtime
     }
     public static class OpCodes 
     {
-        public static Dictionary<byte, OpCodePart> opCodeTable = new Dictionary<byte, OpCodePart>()
+        public static Dictionary<byte, OpCodePart?> opCodeTable = new Dictionary<byte, OpCodePart?>()
         {
             { 0x00, new OpCodePart("BRK")},
             { 0x01, new OpCodePart("ORA", Addressing.indirect, Register.X)},
@@ -41,6 +41,7 @@ namespace Runtime
             { 0x16, new OpCodePart("ASL", Addressing.zeropage, Register.X)},
             { 0x18, new OpCodePart("CLC")},
             { 0x19, new OpCodePart("ORA", Addressing.absolute, Register.Y)},
+            { 0x1a, null },
             { 0x1d, new OpCodePart("ORA", Addressing.absolute, Register.X)},
             { 0x1e, new OpCodePart("ASL", Addressing.absolute, Register.X)},
             { 0x20, new OpCodePart("JSR", Addressing.absolute)},
@@ -181,10 +182,7 @@ namespace Runtime
     
         public static OpCodePart? GetOpCode(byte opCode)
         {
-            if (opCodeTable.TryGetValue(opCode, out var op))
-                return op;
-            else 
-                return null;
+            return opCodeTable[opCode];
         }
     }
 
