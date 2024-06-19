@@ -3,16 +3,20 @@
   "WorkspaceRootPath": "C:\\Users\\luciano\\repos\\6502\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{1091685E-4702-48B5-B778-61B075440669}|Apple2\\Apple2.csproj|C:\\Users\\luciano\\repos\\6502\\apple2\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1091685E-4702-48B5-B778-61B075440669}|Apple2\\Apple2.csproj|solutionrelative:apple2\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|C:\\Users\\luciano\\repos\\6502\\runtime\\overlays\\cpusoftswitchesovl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|solutionrelative:runtime\\overlays\\cpusoftswitchesovl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|C:\\Users\\luciano\\repos\\6502\\runtime\\cpu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|solutionrelative:runtime\\cpu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|C:\\Users\\luciano\\repos\\6502\\runtime\\overlays\\slotssoftswitchesovl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|solutionrelative:runtime\\overlays\\slotssoftswitchesovl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1091685E-4702-48B5-B778-61B075440669}|Apple2\\Apple2.csproj|C:\\Users\\luciano\\repos\\6502\\apple2\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1091685E-4702-48B5-B778-61B075440669}|Apple2\\Apple2.csproj|solutionrelative:apple2\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|C:\\Users\\luciano\\repos\\6502\\runtime\\state.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -37,10 +41,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{1091685E-4702-48B5-B778-61B075440669}|Apple2\\Apple2.csproj|C:\\Users\\luciano\\repos\\6502\\apple2\\videogenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1091685E-4702-48B5-B778-61B075440669}|Apple2\\Apple2.csproj|solutionrelative:apple2\\videogenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|C:\\Users\\luciano\\repos\\6502\\runtime\\overlays\\cpusoftswitchesovl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}|Runtime\\Runtime.csproj|solutionrelative:runtime\\overlays\\cpusoftswitchesovl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -50,24 +50,24 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 0,
               "Title": "Form1.cs",
               "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Apple2\\Form1.cs",
               "RelativeDocumentMoniker": "Apple2\\Form1.cs",
               "ToolTip": "C:\\Users\\luciano\\repos\\6502\\Apple2\\Form1.cs",
               "RelativeToolTip": "Apple2\\Form1.cs",
-              "ViewState": "AQIAAKcAAAAAAAAAAAAcwLUAAABMAAAA",
+              "ViewState": "AQIAAE4AAAAAAAAAAAAUwFsAAAAKAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-06-18T16:59:25.388Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "DiskDrive.cs",
               "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Runtime\\DiskDrive.cs",
               "RelativeDocumentMoniker": "Runtime\\DiskDrive.cs",
@@ -79,7 +79,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "State.cs",
               "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Runtime\\State.cs",
               "RelativeDocumentMoniker": "Runtime\\State.cs",
@@ -91,20 +91,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "CPU.cs",
               "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Runtime\\CPU.cs",
               "RelativeDocumentMoniker": "Runtime\\CPU.cs",
               "ToolTip": "C:\\Users\\luciano\\repos\\6502\\Runtime\\CPU.cs",
               "RelativeToolTip": "Runtime\\CPU.cs",
-              "ViewState": "AQIAAD4AAAAAAAAAAAAQwE8AAAANAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABkAAAAiAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-05-18T19:58:44.883Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "SlotsSoftSwitchesOvl.cs",
               "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Runtime\\Overlays\\SlotsSoftSwitchesOvl.cs",
               "RelativeDocumentMoniker": "Runtime\\Overlays\\SlotsSoftSwitchesOvl.cs",
@@ -117,7 +117,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "RegisterFunctions.cs",
               "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Runtime\\Internal\\RegisterFunctions.cs",
               "RelativeDocumentMoniker": "Runtime\\Internal\\RegisterFunctions.cs",
@@ -129,7 +129,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "Memory.cs",
               "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Runtime\\Memory.cs",
               "RelativeDocumentMoniker": "Runtime\\Memory.cs",
@@ -141,7 +141,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
               "Title": "VideoGenerator.cs",
               "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Apple2\\VideoGenerator.cs",
               "RelativeDocumentMoniker": "Apple2\\VideoGenerator.cs",
@@ -153,7 +153,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "RegisterFunctions.cs",
               "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Runtime\\OpCodeProcessors\\RegisterFunctions.cs",
               "RelativeDocumentMoniker": "Runtime\\OpCodeProcessors\\RegisterFunctions.cs",
@@ -165,15 +165,16 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 1,
               "Title": "CpuSoftswitchesOvl.cs",
               "DocumentMoniker": "C:\\Users\\luciano\\repos\\6502\\Runtime\\Overlays\\CpuSoftswitchesOvl.cs",
               "RelativeDocumentMoniker": "Runtime\\Overlays\\CpuSoftswitchesOvl.cs",
               "ToolTip": "C:\\Users\\luciano\\repos\\6502\\Runtime\\Overlays\\CpuSoftswitchesOvl.cs",
               "RelativeToolTip": "Runtime\\Overlays\\CpuSoftswitchesOvl.cs",
-              "ViewState": "AQIAAAgAAAAAAAAAAAAAwA8AAAAdAAAA",
+              "ViewState": "AQIAABAAAAAAAAAAAAAQwBYAAABAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-07T13:28:59.025Z"
+              "WhenOpened": "2024-06-07T13:28:59.025Z",
+              "EditorCaption": ""
             }
           ]
         }

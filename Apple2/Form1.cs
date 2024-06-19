@@ -87,16 +87,9 @@ public partial class Form1 : Form
         memory.LoadROM(0xe000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftE000.rom"));
         memory.LoadROM(0xd800, File.ReadAllBytes(assemblyPath + "roms/ApplesoftD800.rom"));
         memory.LoadROM(0xd000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftD000.rom"));
-        memory.RegisterOverlay(new KeyboardOvl());
         memory.RegisterOverlay(new CpuSoftswitchesOvl());
         memory.RegisterOverlay(new SlotsSoftSwitchesOvl());
-        // memory.RegisterOverlay(new EmptySlot1Ovl());
-        // memory.RegisterOverlay(new EmptySlot2Ovl());
-        // memory.RegisterOverlay(new EmptySlot3Ovl());
-        // memory.RegisterOverlay(new EmptySlot4Ovl());
-        // memory.RegisterOverlay(new EmptySlot5Ovl());
         memory.RegisterOverlay(new DiskIISlot6Ovl());
-        // memory.RegisterOverlay(new EmptySlot7Ovl());
 
 
         memory.LoadChars(File.ReadAllBytes(assemblyPath + "roms/CharROM.bin"));

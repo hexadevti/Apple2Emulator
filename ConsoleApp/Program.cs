@@ -37,13 +37,13 @@ namespace ConsoleApp
             memory.RegisterOverlay(new KeyboardOvl());
             memory.RegisterOverlay(new CpuSoftswitchesOvl());
             memory.RegisterOverlay(new SlotsSoftSwitchesOvl());
-            memory.RegisterOverlay(new EmptySlot1Ovl());
-            memory.RegisterOverlay(new EmptySlot2Ovl());
-            memory.RegisterOverlay(new EmptySlot3Ovl());
-            memory.RegisterOverlay(new EmptySlot4Ovl());
-            memory.RegisterOverlay(new EmptySlot5Ovl());
+            // memory.RegisterOverlay(new EmptySlot1Ovl());
+            // memory.RegisterOverlay(new EmptySlot2Ovl());
+            // memory.RegisterOverlay(new EmptySlot3Ovl());
+            // memory.RegisterOverlay(new EmptySlot4Ovl());
+            // memory.RegisterOverlay(new EmptySlot5Ovl());
             memory.RegisterOverlay(new DiskIISlot6Ovl());
-            memory.RegisterOverlay(new EmptySlot7Ovl());
+            // memory.RegisterOverlay(new EmptySlot7Ovl());
 
             memory.drive1 = new DiskDrive(assemblyPath + "roms/ProDOS 1.2.dsk", memory);
             memory.drive2 = new DiskDrive(assemblyPath + "roms/EMPTY DOS33.dsk", memory);

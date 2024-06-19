@@ -244,10 +244,15 @@ public class Memory
 
     public byte ReadByte(ushort address)
     {
-        var overLay = GetOverlay(address);
         byte value;
-        if (overLay != null)
-            value = overLay.Read(address, this, state);
+        if (address >= 0xc000 && address <=0xd000)
+        {
+            var overLay = GetOverlay(address);
+            if (overLay != null)
+                value = overLay.Read(address, this, state);
+            else
+                value = ReadMemory(address);
+        }
         else
             value = ReadMemory(address);
         return value;
@@ -292,9 +297,14 @@ public class Memory
 
     public void Write(ushort address, byte value)
     {
-        var overLay = GetOverlay(address);
-        if (overLay != null)
-            overLay.Write(address, value, this);
+        if (address >= 0xc000 && address <=0xd000)
+        {
+            var overLay = GetOverlay(address);
+            if (overLay != null)
+                overLay.Write(address, value, this);
+            else
+                WriteMemory(address, value);
+        }
         else
             WriteMemory(address, value);
     }
