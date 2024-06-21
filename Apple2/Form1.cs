@@ -16,6 +16,7 @@ using NAudio.Wave;
 using System.Diagnostics;
 using System.Security;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
+using System;
 
 namespace Apple2;
 
@@ -40,8 +41,6 @@ public partial class Form1 : Form
     private DirectSoundOut output = null;
     private BlockAlignReductionStream stream = null;
 
-    private bool adjust1mhz = false;
-
     public Form1()
     {
         InitializeComponent();
@@ -53,11 +52,13 @@ public partial class Form1 : Form
         if (assemblyPath != null)
             assemblyPath += "/";
 
-        openFileDialog1.FileName = assemblyPath + "roms/Apple Core 525 ProDOS RC2.dsk";
+        openFileDialog1.FileName = assemblyPath + "roms/karateka.dsk";
         string[] parts = openFileDialog1.FileName.Split('\\');
-        disk1.Text = parts[parts.Length-1];
+        disk1.Text = parts[parts.Length - 1];
         openFileDialog2.FileName = "";
         PowerOn();
+        timerClockSpeed.Interval = 500;
+        timerClockSpeed.Start();
 
 
 
@@ -67,11 +68,6 @@ public partial class Form1 : Form
     public void PowerOn()
     {
 
-
-        waveViewer1.SamplesPerPixel = 10;
-        waveViewer1.AutoScroll = true;
-        waveViewer1.AutoSize = true;
-
         output = new DirectSoundOut();
 
 
@@ -79,6 +75,7 @@ public partial class Form1 : Form
 
 
         memory = new Memory(state);
+        memory.adjust1Mhz = true;
 
 
         memory.LoadROM(0xf800, File.ReadAllBytes(assemblyPath + "roms/ApplesoftF800.rom"));
@@ -99,7 +96,6 @@ public partial class Form1 : Form
         memory.drive2 = new DiskDrive(openFileDialog2.FileName, memory);
 
 
-
         cpu = new CPU(state, memory, false);
         Keyboard keyboard = new Keyboard(memory, state);
 
@@ -108,9 +104,6 @@ public partial class Form1 : Form
         richTextBox1.KeyPress += keyboard.OnKeyPress;
         richTextBox1.TextChanged += keyboard.Keyb_TextChanged;
 
-        
-
-
 
         cpu.Reset();
 
@@ -118,7 +111,7 @@ public partial class Form1 : Form
         {
             while (running)
             {
-                cpu.RunCycle(adjust1mhz);
+                cpu.RunCycle();
             }
         }));
 
@@ -138,22 +131,20 @@ public partial class Form1 : Form
             }
         }));
 
-        //threads.Add(Task.Run(() =>
-        //{
-        //    while (running)
-        //    {
-        //        if (memory.softswitches.SoundClick)
-        //        {
-        //            tone = new WaveTone(400, 1);
-        //            stream = new BlockAlignReductionStream(tone);
-        //            waveViewer1.WaveStream = stream;
-        //            output.Init(stream);
-        //            output.Play();
-        //            memory.softswitches.SoundClick = false;
-        //        }
-        //        Thread.Sleep(5);
-        //    }
-        //}));
+        threads.Add(Task.Run(() =>
+        {
+                WaveTone tone = new WaveTone(memory);
+                stream = new BlockAlignReductionStream(tone);
+                //waveViewer1.WaveStream = stream;
+                output.Init(stream);
+                output.Play();
+                while (running)
+                {
+                    Thread.Sleep(10);
+                }
+
+        }));
+
     }
 
     private void Form1_Shown(object? sender, EventArgs e)
@@ -161,17 +152,12 @@ public partial class Form1 : Form
         richTextBox1.Focus();
     }
 
-    private void Form1_Resize(object sender, System.EventArgs e)
-    {
-    }
-
-
     private void button_dsk1_Click(object sender, EventArgs e)
     {
         if (openFileDialog1.ShowDialog() == DialogResult.OK)
         {
             string[] parts = openFileDialog1.FileName.Split('\\');
-            disk1.Text = parts[parts.Length-1];
+            disk1.Text = parts[parts.Length - 1];
             memory.drive1 = new DiskDrive(openFileDialog1.FileName, memory);
             richTextBox1.Focus();
         }
@@ -181,7 +167,7 @@ public partial class Form1 : Form
         if (openFileDialog2.ShowDialog() == DialogResult.OK)
         {
             string[] parts = openFileDialog2.FileName.Split('\\');
-            disk2.Text = parts[parts.Length-1];
+            disk2.Text = parts[parts.Length - 1];
             memory.drive2 = new DiskDrive(openFileDialog2.FileName, memory);
             richTextBox1.Focus();
         }
@@ -204,62 +190,55 @@ public partial class Form1 : Form
         richTextBox1.Focus();
     }
 
-    WaveTone tone = new WaveTone(400, 1);
-
-
-    private void button1_Click(object sender, EventArgs e)
-    {
-        tone = new WaveTone(100, 1);
-        stream = new BlockAlignReductionStream(tone);
-        waveViewer1.WaveStream = stream;
-        output.Init(stream);
-        output.Play();
-    }
-
-    private void button2_Click(object sender, EventArgs e)
-    {
-        if (output != null) output.Stop();
-
-    }
-
-    private void button3_Click(object sender, EventArgs e)
-    {
-        tone.frequency = tone.frequency + 200;
-        stream = new BlockAlignReductionStream(tone);
-        waveViewer1.WaveStream = stream;
-    }
-
     private void btnClockAdjust_Click(object sender, EventArgs e)
     {
-        adjust1mhz = !adjust1mhz;
-        if (adjust1mhz)
+        memory.adjust1Mhz = !memory.adjust1Mhz;
+        if (memory.adjust1Mhz)
             btnClockAdjust.Text = "Max";
         else
             btnClockAdjust.Text = "1Mhz";
         richTextBox1.Focus();
     }
+
+    private void timerClockSpeed_Tick(object sender, EventArgs e)
+    {
+        lblClockSpeed.Text = (1000 / memory.clockSpeed).ToString("0.00") + " Mhz";
+    }
 }
 
 public class WaveTone : WaveStream
 {
+    Memory _memory;
+
+
     public double frequency { get; set; }
     private double amplitude;
     private double time;
-    public WaveTone(double f, double a)
+
+    private long clickCount;
+
+    private bool emptyStream = true;
+
+    private long click;
+
+    private long nextClick;
+
+
+    public WaveTone(Memory memory)
     {
-        this.time = 0;
-        this.frequency = f;
-        this.amplitude = a;
+        _memory = memory;
+        clickCount = 0;
+
     }
     public override WaveFormat WaveFormat
     {
         get
         {
-            return new WaveFormat(44100, 8, 1);
+            return new WaveFormat(88200, 8, 1);
         }
     }
 
-    public override long Length 
+    public override long Length
     {
         get
         {
@@ -269,19 +248,68 @@ public class WaveTone : WaveStream
 
     public override long Position { get; set; }
 
+    // public override int Read(byte[] buffer, int offset, int count)
+    // {
+    //     for (int i = 0; i < count; i++)
+    //     {
+    //         if (emptyStream && _memory.clickEvent.Any()) // cai a primeira vez e quando zera o buffer
+    //         {
+    //             click = _memory.clickEvent.Dequeue();
+    //             emptyStream = !_memory.clickEvent.Any();
+    //         }
+
+    //         if (!emptyStream)
+    //         {
+    //             var diff = _memory.clickEvent.Peek() - clickCount;
+    //             if (diff > 100000)
+    //             {
+    //                 clickCount = clickCount + diff;
+    //             }
+    //               //clickCount = clickCount + 2;
+
+    //         }
+
+    //         if (!emptyStream && clickCount >= click)
+    //         {
+    //             buffer[i] = 0xff;
+    //             click = _memory.clickEvent.Dequeue();
+    //             emptyStream = !_memory.clickEvent.Any();
+    //         }
+    //         else
+    //             buffer[i] = 0x0;
+
+    //          clickCount++;
+
+    //     }
+    //     return count;
+    // }
+
     public override int Read(byte[] buffer, int offset, int count)
     {
-        int samples = count; // / 2;
-        for (int i = 0; i < samples; i++)
+        for (int i = 0; i < count; i++)
         {
-            amplitude = amplitude * 0.9992f;
-            double sine = amplitude * Math.Sin(Math.PI * 2 * frequency * time);
-            time += 1.0 / 44100;
-            short truncated = (short)Math.Round(sine * (Math.Pow(2, 7) - 1));
-            buffer[i] = (byte)truncated;
-            //buffer[i * 2 + 1] = (byte)((truncated & 0xff00) >> 8);
-        }
+            if (_memory.clickEvent.Any())
+            {
+                var diff = _memory.clickEvent.Peek() - clickCount;
+                if (diff > 100000)
+                {
+                    clickCount = clickCount + diff;
+                }
+                if (clickCount >= click)
+                {
+                    click = _memory.clickEvent.Dequeue();
+                    buffer[i] = 0xff;
+                }
+                else
+                    buffer[i] = 0x0;
+            }
+            else
+                buffer[i] = 0x0;
 
+            clickCount++;
+            clickCount++;
+            clickCount++;
+        }
         return count;
     }
 }

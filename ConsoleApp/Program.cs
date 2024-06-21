@@ -60,7 +60,7 @@ namespace ConsoleApp
             {
                 while (running)
                 {
-                    cpu.RunCycle(false);
+                    cpu.RunCycle();
                 }
             }));
             threads.Add(Task.Run(() =>

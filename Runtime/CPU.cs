@@ -6,6 +6,8 @@ using Runtime.OpCodeProcessors;
 using Runtime.Overlays;
 
 
+
+
 namespace Runtime;
 
 public class CPU
@@ -13,9 +15,6 @@ public class CPU
 
     public State state { get; set; }
     public Memory memory { get; set; }
-
-
-
 
     public bool debug = false;
 
@@ -35,9 +34,11 @@ public class CPU
     public DateTime last1mhz = DateTime.MinValue;
     public DateTime actual1mhz = DateTime.MinValue;
 
-    public int delayCycle = 0;
+    private int partClock = 1;
 
-    public bool adjust1Mhz = false;
+    private int actualPart = 0;
+
+    
 
 
     public CPU(State state, Memory memory, bool debug = false)
@@ -53,6 +54,7 @@ public class CPU
             Graphics_Text = false
         };
         last1mhz = DateTime.Now;
+        memory.soundClickCount = 0;
     }
 
     public void Reset()
@@ -60,6 +62,7 @@ public class CPU
         lastPC = 0;
         state.PC = 0;
         state.PC = memory.ReadAddressLLHH(0xfffc) ?? 0;
+        memory.soundClickCount = 0;
     }
 
     public void InitConsole()
@@ -76,33 +79,40 @@ public class CPU
         {
             PCCount = 0;
             TimeSpan cycle = DateTime.Now - last1mhz;
-            if (adjust1Mhz)
+            if (memory.adjust1Mhz)
             {
                 if (cycle.TotalMilliseconds < 1000)
-                    delayCycle += Convert.ToInt16((1000 - cycle.TotalMilliseconds) / 2);
+                    memory.delayCycle += Convert.ToInt16((1000 - cycle.TotalMilliseconds) / 2);
                 else
                 {
-                    delayCycle -= Convert.ToInt16((cycle.TotalMilliseconds - 1000) / 2);
-                    if (delayCycle < 0)
-                        delayCycle = 0;
+                    memory.delayCycle -= Convert.ToInt16((cycle.TotalMilliseconds - 1000) / 2);
+                    if (memory.delayCycle < 0)
+                        memory.delayCycle = 0;
                 }
             }
             else
-                delayCycle = 0;
+                memory.delayCycle = 0;
             last1mhz = actual1mhz = DateTime.Now;
-            Console.WriteLine(cycle.TotalMilliseconds);
+            memory.clockSpeed = cycle.TotalMilliseconds;
         }
         PCCount++;
-        for (int i = 0; i < delayCycle; i++)
+        for (int i = 0; i < memory.delayCycle; i++)
         {
             var a = i;
         }
+        
+        actualPart++;
+        if (actualPart > partClock)
+        {
+            memory.soundClickCount++;
+            actualPart = 0;
+        }
+        
 
     }
 
-    public void RunCycle(bool adjust1mhz)
+    public void RunCycle()
     {
-        adjust1Mhz = adjust1mhz;
         byte instruction = memory.ReadByte(state.PC);
         OpCodePart? opCodePart = OpCodes.GetOpCode(instruction);
         ushort? refAddress = null;

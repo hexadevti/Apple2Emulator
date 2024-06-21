@@ -32,7 +32,13 @@ public class CpuSoftswitchesOvl : IOverLay
         if (address == 0xc010)
             memory.KeyPressed = b;
         if (address == 0xc030)
-            memory.softswitches.SoundClick = true;
+        {
+            memory.clickEvent.Enqueue(memory.soundClickCount);
+            memory.clickEvent.Enqueue(memory.soundClickCount);
+            memory.clickEvent.Enqueue(memory.soundClickCount);
+            memory.clickEvent.Enqueue(memory.soundClickCount);
+            memory.clickEvent.Enqueue(memory.soundClickCount);
+        }
         if (address == 0xc050)
             memory.softswitches.Graphics_Text = true;
         if (address == 0xc051)

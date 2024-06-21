@@ -121,6 +121,9 @@
     <value>24, 22</value>
   </metadata>
   <metadata name="openFileDialog2.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>242, 28</value>
+    <value>145, 26</value>
+  </metadata>
+  <metadata name="timerClockSpeed.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>270, 30</value>
   </metadata>
 </root>

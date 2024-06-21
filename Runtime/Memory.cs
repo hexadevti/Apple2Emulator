@@ -9,13 +9,15 @@ namespace Runtime;
 public class Memory
 {
     public object displayLock = new object();
-    public object cpuLock = new object();
-    public const ushort _ResetVector = 65532;
-    public const ushort _IRQVector = 0xFFFE;
-    private const byte ZeroByte = (byte)0;
+
+    public object soundLock = new object();
+    
     private readonly IList<IOverLay> overlays;
     public Dictionary<byte, bool[,]> charSet = new Dictionary<byte, bool[,]>();
+    public bool adjust1Mhz = false;
+    public int delayCycle = 0;
 
+    public double clockSpeed = 0;
     public byte[] baseRAM = new byte[0xc000];
     public byte[] ROM = new byte[0x4000];
     public byte[] extendedRAM = new byte[0x800];
@@ -35,6 +37,10 @@ public class Memory
     public bool UpdateScreen { get; set; }
 
     public State state { get; set; }
+
+    public long soundClickCount { get; set; }
+
+    public Queue<long> clickEvent = new Queue<long>(1000000);
     public Memory(State state)
     {
         overlays = new List<IOverLay>();
@@ -313,8 +319,8 @@ public class Memory
     {
         var bytes = new byte[]
         {
-            ReadByte(_IRQVector),
-            ReadByte(_IRQVector + 1)
+            ReadByte(0xFFFE),
+            ReadByte(0xFFFE + 1)
         };
 
         return BitConverter.ToUInt16(bytes);
@@ -363,3 +369,4 @@ public class Softswitches
 
 
 }
+

@@ -40,7 +40,6 @@ namespace Runtime
             { 0x16, new OpCodePart("ASL", Addressing.zeropage, Register.X)},
             { 0x18, new OpCodePart("CLC")},
             { 0x19, new OpCodePart("ORA", Addressing.absolute, Register.Y)},
-            { 0x1a, null },
             { 0x1d, new OpCodePart("ORA", Addressing.absolute, Register.X)},
             { 0x1e, new OpCodePart("ASL", Addressing.absolute, Register.X)},
             { 0x20, new OpCodePart("JSR", Addressing.absolute)},
@@ -56,7 +55,6 @@ namespace Runtime
             { 0x2e, new OpCodePart("ROL", Addressing.absolute)},
             { 0x30, new OpCodePart("BMI", Addressing.relative)},
             { 0x31, new OpCodePart("AND", Addressing.indirect, Register.Y)},
-            { 0x32, null },
             { 0x35, new OpCodePart("AND", Addressing.zeropage, Register.X)},
             { 0x36, new OpCodePart("ROL", Addressing.zeropage, Register.X)},
             { 0x38, new OpCodePart("SEC")},
@@ -77,7 +75,6 @@ namespace Runtime
             { 0x51, new OpCodePart("EOR", Addressing.indirect, Register.Y)},
             { 0x55, new OpCodePart("EOR", Addressing.zeropage, Register.X)},
             { 0x56, new OpCodePart("LSR", Addressing.zeropage, Register.X)},
-            { 0x57, null},
             { 0x58, new OpCodePart("CLI")},
             { 0x59, new OpCodePart("EOR", Addressing.absolute, Register.Y)},
             { 0x5d, new OpCodePart("EOR", Addressing.absolute, Register.X)},
@@ -98,10 +95,8 @@ namespace Runtime
             { 0x76, new OpCodePart("ROR", Addressing.zeropage, Register.X)},
             { 0x78, new OpCodePart("SEI")},
             { 0x79, new OpCodePart("ADC", Addressing.absolute, Register.Y)},
-            { 0x7b, null },
             { 0x7d, new OpCodePart("ADC", Addressing.absolute, Register.X)},
             { 0x7e, new OpCodePart("ROR", Addressing.absolute, Register.X)},
-            { 0x80, null },
             { 0x81, new OpCodePart("STA", Addressing.indirect, Register.X)},
             { 0x84, new OpCodePart("STY", Addressing.zeropage)},
             { 0x85, new OpCodePart("STA", Addressing.zeropage)},
@@ -129,7 +124,6 @@ namespace Runtime
             { 0xa8, new OpCodePart("TAY")},
             { 0xa9, new OpCodePart("LDA", Addressing.immediate)},
             { 0xaa, new OpCodePart("TAX")},
-            { 0xab, null},
             { 0xac, new OpCodePart("LDY", Addressing.absolute)},
             { 0xad, new OpCodePart("LDA", Addressing.absolute)},
             { 0xae, new OpCodePart("LDX", Addressing.absolute)},
@@ -161,7 +155,6 @@ namespace Runtime
             { 0xd6, new OpCodePart("DEC", Addressing.zeropage, Register.X)},
             { 0xd8, new OpCodePart("CLD")},
             { 0xd9, new OpCodePart("CMP", Addressing.absolute, Register.Y)},
-            { 0xdb, null},
             { 0xdd, new OpCodePart("CMP", Addressing.absolute, Register.X)},
             { 0xde, new OpCodePart("DEC", Addressing.absolute, Register.X)},
             { 0xe0, new OpCodePart("CPX", Addressing.immediate)},
@@ -187,7 +180,16 @@ namespace Runtime
     
         public static OpCodePart? GetOpCode(byte opCode)
         {
-            return opCodeTable[opCode];
+            OpCodePart? ret = null;
+            try
+            {
+                ret = opCodeTable[opCode];
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("OpCode: " + opCode.ToString("X2") + " not found.");
+            }
+            return ret;
         }
     }
 
