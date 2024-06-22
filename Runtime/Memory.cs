@@ -28,11 +28,11 @@ public class Memory
 
     public byte KeyPressed { get; set; }
 
-    public Softswitches softswitches { get; set; }
+    public Softswitches softswitches = new Softswitches();
 
-    public DiskDrive drive1 { get; set; }
+    public DiskDrive? drive1 { get; set; }
 
-    public DiskDrive drive2 { get; set; }
+    public DiskDrive? drive2 { get; set; }
 
     public bool UpdateScreen { get; set; }
 

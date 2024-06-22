@@ -36,7 +36,7 @@ public class CPU
 
     private int actualPart = 0;
 
-    
+
 
 
     public CPU(State state, Memory memory, bool debug = false)
@@ -79,11 +79,11 @@ public class CPU
             TimeSpan cycle = DateTime.Now - last1mhz;
             if (memory.adjust1Mhz)
             {
-                if (cycle.TotalMilliseconds < 1000)
-                    memory.delayCycle += Convert.ToInt16((1000 - cycle.TotalMilliseconds) / 2);
+                if (cycle.TotalMilliseconds < 2000)
+                    memory.delayCycle += Convert.ToInt16((2000 - cycle.TotalMilliseconds) / 2);
                 else
                 {
-                    memory.delayCycle -= Convert.ToInt16((cycle.TotalMilliseconds - 1000) / 2);
+                    memory.delayCycle -= Convert.ToInt16((cycle.TotalMilliseconds - 2000) / 2);
                     if (memory.delayCycle < 0)
                         memory.delayCycle = 0;
                 }
@@ -94,19 +94,21 @@ public class CPU
             memory.clockSpeed = cycle.TotalMilliseconds;
         }
         PCCount++;
-        for (int i = 0; i < 650; i++)
+        for (int i = 0; i < memory.delayCycle; i++) // 650 é o mais proximo
         {
             var a = i;
         }
-        
-        if (actualPart > 5)
-        {
-            memory.clickEvent.Enqueue(false);
-            actualPart = 0;
-        }
-        
-        actualPart++;
 
+        if (memory.adjust1Mhz)
+        {
+            if (actualPart > 5) // 5 é o ideal
+            {
+                memory.clickEvent.Enqueue(false);
+                actualPart = 0;
+            }
+
+            actualPart++;
+        }
     }
 
     public void RunCycle()

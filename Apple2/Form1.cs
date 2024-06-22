@@ -22,24 +22,15 @@ namespace Apple2;
 
 public partial class Form1 : Form
 {
-    private Memory memory { get; set; }
-
-    private CPU cpu { get; set; }
-
+    public Memory? memory { get; set; }
+    public CPU? cpu { get; set; }
     Runtime.State state = new Runtime.State();
-
-
-
     bool running = true;
-
     string? assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-
     List<Task> threads = new List<Task>();
-
     int pixelSize = 2;
-
-    private DirectSoundOut output = null;
-    private BlockAlignReductionStream stream = null;
+    private DirectSoundOut output = new DirectSoundOut();
+    public BlockAlignReductionStream? stream;
 
     public Form1()
     {
@@ -68,7 +59,6 @@ public partial class Form1 : Form
     public void PowerOn()
     {
 
-        output = new DirectSoundOut();
 
 
         running = true;
@@ -76,6 +66,7 @@ public partial class Form1 : Form
 
         memory = new Memory(state);
         memory.adjust1Mhz = true;
+        btnClockAdjust.Text = "Max";
 
 
         memory.LoadROM(0xf800, File.ReadAllBytes(assemblyPath + "roms/ApplesoftF800.rom"));
@@ -133,14 +124,17 @@ public partial class Form1 : Form
 
         threads.Add(Task.Run(() =>
         {
-                WaveTone tone = new WaveTone(memory);
-                stream = new BlockAlignReductionStream(tone);
-                output.Init(stream);
-                output.Play();
-                while (running)
-                {
-                    Thread.Sleep(10);
-                }
+            WaveTone tone = new WaveTone(memory);
+            stream = new BlockAlignReductionStream(tone);
+            output.Init(stream);
+            output.Play();
+            while (running)
+            {
+                Thread.Sleep(50);
+            }
+            output.Dispose();
+            stream.Dispose();
+            tone.Dispose();
 
         }));
 
@@ -157,7 +151,8 @@ public partial class Form1 : Form
         {
             string[] parts = openFileDialog1.FileName.Split('\\');
             disk1.Text = parts[parts.Length - 1];
-            memory.drive1 = new DiskDrive(openFileDialog1.FileName, memory);
+            if (memory != null)
+                memory.drive1 = new DiskDrive(openFileDialog1.FileName, memory);
             richTextBox1.Focus();
         }
     }
@@ -167,7 +162,8 @@ public partial class Form1 : Form
         {
             string[] parts = openFileDialog2.FileName.Split('\\');
             disk2.Text = parts[parts.Length - 1];
-            memory.drive2 = new DiskDrive(openFileDialog2.FileName, memory);
+            if (memory != null)
+                memory.drive2 = new DiskDrive(openFileDialog2.FileName, memory);
             richTextBox1.Focus();
         }
     }
@@ -191,17 +187,21 @@ public partial class Form1 : Form
 
     private void btnClockAdjust_Click(object sender, EventArgs e)
     {
-        memory.adjust1Mhz = !memory.adjust1Mhz;
-        if (memory.adjust1Mhz)
-            btnClockAdjust.Text = "Max";
-        else
-            btnClockAdjust.Text = "1Mhz";
+        if (memory != null)
+        {
+            memory.adjust1Mhz = !memory.adjust1Mhz;
+            if (memory.adjust1Mhz)
+                btnClockAdjust.Text = "Max";
+            else
+                btnClockAdjust.Text = "1Mhz";
+        }
         richTextBox1.Focus();
     }
 
     private void timerClockSpeed_Tick(object sender, EventArgs e)
     {
-        lblClockSpeed.Text = (1000 / memory.clockSpeed).ToString("0.00") + " Mhz";
+        if (memory != null)
+            lblClockSpeed.Text = (1000 / memory.clockSpeed * 2).ToString("0.00") + " Mhz";
     }
 }
 
@@ -209,25 +209,13 @@ public class WaveTone : WaveStream
 {
     Memory _memory;
 
-
     public double frequency { get; set; }
     private double amplitude;
     private double time;
 
-    private long clickCount;
-
-    private bool emptyStream = true;
-
-    private long click;
-
-    private long nextClick;
-
-
     public WaveTone(Memory memory)
     {
         _memory = memory;
-        clickCount = 0;
-
     }
     public override WaveFormat WaveFormat
     {
