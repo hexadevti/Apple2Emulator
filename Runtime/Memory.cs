@@ -40,7 +40,7 @@ public class Memory
 
     public long soundClickCount { get; set; }
 
-    public Queue<long> clickEvent = new Queue<long>(1000000);
+    public Queue<bool> clickEvent = new Queue<bool>(1000000);
     public Memory(State state)
     {
         overlays = new List<IOverLay>();

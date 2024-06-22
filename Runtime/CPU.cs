@@ -34,8 +34,6 @@ public class CPU
     public DateTime last1mhz = DateTime.MinValue;
     public DateTime actual1mhz = DateTime.MinValue;
 
-    private int partClock = 1;
-
     private int actualPart = 0;
 
     
@@ -68,7 +66,7 @@ public class CPU
     public void InitConsole()
     {
         Console.CursorVisible = false;
-        Console.WindowHeight = 700;
+        Console.WindowHeight = 750;
     }
 
     public void IncPC()
@@ -96,18 +94,18 @@ public class CPU
             memory.clockSpeed = cycle.TotalMilliseconds;
         }
         PCCount++;
-        for (int i = 0; i < memory.delayCycle; i++)
+        for (int i = 0; i < 650; i++)
         {
             var a = i;
         }
         
-        actualPart++;
-        if (actualPart > partClock)
+        if (actualPart > 5)
         {
-            memory.soundClickCount++;
+            memory.clickEvent.Enqueue(false);
             actualPart = 0;
         }
         
+        actualPart++;
 
     }
 

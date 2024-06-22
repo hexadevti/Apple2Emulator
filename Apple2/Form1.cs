@@ -135,7 +135,6 @@ public partial class Form1 : Form
         {
                 WaveTone tone = new WaveTone(memory);
                 stream = new BlockAlignReductionStream(tone);
-                //waveViewer1.WaveStream = stream;
                 output.Init(stream);
                 output.Play();
                 while (running)
@@ -248,67 +247,11 @@ public class WaveTone : WaveStream
 
     public override long Position { get; set; }
 
-    // public override int Read(byte[] buffer, int offset, int count)
-    // {
-    //     for (int i = 0; i < count; i++)
-    //     {
-    //         if (emptyStream && _memory.clickEvent.Any()) // cai a primeira vez e quando zera o buffer
-    //         {
-    //             click = _memory.clickEvent.Dequeue();
-    //             emptyStream = !_memory.clickEvent.Any();
-    //         }
-
-    //         if (!emptyStream)
-    //         {
-    //             var diff = _memory.clickEvent.Peek() - clickCount;
-    //             if (diff > 100000)
-    //             {
-    //                 clickCount = clickCount + diff;
-    //             }
-    //               //clickCount = clickCount + 2;
-
-    //         }
-
-    //         if (!emptyStream && clickCount >= click)
-    //         {
-    //             buffer[i] = 0xff;
-    //             click = _memory.clickEvent.Dequeue();
-    //             emptyStream = !_memory.clickEvent.Any();
-    //         }
-    //         else
-    //             buffer[i] = 0x0;
-
-    //          clickCount++;
-
-    //     }
-    //     return count;
-    // }
-
     public override int Read(byte[] buffer, int offset, int count)
     {
-        for (int i = 0; i < count; i++)
+        for (int i = 0; i < buffer.Length; i++)
         {
-            if (_memory.clickEvent.Any())
-            {
-                var diff = _memory.clickEvent.Peek() - clickCount;
-                if (diff > 100000)
-                {
-                    clickCount = clickCount + diff;
-                }
-                if (clickCount >= click)
-                {
-                    click = _memory.clickEvent.Dequeue();
-                    buffer[i] = 0xff;
-                }
-                else
-                    buffer[i] = 0x0;
-            }
-            else
-                buffer[i] = 0x0;
-
-            clickCount++;
-            clickCount++;
-            clickCount++;
+            buffer[i] = (byte)(_memory.clickEvent.Any() && _memory.clickEvent.Dequeue() ? 0xff : 0x00);
         }
         return count;
     }
