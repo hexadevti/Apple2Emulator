@@ -9,8 +9,6 @@ namespace Runtime;
 public class Memory
 {
     public object displayLock = new object();
-
-    public object soundLock = new object();
     
     private readonly IList<IOverLay> overlays;
     public Dictionary<byte, bool[,]> charSet = new Dictionary<byte, bool[,]>();
@@ -38,7 +36,6 @@ public class Memory
 
     public State state { get; set; }
 
-    public long soundClickCount { get; set; }
 
     public Queue<bool> clickEvent = new Queue<bool>(1000000);
     public Memory(State state)

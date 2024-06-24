@@ -43,7 +43,7 @@ public partial class Form1 : Form
         if (assemblyPath != null)
             assemblyPath += "/";
 
-        openFileDialog1.FileName = assemblyPath + "roms/karateka.dsk";
+        openFileDialog1.FileName = assemblyPath + "roms/teste.dsk";
         string[] parts = openFileDialog1.FileName.Split('\\');
         disk1.Text = parts[parts.Length - 1];
         openFileDialog2.FileName = "";
@@ -58,16 +58,11 @@ public partial class Form1 : Form
 
     public void PowerOn()
     {
-
-
-
         running = true;
-
 
         memory = new Memory(state);
         memory.adjust1Mhz = true;
         btnClockAdjust.Text = "Max";
-
 
         memory.LoadROM(0xf800, File.ReadAllBytes(assemblyPath + "roms/ApplesoftF800.rom"));
         memory.LoadROM(0xf000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftF000.rom"));
@@ -78,25 +73,15 @@ public partial class Form1 : Form
         memory.RegisterOverlay(new CpuSoftswitchesOvl());
         memory.RegisterOverlay(new SlotsSoftSwitchesOvl());
         memory.RegisterOverlay(new DiskIISlot6Ovl());
-
-
         memory.LoadChars(File.ReadAllBytes(assemblyPath + "roms/CharROM.bin"));
-
-
         memory.drive1 = new DiskDrive(openFileDialog1.FileName, memory);
         memory.drive2 = new DiskDrive(openFileDialog2.FileName, memory);
-
-
-        cpu = new CPU(state, memory, false);
-        Keyboard keyboard = new Keyboard(memory, state);
-
-
+        cpu = new CPU(state, memory);
+        Keyboard keyboard = new Keyboard(memory, cpu);
         richTextBox1.KeyDown += keyboard.OnKeyDown;
         richTextBox1.KeyPress += keyboard.OnKeyPress;
         richTextBox1.TextChanged += keyboard.Keyb_TextChanged;
 
-
-        cpu.Reset();
 
         threads.Add(Task.Run(() =>
         {
@@ -106,6 +91,8 @@ public partial class Form1 : Form
             }
         }));
 
+        cpu.Reset();
+        
         threads.Add(Task.Run(() =>
         {
             while (running)
@@ -132,9 +119,6 @@ public partial class Form1 : Form
             {
                 Thread.Sleep(50);
             }
-            output.Dispose();
-            stream.Dispose();
-            tone.Dispose();
 
         }));
 
@@ -239,7 +223,14 @@ public class WaveTone : WaveStream
     {
         for (int i = 0; i < buffer.Length; i++)
         {
-            buffer[i] = (byte)(_memory.clickEvent.Any() && _memory.clickEvent.Dequeue() ? 0xff : 0x00);
+            if (_memory.clickEvent.Any())
+                buffer[i] = (byte)(_memory.clickEvent.Dequeue() ? 0xff : 0x00);
+            else
+            {
+                buffer[i] = 0x00;
+                
+            }
+
         }
         return count;
     }

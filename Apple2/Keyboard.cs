@@ -8,14 +8,15 @@ namespace Apple2;
 public class Keyboard
 {
     public Runtime.Memory memory { get; set; }
-    public State state { get; set; }
+
+    private CPU cpu { get; set;}
 
     private List<char> buffer = new List<char>();
 
-    public Keyboard(Runtime.Memory memory, State state)
+    public Keyboard(Memory memory, CPU cpu)
     {
         this.memory = memory;
-        this.state = state;
+        this.cpu = cpu;
     }
 
     public void OnKeyPress(object? sender, KeyPressEventArgs e)
@@ -33,8 +34,8 @@ public class Keyboard
             switch (e.KeyCode)
             {
                 case Keys.F12:
-                    Thread.Sleep(100);
-                    state.PC = 0;
+                    e.Handled = true;
+                    cpu.Reset();
                     break;
                 case Keys.V:
                     return;
