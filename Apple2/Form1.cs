@@ -61,7 +61,7 @@ public partial class Form1 : Form
         running = true;
 
         memory = new Memory(state);
-        memory.adjust1Mhz = true;
+        memory.adjust1Mhz = false;
         btnClockAdjust.Text = "Max";
 
         memory.LoadROM(0xf800, File.ReadAllBytes(assemblyPath + "roms/ApplesoftF800.rom"));
@@ -85,14 +85,19 @@ public partial class Form1 : Form
 
         threads.Add(Task.Run(() =>
         {
-            WaveTone tone = new WaveTone(memory);
-            stream = new BlockAlignReductionStream(tone);
-            output.Init(stream);
-            output.Play();
-            while (running)
+            if (memory.adjust1Mhz)
             {
-                memory.softswitches.SoundClick = false;
-                Thread.Sleep(100);
+
+
+                WaveTone tone = new WaveTone(memory);
+                stream = new BlockAlignReductionStream(tone);
+                output.Init(stream);
+                output.Play();
+                while (running)
+                {
+                    //memory.softswitches.SoundClick = false;
+                    Thread.Sleep(100);
+                }
             }
         }));
 
@@ -123,7 +128,7 @@ public partial class Form1 : Form
             memory.cpuCycles = 0;
             int soundCycles = 0;
             Stopwatch sw2;
-            float cycleTotalTime = 2f;
+            float cycleTotalTime = 2.5f;
 
             Stopwatch sw = Stopwatch.StartNew();
             for (int i = 0; i < 100000000; i++)
@@ -136,63 +141,63 @@ public partial class Form1 : Form
             //Thread.Sleep(5000);
             while (running)
             {
-
-                sw2 = Stopwatch.StartNew();
-                sw = Stopwatch.StartNew();
-                cpu.deleyloops = cycleTotalTime * microsecondLoops / 2;
-                cpu.RunCycle();
-                sw.Stop();
-
-                double elepsedCycleTime = (cycleTotalTime - sw.Elapsed.TotalMicroseconds) * microsecondLoops;
-
-                for (int i = 0; i < (elepsedCycleTime > 0 ? elepsedCycleTime : 0); i++)
-                    ;
-                sw2.Stop();
-
-                //Console.WriteLine(" "+ sw2.Elapsed.TotalMicroseconds.ToString("000.0"));
-
-
-
-                if (soundCycles > 6)
+                if (memory.adjust1Mhz)
                 {
-                    countFreq++;
+                    sw2 = Stopwatch.StartNew();
+                    sw = Stopwatch.StartNew();
+                    cpu.deleyloops = cycleTotalTime * microsecondLoops / 2;
+                    cpu.RunCycle();
+                    sw.Stop();
 
-                    if (memory.softswitches.SoundClick)
+                    double elepsedCycleTime = (cycleTotalTime - sw.Elapsed.TotalMicroseconds) * microsecondLoops;
+
+                    for (int i = 0; i < (elepsedCycleTime > 0 ? elepsedCycleTime : 0); i++)
+                        ;
+                    sw2.Stop();
+
+                    //Console.WriteLine(" "+ sw2.Elapsed.TotalMicroseconds.ToString("000.0"));
+
+
+
+                    if (soundCycles > 5)
                     {
-                        memory.clickEvent.Enqueue(0xff);
+                        countFreq++;
+
+                        if (memory.softswitches.SoundClick)
+                        {
+                            memory.clickEvent.Enqueue(0x80);
+                        }
+                        else
+                        {
+                            memory.clickEvent.Enqueue(0);
+                        }
+                        // Sound routine
+
+                        TimeSpan delta2 = DateTime.Now - countTime;
+                        if (delta2.TotalMilliseconds >= 1000)
+                        {
+                            Console.WriteLine("Sound Freq = " + countFreq + " cpu Freq = "
+                            + memory.cpuCycles + " Empty Queue = " + memory.EmptyQueue);
+
+                            countFreq = 0;
+                            countTime = DateTime.Now;
+                            memory.cpuCycles = 0;
+                            memory.EmptyQueue = 0;
+                        }
+                        soundCycles = 0;
                     }
                     else
                     {
-                        memory.clickEvent.Enqueue(0);
+                        soundCycles++;
                     }
-                    // Sound routine
-
-                    TimeSpan delta2 = DateTime.Now - countTime;
-                    if (delta2.TotalMilliseconds >= 1000)
-                    {
-                        Console.WriteLine("Sound Freq = " + countFreq + " cpu Freq = "
-                        + memory.cpuCycles + " Empty Queue = " + memory.EmptyQueue
-                        + " LoopCount = " + memory.loopCount);
-
-                        // if (memory.EmptyQueue > 20000)
-                        //     memory.loopCount -= 100;
-                        // else if (memory.EmptyQueue < 10000)
-                        //     memory.loopCount += 100;
 
 
-                        countFreq = 0;
-                        countTime = DateTime.Now;
-                        memory.cpuCycles = 0;
-                        memory.EmptyQueue = 0;
-                    }
-                    soundCycles = 0;
                 }
                 else
                 {
-                    soundCycles++;
+                    cpu.deleyloops = 0;
+                    cpu.RunCycle();
                 }
-
-
             }
 
         }));
@@ -273,7 +278,6 @@ public class WaveTone : WaveStream
     public WaveTone(Memory memory)
     {
         _memory = memory;
-        _memory.loopCount = 3520;
     }
     public override WaveFormat WaveFormat
     {

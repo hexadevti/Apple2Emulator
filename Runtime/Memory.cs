@@ -41,8 +41,7 @@ public class Memory
 
     public int cpuCycles { get; set; }
     public int EmptyQueue { get; set; }
-    public int loopCount { get; set; }
-
+    
     public double microsecondLoops { get; set; }
     public Memory(State state)
     {
