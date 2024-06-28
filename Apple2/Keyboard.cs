@@ -37,6 +37,10 @@ public class Keyboard
                     e.Handled = true;
                     cpu.Reset();
                     break;
+                case Keys.F5:
+                    e.Handled = true;
+                    
+                    break;
                 case Keys.V:
                     return;
                 default:

@@ -20,6 +20,8 @@ public class CPU
     public DateTime last1mhz = DateTime.MinValue;
     public DateTime actual1mhz = DateTime.MinValue;
 
+    public double deleyloops = 0;
+
     private int actualPart = 0;
 
     public CPU(State state, Memory memory)
@@ -37,46 +39,14 @@ public class CPU
 
     public void IncPC()
     {
+
         lastPC = state.PC;
         state.PC++;
-        var speedAdjust = 1500; // ClockDelay
-        var soundAdjust = 5; // Silent Buffer Coeficient
-        if (PCCount == 1000000)
-        {
-            PCCount = 0;
-            TimeSpan cycle = DateTime.Now - last1mhz;
-            if (memory.adjust1Mhz)
-            {
-                if (cycle.TotalMilliseconds < speedAdjust)
-                    memory.delayCycle += Convert.ToInt16((speedAdjust - cycle.TotalMilliseconds) / 2);
-                else
-                {
-                    memory.delayCycle -= Convert.ToInt16((cycle.TotalMilliseconds - speedAdjust) / 2);
-                    if (memory.delayCycle < 0)
-                        memory.delayCycle = 0;
-                }
-            }
-            else
-                memory.delayCycle = 0;
-            last1mhz = actual1mhz = DateTime.Now;
-            memory.clockSpeed = cycle.TotalMilliseconds;
-        }
-        PCCount++;
-        for (int i = 0; i < memory.delayCycle; i++) // 650 é o mais proximo
-        {
-            var a = i;
-        }
+        memory.cpuCycles++;
 
-        if (memory.adjust1Mhz)
-        {
-            if (actualPart > soundAdjust) // 5 é o ideal
-            {
-                memory.clickEvent.Enqueue(false);
-                actualPart = 0;
-            }
-
-            actualPart++;
-        }
+         for (int i = 0; i < this.deleyloops ;i++)
+                ;
+        
     }
 
     public void RunCycle()

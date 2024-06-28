@@ -85,14 +85,19 @@ public partial class Form1 : Form
 
         threads.Add(Task.Run(() =>
         {
+            WaveTone tone = new WaveTone(memory);
+            stream = new BlockAlignReductionStream(tone);
+            output.Init(stream);
+            output.Play();
             while (running)
             {
-                cpu.RunCycle();
+                memory.softswitches.SoundClick = false;
+                Thread.Sleep(100);
             }
         }));
 
         cpu.Reset();
-        
+
         threads.Add(Task.Run(() =>
         {
             while (running)
@@ -111,13 +116,83 @@ public partial class Form1 : Form
 
         threads.Add(Task.Run(() =>
         {
-            WaveTone tone = new WaveTone(memory);
-            stream = new BlockAlignReductionStream(tone);
-            output.Init(stream);
-            output.Play();
+            int countFreq = 0;
+            DateTime lastBlock = DateTime.Now;
+            DateTime countTime = DateTime.Now;
+            DateTime cpuDelay = DateTime.Now;
+            memory.cpuCycles = 0;
+            int soundCycles = 0;
+            Stopwatch sw2;
+            float cycleTotalTime = 2f;
+
+            Stopwatch sw = Stopwatch.StartNew();
+            for (int i = 0; i < 100000000; i++)
+                ;
+            sw.Stop();
+
+            Console.WriteLine("1000000 in " + sw.Elapsed.TotalMicroseconds.ToString("000000.0") + " microseconds ");
+            double microsecondLoops = (int)(100000000f / sw.Elapsed.TotalMicroseconds) - 50;
+            Console.WriteLine(microsecondLoops + " loops per microsecond");
+            //Thread.Sleep(5000);
             while (running)
             {
-                Thread.Sleep(50);
+
+                sw2 = Stopwatch.StartNew();
+                sw = Stopwatch.StartNew();
+                cpu.deleyloops = cycleTotalTime * microsecondLoops / 2;
+                cpu.RunCycle();
+                sw.Stop();
+
+                double elepsedCycleTime = (cycleTotalTime - sw.Elapsed.TotalMicroseconds) * microsecondLoops;
+
+                for (int i = 0; i < (elepsedCycleTime > 0 ? elepsedCycleTime : 0); i++)
+                    ;
+                sw2.Stop();
+
+                //Console.WriteLine(" "+ sw2.Elapsed.TotalMicroseconds.ToString("000.0"));
+
+
+
+                if (soundCycles > 6)
+                {
+                    countFreq++;
+
+                    if (memory.softswitches.SoundClick)
+                    {
+                        memory.clickEvent.Enqueue(0xff);
+                    }
+                    else
+                    {
+                        memory.clickEvent.Enqueue(0);
+                    }
+                    // Sound routine
+
+                    TimeSpan delta2 = DateTime.Now - countTime;
+                    if (delta2.TotalMilliseconds >= 1000)
+                    {
+                        Console.WriteLine("Sound Freq = " + countFreq + " cpu Freq = "
+                        + memory.cpuCycles + " Empty Queue = " + memory.EmptyQueue
+                        + " LoopCount = " + memory.loopCount);
+
+                        // if (memory.EmptyQueue > 20000)
+                        //     memory.loopCount -= 100;
+                        // else if (memory.EmptyQueue < 10000)
+                        //     memory.loopCount += 100;
+
+
+                        countFreq = 0;
+                        countTime = DateTime.Now;
+                        memory.cpuCycles = 0;
+                        memory.EmptyQueue = 0;
+                    }
+                    soundCycles = 0;
+                }
+                else
+                {
+                    soundCycles++;
+                }
+
+
             }
 
         }));
@@ -194,18 +269,17 @@ public class WaveTone : WaveStream
     Memory _memory;
 
     public double frequency { get; set; }
-    private double amplitude;
-    private double time;
 
     public WaveTone(Memory memory)
     {
         _memory = memory;
+        _memory.loopCount = 3520;
     }
     public override WaveFormat WaveFormat
     {
         get
         {
-            return new WaveFormat(88200, 8, 1);
+            return new WaveFormat(44100, 8, 1);
         }
     }
 
@@ -219,18 +293,21 @@ public class WaveTone : WaveStream
 
     public override long Position { get; set; }
 
+
     public override int Read(byte[] buffer, int offset, int count)
     {
         for (int i = 0; i < buffer.Length; i++)
         {
             if (_memory.clickEvent.Any())
-                buffer[i] = (byte)(_memory.clickEvent.Dequeue() ? 0xff : 0x00);
+            {
+                buffer[i] = _memory.clickEvent.Dequeue();
+            }
             else
             {
-                buffer[i] = 0x00;
-                
+                buffer[i] = 0;
+                _memory.clickEvent.Clear();
+                _memory.EmptyQueue++;
             }
-
         }
         return count;
     }

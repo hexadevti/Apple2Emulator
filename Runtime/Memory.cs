@@ -37,7 +37,13 @@ public class Memory
     public State state { get; set; }
 
 
-    public Queue<bool> clickEvent = new Queue<bool>(1000000);
+    public Queue<byte> clickEvent = new Queue<byte>(1000000);
+
+    public int cpuCycles { get; set; }
+    public int EmptyQueue { get; set; }
+    public int loopCount { get; set; }
+
+    public double microsecondLoops { get; set; }
     public Memory(State state)
     {
         overlays = new List<IOverLay>();
