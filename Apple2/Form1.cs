@@ -197,6 +197,14 @@ public partial class Form1 : Form
                 {
                     cpu.deleyloops = 0;
                     cpu.RunCycle();
+                    
+                }
+                if (memory.cpuCycles >= 1000000)
+                {
+                    sw.Stop();
+                    memory.clockSpeed = sw.Elapsed.TotalMilliseconds;
+                    memory.cpuCycles = 0;
+                    sw = Stopwatch.StartNew();
                 }
             }
 
@@ -265,7 +273,7 @@ public partial class Form1 : Form
     private void timerClockSpeed_Tick(object sender, EventArgs e)
     {
         if (memory != null)
-            lblClockSpeed.Text = (1000 / memory.clockSpeed * 2).ToString("0.00") + " Mhz";
+            lblClockSpeed.Text = (1000 / memory.clockSpeed).ToString("0.00") + " Mhz";
     }
 }
 

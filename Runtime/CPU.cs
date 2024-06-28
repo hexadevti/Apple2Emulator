@@ -39,13 +39,14 @@ public class CPU
 
     public void IncPC()
     {
-
         lastPC = state.PC;
         state.PC++;
         memory.cpuCycles++;
-
-         for (int i = 0; i < this.deleyloops ;i++)
+        if (memory.adjust1Mhz)
+        {
+            for (int i = 0; i < this.deleyloops ;i++)
                 ;
+        }
         
     }
 
