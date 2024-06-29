@@ -29,7 +29,18 @@ public class Keyboard
 
     public void OnKeyDown(object? sender, KeyEventArgs e)
     {
-        if (e.Control)
+         if (e.Control && e.Shift)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.F12:
+                    e.Handled = true;
+                    Thread.Sleep(100);
+                    cpu.WarmStart();
+                    break;
+            }
+       }
+        else if (e.Control)
         {
             switch (e.KeyCode)
             {
@@ -39,7 +50,6 @@ public class Keyboard
                     break;
                 case Keys.F5:
                     e.Handled = true;
-                    
                     break;
                 case Keys.V:
                     return;

@@ -16,14 +16,8 @@ public class CPU
     public State state { get; set; }
     public Memory memory { get; set; }
     public ushort lastPC = 0;
-    public int PCCount = 0;
     public DateTime last1mhz = DateTime.MinValue;
-    public DateTime actual1mhz = DateTime.MinValue;
-
     public double deleyloops = 0;
-
-    private int actualPart = 0;
-
     public CPU(State state, Memory memory)
     {
         this.memory = memory;
@@ -31,6 +25,12 @@ public class CPU
         last1mhz = DateTime.Now;
     }
 
+    public void WarmStart()
+    {
+        memory.Clear();
+        Thread.Sleep(100);
+        Reset();
+    }
     public void Reset()
     {
         lastPC = 0;
@@ -44,10 +44,9 @@ public class CPU
         memory.cpuCycles++;
         if (memory.adjust1Mhz)
         {
-            for (int i = 0; i < this.deleyloops ;i++)
+            for (int i = 0; i < this.deleyloops; i++)
                 ;
         }
-        
     }
 
     public void RunCycle()
@@ -303,101 +302,85 @@ public class CPU
             IncPC();
     }
 
-    public void RefreshScreen()
+    public void DelayedRun(bool running)
     {
-        Console.SetCursorPosition(0, 0);
+        int countFreq = 0;
+        DateTime lastBlock = DateTime.Now;
+        DateTime countTime = DateTime.Now;
+        DateTime cpuDelay = DateTime.Now;
+        memory.cpuCycles = 0;
+        int soundCycles = 0;
+        Stopwatch sw2;
+        Stopwatch sw3 = Stopwatch.StartNew();
+        float cycleTotalTime = 2.5f;
 
-        var cursorH = memory.baseRAM[0x24];
-        var cursorV = memory.baseRAM[0x25];
+        Stopwatch sw = Stopwatch.StartNew();
+        for (int i = 0; i < 100000000; i++)
+            ;
+        sw.Stop();
 
-        StringBuilder output = new StringBuilder();
-
-        int posH = 0;
-        int posV = 0;
-
-        for (int b = 0; b < 3; b++)
+        Console.WriteLine("1000000 in " + sw.Elapsed.TotalMicroseconds.ToString("000000.0") + " microseconds ");
+        double microsecondLoops = (int)(100000000f / sw.Elapsed.TotalMicroseconds) - 50;
+        Console.WriteLine(microsecondLoops + " loops per microsecond");
+        //Thread.Sleep(5000);
+        while (running)
         {
-            posV = b * 8;
-            for (int l = 0; l < 8; l++)
+            if (memory.adjust1Mhz)
             {
+                sw2 = Stopwatch.StartNew();
+                sw = Stopwatch.StartNew();
+                deleyloops = cycleTotalTime * microsecondLoops / 2;
+                RunCycle();
+                sw.Stop();
 
-                for (ushort c = 0; c < 0x28; c++)
+                double elepsedCycleTime = (cycleTotalTime - sw.Elapsed.TotalMicroseconds) * microsecondLoops;
+
+                for (int i = 0; i < (elepsedCycleTime > 0 ? elepsedCycleTime : 0); i++)
+                    ;
+                sw2.Stop();
+
+                if (soundCycles > 5)
                 {
-                    posH = c;
+                    countFreq++;
 
-                    var chr = memory.baseRAM[(ushort)(0x400 + (b * 0x28) + (l * 0x80) + c)];
-                    chr = (byte)(chr & 0b01111111);
-                    if (posV == cursorV && posH == cursorH)
-                        chr = DateTime.Now.Millisecond > 500 ? chr : (byte)95;
+                    if (memory.softswitches.SoundClick)
+                    {
+                        memory.clickEvent.Enqueue(0x80);
+                    }
+                    else
+                    {
+                        memory.clickEvent.Enqueue(0);
+                    }
+                    // Sound routine
 
-                    if (chr == 96)
-                        chr = DateTime.Now.Millisecond > 500 ? (byte)32 : (byte)95;
-                    output.Append(Encoding.ASCII.GetString(new[] { chr }));
+                    TimeSpan delta2 = DateTime.Now - countTime;
+                    if (delta2.TotalMilliseconds >= 1000)
+                    {
+                        Console.WriteLine("Sound Cycle = " + countFreq
+                         + "Hz, Empty Queue = " + memory.EmptyQueue);
 
+                        countFreq = 0;
+                        countTime = DateTime.Now;
+                        memory.EmptyQueue = 0;
+                    }
+                    soundCycles = 0;
                 }
-                posV = posV + 1;
-                output.Append("\n");
+                else
+                {
+                    soundCycles++;
+                }
             }
-        }
-
-        Console.Write(output.ToString());
-    }
-
-    public void Keyboard()
-    {
-        if (Console.KeyAvailable)
-        {
-            var consoleKeyInfo = Console.ReadKey(true);
-
-            switch (consoleKeyInfo.Modifiers)
+            else
             {
-                case ConsoleModifiers.Alt:
-                    switch (consoleKeyInfo.Key)
-                    {
-                        case ConsoleKey.C:
-                            memory.KeyPressed = 0x83;
-                            break;
-                        case ConsoleKey.F12:
-                            state.PC = 0;
-                            Console.Beep();
-                            break;
-                    }
-                    break;
-
-                default:
-                    switch (consoleKeyInfo.Key)
-                    {
-                        case ConsoleKey.LeftArrow:
-                            memory.KeyPressed = 0x88;
-                            break;
-                        case ConsoleKey.RightArrow:
-                            memory.KeyPressed = 0x95;
-                            break;
-                        case ConsoleKey.UpArrow:
-                            memory.KeyPressed = 0x8b;
-                            break;
-                        case ConsoleKey.DownArrow:
-                            memory.KeyPressed = 0x8a;
-                            break;
-                        case ConsoleKey.Enter:
-                            memory.KeyPressed = 0x8D;
-                            break;
-                        case ConsoleKey.Escape:
-                            memory.KeyPressed = 0x9b;
-                            break;
-                        default:
-                            switch (consoleKeyInfo.KeyChar)
-                            {
-                                case (char)231:
-                                    memory.KeyPressed = 0x83;
-                                    break;
-                                default:
-                                    memory.KeyPressed = (byte)(Encoding.ASCII.GetBytes(new[] { consoleKeyInfo.KeyChar.ToString().ToUpper()[0] })[0] | 0b10000000);
-                                    break;
-                            }
-                            break;
-                    }
-                    break;
+                deleyloops = 0;
+                RunCycle();
+            }
+            if (memory.cpuCycles >= 1000000)
+            {
+                sw3.Stop();
+                memory.clockSpeed = sw3.Elapsed.TotalMilliseconds;
+                memory.cpuCycles = 0;
+                sw3 = Stopwatch.StartNew();
             }
         }
     }

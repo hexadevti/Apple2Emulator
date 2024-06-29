@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Reflection;
+using System.Text;
 using Runtime;
 using Runtime.Overlays;
 
@@ -13,7 +14,7 @@ namespace ConsoleApp
         [RequiresAssemblyFiles()]
         public static void Main(string[] args)
         {
-            
+
             Memory memory;
             CPU cpu;
             object lockObj = new object();
@@ -31,29 +32,16 @@ namespace ConsoleApp
             memory.LoadROM(0xe000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftE000.rom"));
             memory.LoadROM(0xd800, File.ReadAllBytes(assemblyPath + "roms/ApplesoftD800.rom"));
             memory.LoadROM(0xd000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftD000.rom"));
-
-            //memory.LoadInterfaceROM(0xc600, File.ReadAllBytes(assemblyPath + "roms/diskinterface.rom"));
-
-            memory.RegisterOverlay(new KeyboardOvl());
-            memory.RegisterOverlay(new CpuSoftswitchesOvl());
-            memory.RegisterOverlay(new SlotsSoftSwitchesOvl());
-            // memory.RegisterOverlay(new EmptySlot1Ovl());
-            // memory.RegisterOverlay(new EmptySlot2Ovl());
-            // memory.RegisterOverlay(new EmptySlot3Ovl());
-            // memory.RegisterOverlay(new EmptySlot4Ovl());
-            // memory.RegisterOverlay(new EmptySlot5Ovl());
-            memory.RegisterOverlay(new DiskIISlot6Ovl());
-            // memory.RegisterOverlay(new EmptySlot7Ovl());
-
+            memory.LoadSlotsROM(0xc600, File.ReadAllBytes(assemblyPath + "roms/diskinterface.rom"));
             memory.drive1 = new DiskDrive(assemblyPath + "roms/ProDOS 1.2.dsk", memory);
             memory.drive2 = new DiskDrive(assemblyPath + "roms/EMPTY DOS33.dsk", memory);
 
 
             List<Task> threads = new List<Task>();
-            cpu = new CPU(state, memory, false);
+            cpu = new CPU(state, memory);
             cpu.Reset();
-            
-            
+
+
 
 
             threads.Add(Task.Run(() =>
@@ -67,7 +55,42 @@ namespace ConsoleApp
             {
                 while (running)
                 {
-                    cpu.RefreshScreen();
+                    Console.SetCursorPosition(0, 0);
+
+                    var cursorH = memory.baseRAM[0x24];
+                    var cursorV = memory.baseRAM[0x25];
+
+                    StringBuilder output = new StringBuilder();
+
+                    int posH = 0;
+                    int posV = 0;
+
+                    for (int b = 0; b < 3; b++)
+                    {
+                        posV = b * 8;
+                        for (int l = 0; l < 8; l++)
+                        {
+
+                            for (ushort c = 0; c < 0x28; c++)
+                            {
+                                posH = c;
+
+                                var chr = memory.baseRAM[(ushort)(0x400 + (b * 0x28) + (l * 0x80) + c)];
+                                chr = (byte)(chr & 0b01111111);
+                                if (posV == cursorV && posH == cursorH)
+                                    chr = DateTime.Now.Millisecond > 500 ? chr : (byte)95;
+
+                                if (chr == 96)
+                                    chr = DateTime.Now.Millisecond > 500 ? (byte)32 : (byte)95;
+                                output.Append(Encoding.ASCII.GetString(new[] { chr }));
+
+                            }
+                            posV = posV + 1;
+                            output.Append("\n");
+                        }
+                    }
+
+                    Console.Write(output.ToString());
                     Thread.Sleep(10);
                 }
             }));
@@ -75,7 +98,61 @@ namespace ConsoleApp
             {
                 while (running)
                 {
-                    cpu.Keyboard();
+                    if (Console.KeyAvailable)
+                    {
+                        var consoleKeyInfo = Console.ReadKey(true);
+
+                        switch (consoleKeyInfo.Modifiers)
+                        {
+                            case ConsoleModifiers.Alt:
+                                switch (consoleKeyInfo.Key)
+                                {
+                                    case ConsoleKey.C:
+                                        memory.KeyPressed = 0x83;
+                                        break;
+                                    case ConsoleKey.F12:
+                                        state.PC = 0;
+                                        Console.Beep();
+                                        break;
+                                }
+                                break;
+
+                            default:
+                                switch (consoleKeyInfo.Key)
+                                {
+                                    case ConsoleKey.LeftArrow:
+                                        memory.KeyPressed = 0x88;
+                                        break;
+                                    case ConsoleKey.RightArrow:
+                                        memory.KeyPressed = 0x95;
+                                        break;
+                                    case ConsoleKey.UpArrow:
+                                        memory.KeyPressed = 0x8b;
+                                        break;
+                                    case ConsoleKey.DownArrow:
+                                        memory.KeyPressed = 0x8a;
+                                        break;
+                                    case ConsoleKey.Enter:
+                                        memory.KeyPressed = 0x8D;
+                                        break;
+                                    case ConsoleKey.Escape:
+                                        memory.KeyPressed = 0x9b;
+                                        break;
+                                    default:
+                                        switch (consoleKeyInfo.KeyChar)
+                                        {
+                                            case (char)231:
+                                                memory.KeyPressed = 0x83;
+                                                break;
+                                            default:
+                                                memory.KeyPressed = (byte)(Encoding.ASCII.GetBytes(new[] { consoleKeyInfo.KeyChar.ToString().ToUpper()[0] })[0] | 0b10000000);
+                                                break;
+                                        }
+                                        break;
+                                }
+                                break;
+                        }
+                    }
                     Thread.Sleep(10);
                 }
             }));

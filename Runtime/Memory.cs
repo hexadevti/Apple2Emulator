@@ -10,56 +10,47 @@ public class Memory
 {
     public object displayLock = new object();
     
-    private readonly IList<IOverLay> overlays;
-    public Dictionary<byte, bool[,]> charSet = new Dictionary<byte, bool[,]>();
+    //private readonly IList<IOverLay> overlays;
+    public Dictionary<byte, bool[,]> charSet;
     public bool adjust1Mhz = false;
-    public int delayCycle = 0;
-
     public double clockSpeed = 0;
     public byte[] baseRAM = new byte[0xc000];
+    public byte[] slotsROM = new byte[0x700];
     public byte[] ROM = new byte[0x4000];
     public byte[] extendedRAM = new byte[0x800];
     public byte[] memoryBankSwitchedRAM1 = new byte[0x3000];
-
     public byte[] memoryBankSwitchedRAM2_1 = new byte[0x1000];
     public byte[] memoryBankSwitchedRAM2_2 = new byte[0x1000];
-
     public byte KeyPressed { get; set; }
-
     public Softswitches softswitches = new Softswitches();
-
     public DiskDrive? drive1 { get; set; }
-
     public DiskDrive? drive2 { get; set; }
-
-    public bool UpdateScreen { get; set; }
-
     public State state { get; set; }
-
-
     public Queue<byte> clickEvent = new Queue<byte>(1000000);
-
     public int cpuCycles { get; set; }
     public int EmptyQueue { get; set; }
-    
-    public double microsecondLoops { get; set; }
+    SlotsSoftSwitchesOvl ov1  = new SlotsSoftSwitchesOvl();
+    CpuSoftswitchesOvl ov2  = new CpuSoftswitchesOvl();
     public Memory(State state)
     {
-        overlays = new List<IOverLay>();
+        //overlays = new List<IOverLay>();
         this.state = state;
+    }
+
+    public void Clear()
+    {
         Random rnd = new Random();
         byte[] b = new byte[0xbfff];
         rnd.NextBytes(b);
         for (ushort i = 0; i < b.Length; i++)
         {
             baseRAM[i] = b[i];
-            //memory[i] = 0x00;
         }
     }
 
     public void LoadChars(byte[] rom)
     {
-
+        charSet = new Dictionary<byte, bool[,]>();
         byte[] chars = new byte[] {
 
                                     0xc0, 0xc1, 0xc2, 0xc3, 0xc4, 0xc5, 0xc6, 0xc7, 0xc8, 0xc9, 0xca, 0xcb, 0xcc, 0xcd, 0xce, 0xcf,
@@ -126,10 +117,7 @@ public class Memory
             }
 
             charSet.Add(item, charboolItem);
-
-
         }
-
     }
 
     public void LoadROM(ushort startAddress, byte[] rom)
@@ -138,22 +126,56 @@ public class Memory
         {
             ROM[startAddress - 0xd000 + i] = rom[i];
         }
-
     }
 
-    // public void LoadInterfaceROM(ushort startAddress, byte[] rom)
-    // {
-    //     for (int i = 0; i < rom.Length; i++)
-    //     {
-    //         interfaceROM[startAddress - 0xc000 + i] = rom[i];
-    //     }
+    public void LoadSlotsROM(ushort startAddress, byte[] rom)
+    {
+        for (int i = 0; i < rom.Length; i++)
+        {
+            slotsROM[startAddress - 0xc100 + i] = rom[i];
+        }
+    }
+    
+    public void ImportStringHexData(string image, ushort address)
+    {
+        for (int i = 0; i < 0x1fff; i = i + 1)
+        {
+            Write((ushort)(address + i), byte.Parse(image.Substring(i * 2, 2), NumberStyles.HexNumber));
+        }
+    }
 
+    public bool[] ConvertByteToBoolArray(byte b)
+    {
+        // prepare the return result
+        bool[] result = new bool[8];
+
+        // check each bit in the byte. if 1 set to true, if 0 set to false
+        for (int i = 0; i < 8; i++)
+            result[i] = (b & (1 << i)) != 0;
+
+        // reverse the array
+        Array.Reverse(result);
+
+        return result;
+    }
+
+    // private IOverLay? GetOverlay(ushort address) 
+    // {
+    //     return overlays.FirstOrDefault(x => x.Start <= address && x.End >= address);
+    // }
+    // public void RegisterOverlay(IOverLay overlay)
+    // {
+    //     overlays.Add(overlay);
     // }
 
-    public byte ReadMemory(ushort address)
+    public byte ReadByte(ushort address)
     {
-        byte ret;
-        if (address >= 0xd000)
+        byte ret = 0;
+        if (address < 0xc000)
+        {
+            ret = baseRAM[address];
+        }
+        else if (address >= 0xd000)
         {
             if (softswitches.MemoryBankReadRAM_ROM)
             {
@@ -176,20 +198,66 @@ public class Memory
         {
             ret = 0; //extendedRAM[address - 0xc800];
         }
+        else if (address >= 0xc100)
+        {
+            ret = slotsROM[address - 0xc100];
+        }
+        else if (address >= 0xc090)
+        {
+            ret = ov1.Read(address, this, state);
+        }
         else if (address >= 0xc000)
         {
-            ret = 0;
+            ret = ov2.Read(address, this, state);
         }
-        else
-        {
-            ret = baseRAM[address];
-        }
+        
         return ret;
     }
 
-    public void WriteMemory(ushort address, byte value)
+    public ushort? ReadAddressLLHH(ushort? address)
     {
-        if (address >= 0xd000)
+        if (address != null)
+            return (ushort)(ReadByte((ushort)(address.Value + 1)) << 8 | ReadByte(address.Value));
+        else
+            return null;
+    }
+
+    // private static ushort ProcessIndex(ushort address, State processorState, string[] addressMode)
+    // {
+    //     if (addressMode.Length <= 1) return address;
+
+    //     return addressMode[1] switch
+    //     {
+    //         "X" => (ushort)(address + processorState.X),
+    //         "Y" => (ushort)(address + processorState.Y),
+    //         _ => address
+    //     };
+    // }
+    // public ushort? ReadAddressHHLL(ushort? address)
+    // {
+    //     if (address != null)
+    //     {
+    //         return (ushort)(ReadByte(address.Value) << 8 | ReadByte((ushort)(address.Value + 1)));
+    //     }
+    //     else
+    //         return null;
+    // }
+
+    public byte? ReadZeroPageAddress(ushort? address)
+    {
+        if (address.HasValue)
+            return (byte?)ReadByte(address.Value);
+        else
+            return null;
+    }
+
+    public void Write(ushort address, byte value)
+    {
+        if (address < 0xc000)
+        {
+            baseRAM[address] = value;
+        } 
+        else if (address >= 0xd000)
         {
             if (this.softswitches.MemoryBankReadRAM_ROM)
             {
@@ -208,113 +276,15 @@ public class Memory
         {
             extendedRAM[address - 0xc800] = value;
         }
+        else if (address >= 0xc090)
+        {
+            ov1.Write(address, value, this);
+        }
         else if (address >= 0xc000)
         {
-
+            ov2.Write(address, value, this);
         }
-        else
-        {
-            baseRAM[address] = value;
-        }
-    }
-
-    public void ImportStringHexData(string image, ushort address)
-    {
-        for (int i = 0; i < 0x1fff; i = i + 1)
-        {
-            WriteMemory((ushort)(address + i), byte.Parse(image.Substring(i * 2, 2), NumberStyles.HexNumber));
-        }
-    }
-
-    public bool[] ConvertByteToBoolArray(byte b)
-    {
-        // prepare the return result
-        bool[] result = new bool[8];
-
-        // check each bit in the byte. if 1 set to true, if 0 set to false
-        for (int i = 0; i < 8; i++)
-            result[i] = (b & (1 << i)) != 0;
-
-        // reverse the array
-        Array.Reverse(result);
-
-        return result;
-    }
-
-    private IOverLay? GetOverlay(ushort address) 
-    {
-        return overlays.FirstOrDefault(x => x.Start <= address && x.End >= address);
-    }
-    public void RegisterOverlay(IOverLay overlay)
-    {
-        overlays.Add(overlay);
-    }
-
-    public byte ReadByte(ushort address)
-    {
-        byte value;
-        if (address >= 0xc000 && address <=0xd000)
-        {
-            var overLay = GetOverlay(address);
-            if (overLay != null)
-                value = overLay.Read(address, this, state);
-            else
-                value = ReadMemory(address);
-        }
-        else
-            value = ReadMemory(address);
-        return value;
-    }
-
-    public ushort? ReadAddressLLHH(ushort? address)
-    {
-        if (address != null)
-            return (ushort)(ReadByte((ushort)(address.Value + 1)) << 8 | ReadByte(address.Value));
-        else
-            return null;
-    }
-
-    private static ushort ProcessIndex(ushort address, State processorState, string[] addressMode)
-    {
-        if (addressMode.Length <= 1) return address;
-
-        return addressMode[1] switch
-        {
-            "X" => (ushort)(address + processorState.X),
-            "Y" => (ushort)(address + processorState.Y),
-            _ => address
-        };
-    }
-    public ushort? ReadAddressHHLL(ushort? address)
-    {
-        if (address != null)
-        {
-            return (ushort)(ReadByte(address.Value) << 8 | ReadByte((ushort)(address.Value + 1)));
-        }
-        else
-            return null;
-    }
-
-    public byte? ReadZeroPageAddress(ushort? address)
-    {
-        if (address.HasValue)
-            return (byte?)ReadByte(address.Value);
-        else
-            return null;
-    }
-
-    public void Write(ushort address, byte value)
-    {
-        if (address >= 0xc000 && address <=0xd000)
-        {
-            var overLay = GetOverlay(address);
-            if (overLay != null)
-                overLay.Write(address, value, this);
-            else
-                WriteMemory(address, value);
-        }
-        else
-            WriteMemory(address, value);
+        
     }
 
     public ushort GetIRQVector()
@@ -339,36 +309,3 @@ public class Memory
     }
 
 }
-
-public class Softswitches
-{
-    public bool Graphics_Text { get; set; }
-    public bool TextPage1_Page2 { get; set; }
-    public bool DisplayFull_Split { get; set; }
-    public bool LoRes_HiRes { get; set; }
-
-    public bool DrivePhase0ON_OFF { get; set; }
-    public bool DrivePhase1ON_OFF { get; set; }
-    public bool DrivePhase2ON_OFF { get; set; }
-    public bool DrivePhase3ON_OFF { get; set; }
-
-    public bool DriveMotorON_OFF { get; set; }
-
-    public bool DriveQ6H_L { get; set; }
-
-    public bool DriveQ7H_L { get; set; }
-
-    public bool Drive1_2 { get; set; }
-
-    public bool MemoryBankBankSelect1_2 { get; set; }
-
-    public bool MemoryBankReadRAM_ROM { get; set; }
-
-    public bool MemoryBankWriteRAM_NoWrite { get; set; }
-
-    public bool SoundClick { get; set; }
-
-
-
-}
-

@@ -7,30 +7,16 @@ using Runtime.Abstractions;
 
 namespace Runtime.Overlays;
 
-public class SlotsSoftSwitchesOvl : IOverLay
+public class SlotsSoftSwitchesOvl
 {
-
-    public SlotsSoftSwitchesOvl()
-    {
-        Start = 0xc090;
-        End = 0xc0ff;
-    }
-
-    public int Start { get; }
-    public int End { get; }
-
     int slot = 6;
     int pointer = 0;
-
     int trackSize = 5856;
-    
     Dictionary<string, List<byte>> output = new Dictionary<string, List<byte>>();
-
-
     public void Write(ushort address, byte b, Memory memory)
     {
         int slotOffset = slot * 0x10;
-        var sec = memory.softswitches.Drive1_2 ? (memory.drive1.FlagDos_Prodos ? memory.ReadMemory(0x2d) : memory.ReadMemory(0xd357)) : (memory.drive2.FlagDos_Prodos ? memory.ReadMemory(0x2d) : memory.ReadMemory(0xd357));
+        var sec = memory.softswitches.Drive1_2 ? (memory.drive1.FlagDos_Prodos ? memory.ReadByte(0x2d) : memory.ReadByte(0xd357)) : (memory.drive2.FlagDos_Prodos ? memory.ReadByte(0x2d) : memory.ReadByte(0xd357));
         var trk = memory.softswitches.Drive1_2 ? memory.drive1.track : memory.drive2.track;
         string key = trk + "_" + sec;
         if (address == 0xc08d + slotOffset)
@@ -48,7 +34,7 @@ public class SlotsSoftSwitchesOvl : IOverLay
                     output.Add(key, new List<byte>() { b });
                 }
 
-                Console.WriteLine(DateTime.Now.ToString("HH:mm:ss.ff") + " Save Track: " + trk + " Sector DOS: " + memory.ReadMemory(0x2d) + " Sector PRODOS: " + memory.ReadMemory(0xd357));
+                Console.WriteLine(DateTime.Now.ToString("HH:mm:ss.ff") + " Save Track: " + trk + " Sector DOS: " + memory.ReadByte(0x2d) + " Sector PRODOS: " + memory.ReadByte(0xd357));
 
                 List<string> keysToClear = new List<string>();
                 foreach (var data in output)
@@ -133,7 +119,7 @@ public class SlotsSoftSwitchesOvl : IOverLay
             else
                 memory.drive2.AddPhase(0x00);
         }
-        if (address == 0xc081 + slotOffset)
+        else if (address == 0xc081 + slotOffset)
         {
             memory.softswitches.DrivePhase0ON_OFF = true;
             if (memory.softswitches.Drive1_2)
@@ -141,7 +127,7 @@ public class SlotsSoftSwitchesOvl : IOverLay
             else
                 memory.drive2.AddPhase(0x01);
         }
-        if (address == 0xc082 + slotOffset)
+        else if (address == 0xc082 + slotOffset)
         {
             memory.softswitches.DrivePhase1ON_OFF = false;
             if (memory.softswitches.Drive1_2)
@@ -149,7 +135,7 @@ public class SlotsSoftSwitchesOvl : IOverLay
             else
                 memory.drive2.AddPhase(0x10);
         }
-        if (address == 0xc083 + slotOffset)
+        else if (address == 0xc083 + slotOffset)
         {
             memory.softswitches.DrivePhase1ON_OFF = true;
             if (memory.softswitches.Drive1_2)
@@ -157,7 +143,7 @@ public class SlotsSoftSwitchesOvl : IOverLay
             else
                 memory.drive2.AddPhase(0x11);
         }
-        if (address == 0xc084 + slotOffset)
+        else if (address == 0xc084 + slotOffset)
         {
             memory.softswitches.DrivePhase2ON_OFF = false;
             if (memory.softswitches.Drive1_2)
@@ -165,7 +151,7 @@ public class SlotsSoftSwitchesOvl : IOverLay
             else
                 memory.drive2.AddPhase(0x20);
         }
-        if (address == 0xc085 + slotOffset)
+        else if (address == 0xc085 + slotOffset)
         {
             memory.softswitches.DrivePhase2ON_OFF = true;
             if (memory.softswitches.Drive1_2)
@@ -173,7 +159,7 @@ public class SlotsSoftSwitchesOvl : IOverLay
             else
                 memory.drive2.AddPhase(0x21);
         }
-        if (address == 0xc086 + slotOffset)
+        else if (address == 0xc086 + slotOffset)
         {
             memory.softswitches.DrivePhase3ON_OFF = false;
             if (memory.softswitches.Drive1_2)
@@ -181,7 +167,7 @@ public class SlotsSoftSwitchesOvl : IOverLay
             else
                 memory.drive2.AddPhase(0x30);
         }
-        if (address == 0xc087 + slotOffset)
+        else if (address == 0xc087 + slotOffset)
         {
             memory.softswitches.DrivePhase3ON_OFF = true;
             if (memory.softswitches.Drive1_2)
@@ -189,33 +175,31 @@ public class SlotsSoftSwitchesOvl : IOverLay
             else
                 memory.drive2.AddPhase(0x31);
         }
-        if (address == 0xc088 + slotOffset)
+        else if (address == 0xc088 + slotOffset)
         {
             memory.softswitches.DriveMotorON_OFF = false;
         }
-        if (address == 0xc089 + slotOffset)
+        else if (address == 0xc089 + slotOffset)
         {
             memory.softswitches.DriveMotorON_OFF = true;
         }
-        if (address == 0xc08a + slotOffset)
+        else if (address == 0xc08a + slotOffset)
             memory.softswitches.Drive1_2 = true;
-        if (address == 0xc08b + slotOffset)
+        else if (address == 0xc08b + slotOffset)
             memory.softswitches.Drive1_2 = false;
-        if (address == 0xc08c + slotOffset)
+        else if (address == 0xc08c + slotOffset)
             memory.softswitches.DriveQ6H_L = false;
-        if (address == 0xc08d + slotOffset)
+        else if (address == 0xc08d + slotOffset)
             memory.softswitches.DriveQ6H_L = true;
-        if (address == 0xc08e + slotOffset)
+        else if (address == 0xc08e + slotOffset)
         {
             memory.softswitches.DriveQ7H_L = false;
             return 0; // Not Write Protected, 9f Write protected
         }
-        if (address == 0xc08f + slotOffset)
+        else if (address == 0xc08f + slotOffset)
         {
             memory.softswitches.DriveQ7H_L = true;
         }
         return 0;
     }
-
-    
 }
