@@ -184,6 +184,7 @@ public class WaveTone : WaveStream
     private Memory _memory;
 
     public double frequency { get; set; }
+    public byte sample;
 
     public WaveTone(Memory memory)
     {
@@ -212,16 +213,24 @@ public class WaveTone : WaveStream
     {
         for (int i = 0; i < buffer.Length; i++)
         {
-            if (_memory.clickEvent.Any())
+
+            if (_memory.clickEvent.TryDequeue(out sample))
             {
-                buffer[i] = _memory.clickEvent.Dequeue();
+                buffer[i] = sample;
             }
             else
-            {
                 buffer[i] = 0;
-                _memory.clickEvent.Clear();
-                _memory.EmptyQueue++;
-            }
+                
+            // if (_memory.clickEvent.Any())
+            // {
+            //     buffer[i] = _memory.clickEvent.Dequeue();
+            // }
+            // else
+            // {
+            //     buffer[i] = 0;
+            //     _memory.clickEvent.Clear();
+            //     _memory.EmptyQueue++;
+            // }
         }
         return count;
     }

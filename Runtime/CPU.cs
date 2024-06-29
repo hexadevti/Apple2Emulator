@@ -312,7 +312,8 @@ public class CPU
         int soundCycles = 0;
         Stopwatch sw2;
         Stopwatch sw3 = Stopwatch.StartNew();
-        float cycleTotalTime = 2.5f;
+        float cycleTotalTime = 2.8f;
+        int countOnCycles = 0;
 
         Stopwatch sw = Stopwatch.StartNew();
         for (int i = 0; i < 100000000; i++)
@@ -329,7 +330,7 @@ public class CPU
             {
                 sw2 = Stopwatch.StartNew();
                 sw = Stopwatch.StartNew();
-                deleyloops = cycleTotalTime * microsecondLoops / 2;
+                deleyloops = cycleTotalTime * microsecondLoops;
                 RunCycle();
                 sw.Stop();
 
@@ -339,17 +340,21 @@ public class CPU
                     ;
                 sw2.Stop();
 
-                if (soundCycles > 5)
+                if (soundCycles > 6)
                 {
                     countFreq++;
-
-                    if (memory.softswitches.SoundClick)
+                    if (memory.clickEvent.Count() < 20000)
                     {
-                        memory.clickEvent.Enqueue(0x80);
-                    }
-                    else
-                    {
-                        memory.clickEvent.Enqueue(0);
+                        if (memory.softswitches.SoundClick)
+                        {
+                            memory.clickEvent.Enqueue(0x80);
+                            countOnCycles++;
+                        }
+                        else
+                        {
+                            countOnCycles = 0;
+                            memory.clickEvent.Enqueue(0);
+                        }
                     }
                     // Sound routine
 
@@ -364,6 +369,12 @@ public class CPU
                         memory.EmptyQueue = 0;
                     }
                     soundCycles = 0;
+
+                    if (countOnCycles >= 100)
+                    {
+                        memory.softswitches.SoundClick = false;
+                    }
+
                 }
                 else
                 {
