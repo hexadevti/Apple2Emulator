@@ -17,6 +17,7 @@ using System.Diagnostics;
 using System.Security;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 using System;
+using System.Diagnostics.Eventing.Reader;
 
 namespace Apple2;
 
@@ -31,6 +32,8 @@ public partial class Form1 : Form
     int pixelSize = 2;
     private DirectSoundOut output = new DirectSoundOut();
     public BlockAlignReductionStream? stream;
+
+    public WaveTone tone;
 
     public Form1()
     {
@@ -72,7 +75,7 @@ public partial class Form1 : Form
 
     public void LoadThreads()
     {
-        WaveTone tone = new WaveTone(memory);
+        tone = new WaveTone(memory);
         stream = new BlockAlignReductionStream(tone);
         output.Init(stream);
         output.Play();
@@ -175,7 +178,15 @@ public partial class Form1 : Form
     private void timerClockSpeed_Tick(object sender, EventArgs e)
     {
         if (memory != null)
+        {
             lblClockSpeed.Text = (1000 / memory.clockSpeed).ToString("0.00") + " Mhz";
+            string text = "";
+
+            while (memory.newText.TryDequeue(out text))
+            {
+                richTextBox2.AppendText(text + Environment.NewLine);
+            }
+        }
     }
 }
 
@@ -185,6 +196,7 @@ public class WaveTone : WaveStream
 
     public double frequency { get; set; }
     public byte sample;
+    byte actualSample = 0;
 
     public WaveTone(Memory memory)
     {
@@ -194,7 +206,7 @@ public class WaveTone : WaveStream
     {
         get
         {
-            return new WaveFormat(44100, 8, 1);
+            return new WaveFormat(180000, 8, 1);
         }
     }
 
@@ -211,26 +223,14 @@ public class WaveTone : WaveStream
 
     public override int Read(byte[] buffer, int offset, int count)
     {
-        for (int i = 0; i < buffer.Length; i++)
+        byte[] bytes = new byte[count];
+        
+        if (_memory.clickBuffer.TryDequeue(out bytes))
         {
-
-            if (_memory.clickEvent.TryDequeue(out sample))
+            for (int i = 0; i < count; i++)
             {
-                buffer[i] = sample;
+                buffer[i] = bytes[i];
             }
-            else
-                buffer[i] = 0;
-                
-            // if (_memory.clickEvent.Any())
-            // {
-            //     buffer[i] = _memory.clickEvent.Dequeue();
-            // }
-            // else
-            // {
-            //     buffer[i] = 0;
-            //     _memory.clickEvent.Clear();
-            //     _memory.EmptyQueue++;
-            // }
         }
         return count;
     }

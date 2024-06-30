@@ -320,10 +320,12 @@ public class CPU
             ;
         sw.Stop();
 
-        Console.WriteLine("1000000 in " + sw.Elapsed.TotalMicroseconds.ToString("000000.0") + " microseconds ");
+        memory.newText.Enqueue("1000000 in " + sw.Elapsed.TotalMicroseconds.ToString("000000.0") + " microseconds ");
         double microsecondLoops = (int)(100000000f / sw.Elapsed.TotalMicroseconds) - 50;
-        Console.WriteLine(microsecondLoops + " loops per microsecond");
-        //Thread.Sleep(5000);
+        memory.newText.Enqueue(microsecondLoops + " loops per microsecond");
+        int bufferSize = 7200;
+        int k = 0;
+        byte[] bytes= new byte[bufferSize];
         while (running)
         {
             if (memory.adjust1Mhz)
@@ -340,29 +342,29 @@ public class CPU
                     ;
                 sw2.Stop();
 
-                if (soundCycles > 6)
+                if (soundCycles > 0)
                 {
                     countFreq++;
-                    if (memory.clickEvent.Count() < 20000)
+                    
+                    if (k < bufferSize)
                     {
-                        if (memory.softswitches.SoundClick)
-                        {
-                            memory.clickEvent.Enqueue(0x80);
-                            countOnCycles++;
-                        }
-                        else
-                        {
-                            countOnCycles = 0;
-                            memory.clickEvent.Enqueue(0);
-                        }
+                        bytes[k] = (byte)(memory.softswitches.SoundClick ? 0x80 : 0x00);
                     }
-                    // Sound routine
+                    else
+                    {
+                        memory.clickBuffer.Enqueue(bytes);
+                        k = 0;
+                        bytes = new byte[bufferSize];
+                    }
+
+                    k++;
 
                     TimeSpan delta2 = DateTime.Now - countTime;
                     if (delta2.TotalMilliseconds >= 1000)
                     {
-                        Console.WriteLine("Sound Cycle = " + countFreq
-                         + "Hz, Empty Queue = " + memory.EmptyQueue);
+                        memory.newText.Enqueue("Sound Cycle = " + countFreq
+                         + "Hz, Empty Queue = " + memory.EmptyQueue
+                         + "Queue buffer: " + memory.clickBuffer.Count());
 
                         countFreq = 0;
                         countTime = DateTime.Now;

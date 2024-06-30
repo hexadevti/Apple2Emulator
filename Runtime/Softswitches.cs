@@ -26,7 +26,7 @@ public class Softswitches
 
     public bool MemoryBankWriteRAM_NoWrite { get; set; }
 
-    public bool SoundClick { get; set; }
+    public bool SoundClick;
 
 
 

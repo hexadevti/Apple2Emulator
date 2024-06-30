@@ -1,5 +1,6 @@
 using Runtime.Abstractions;
 using Runtime.Overlays;
+using System.Collections;
 using System.Globalization;
 using System.Runtime.ExceptionServices;
 using System.Threading.Channels;
@@ -26,11 +27,13 @@ public class Memory
     public DiskDrive? drive1 { get; set; }
     public DiskDrive? drive2 { get; set; }
     public State state { get; set; }
-    public Queue<byte> clickEvent = new Queue<byte>(2000);
+    public Queue<byte[]> clickBuffer = new Queue<byte[]>(100);
     public int cpuCycles { get; set; }
     public int EmptyQueue { get; set; }
     SlotsSoftSwitchesOvl ov1  = new SlotsSoftSwitchesOvl();
     CpuSoftswitchesOvl ov2  = new CpuSoftswitchesOvl();
+    public Queue<string> newText = new Queue<string>();
+
     public Memory(State state)
     {
         //overlays = new List<IOverLay>();
