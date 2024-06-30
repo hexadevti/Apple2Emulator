@@ -29,7 +29,6 @@ public class Memory
     public State state { get; set; }
     public Queue<byte[]> clickBuffer = new Queue<byte[]>(100);
     public int cpuCycles { get; set; }
-    public int EmptyQueue { get; set; }
     SlotsSoftSwitchesOvl ov1  = new SlotsSoftSwitchesOvl();
     CpuSoftswitchesOvl ov2  = new CpuSoftswitchesOvl();
     public Queue<string> newText = new Queue<string>();

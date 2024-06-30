@@ -1,23 +1,7 @@
 using Runtime;
-using System.Drawing.Imaging;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Text;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using static System.Windows.Forms.AxHost;
-using System.Windows.Input;
-using Microsoft.VisualBasic.Devices;
-using Runtime.Overlays;
-using System.Security.Cryptography.X509Certificates;
-using System.Media;
-using System.Net;
-using NAudio.Wave.SampleProviders;
 using NAudio.Wave;
 using System.Diagnostics;
-using System.Security;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
-using System;
-using System.Diagnostics.Eventing.Reader;
 
 namespace Apple2;
 
@@ -80,19 +64,6 @@ public partial class Form1 : Form
         output.Init(stream);
         output.Play();
 
-        // threads.Add(Task.Run(() =>
-        // {
-        //     if (memory.adjust1Mhz)
-        //     {
-                
-        //         while (running)
-        //         {
-        //             //memory.softswitches.SoundClick = false;
-        //             Thread.Sleep(100);
-        //         }
-        //     }
-        // }));
-
         threads.Add(Task.Run(() =>
         {
             while (running)
@@ -109,7 +80,14 @@ public partial class Form1 : Form
             }
         }));
 
-        threads.Add(Task.Run(() => cpu.DelayedRun(running)));
+        Stopwatch sw = Stopwatch.StartNew();
+        for (double i = 0; i < 300000000; i++)
+            ;
+        sw.Stop();
+        memory.newText.Enqueue("Stopwatch = " + sw.Elapsed.TotalMilliseconds);
+
+
+        threads.Add(Task.Run(() => cpu.DelayedRun(sw.Elapsed.TotalMilliseconds, running)));
 
     }
 

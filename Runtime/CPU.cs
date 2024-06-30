@@ -42,11 +42,6 @@ public class CPU
         lastPC = state.PC;
         state.PC++;
         memory.cpuCycles++;
-        if (memory.adjust1Mhz)
-        {
-            for (int i = 0; i < this.deleyloops; i++)
-                ;
-        }
     }
 
     public void RunCycle()
@@ -302,7 +297,7 @@ public class CPU
             IncPC();
     }
 
-    public void DelayedRun(bool running)
+    public void DelayedRun(double delay, bool running)
     {
         int countFreq = 0;
         DateTime lastBlock = DateTime.Now;
@@ -310,37 +305,22 @@ public class CPU
         DateTime cpuDelay = DateTime.Now;
         memory.cpuCycles = 0;
         int soundCycles = 0;
-        Stopwatch sw2;
         Stopwatch sw3 = Stopwatch.StartNew();
-        float cycleTotalTime = 2.8f;
         int countOnCycles = 0;
-
-        Stopwatch sw = Stopwatch.StartNew();
-        for (int i = 0; i < 100000000; i++)
-            ;
-        sw.Stop();
-
-        memory.newText.Enqueue("1000000 in " + sw.Elapsed.TotalMicroseconds.ToString("000000.0") + " microseconds ");
-        double microsecondLoops = (int)(100000000f / sw.Elapsed.TotalMicroseconds) - 50;
-        memory.newText.Enqueue(microsecondLoops + " loops per microsecond");
         int bufferSize = 7200;
         int k = 0;
         byte[] bytes= new byte[bufferSize];
+
+        Thread.Sleep(100);
+
+        double elapsedCycleTime =  1100000 / delay ; // 3500; // 1200;
         while (running)
         {
             if (memory.adjust1Mhz)
             {
-                sw2 = Stopwatch.StartNew();
-                sw = Stopwatch.StartNew();
-                deleyloops = cycleTotalTime * microsecondLoops;
                 RunCycle();
-                sw.Stop();
-
-                double elepsedCycleTime = (cycleTotalTime - sw.Elapsed.TotalMicroseconds) * microsecondLoops;
-
-                for (int i = 0; i < (elepsedCycleTime > 0 ? elepsedCycleTime : 0); i++)
+                for (int i = 0; i < (elapsedCycleTime > 0 ? elapsedCycleTime : 0); i++)
                     ;
-                sw2.Stop();
 
                 if (soundCycles > 0)
                 {
@@ -363,12 +343,20 @@ public class CPU
                     if (delta2.TotalMilliseconds >= 1000)
                     {
                         memory.newText.Enqueue("Sound Cycle = " + countFreq
-                         + "Hz, Empty Queue = " + memory.EmptyQueue
-                         + "Queue buffer: " + memory.clickBuffer.Count());
+                         + " Queue buffer: " + memory.clickBuffer.Count()
+                         + " elepsedCycleTime = " + elapsedCycleTime);
+
+                        if (memory.clickBuffer.Count() > 1)
+                        {
+                            elapsedCycleTime += memory.clickBuffer.Count() * 2;
+                        }
+                        else if (memory.clickBuffer.Count() < 1)
+                        {
+                            elapsedCycleTime -= memory.clickBuffer.Count() * 2;
+                        }
 
                         countFreq = 0;
                         countTime = DateTime.Now;
-                        memory.EmptyQueue = 0;
                     }
                     soundCycles = 0;
 
