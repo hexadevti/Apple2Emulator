@@ -5,8 +5,9 @@ using NAudio.Wave;
 
 namespace Apple2;
 
-public static class VideoGenerator
+public static class Video
 {
+    
     public static Bitmap Generate(Runtime.Memory memory, int pixelSize, bool color)
     {
         int byteid = 0;

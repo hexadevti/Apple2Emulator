@@ -17,7 +17,7 @@ public partial class Form1 : Form
     private DirectSoundOut output = new DirectSoundOut();
     public BlockAlignReductionStream? stream;
 
-    public WaveTone tone;
+    public Speaker tone;
 
     public Form1()
     {
@@ -59,10 +59,17 @@ public partial class Form1 : Form
 
     public void LoadThreads()
     {
-        tone = new WaveTone(memory);
-        stream = new BlockAlignReductionStream(tone);
-        output.Init(stream);
-        output.Play();
+        double benchmark = Benchmark();
+
+        threads.Add(Task.Run(() =>
+        {
+            StartSpeaker();
+            while (running)
+            {
+                Thread.Sleep(500);
+            }
+        }));
+
 
         threads.Add(Task.Run(() =>
         {
@@ -72,7 +79,7 @@ public partial class Form1 : Form
                 {
                     try
                     {
-                        pictureBox1.Image = VideoGenerator.Generate(memory, pixelSize, true);
+                        pictureBox1.Image = Video.Generate(memory, pixelSize, true);
                     }
                     catch { }
                 }
@@ -80,15 +87,26 @@ public partial class Form1 : Form
             }
         }));
 
+        threads.Add(Task.Run(() => cpu.DelayedRun(benchmark, running)));
+
+    }
+
+    private void StartSpeaker()
+    {
+        tone = new Speaker(memory);
+        stream = new BlockAlignReductionStream(tone);
+        output.Init(stream);
+        output.Play();
+    }
+
+    private double Benchmark()
+    {
         Stopwatch sw = Stopwatch.StartNew();
         for (double i = 0; i < 300000000; i++)
             ;
         sw.Stop();
-        memory.newText.Enqueue("Stopwatch = " + sw.Elapsed.TotalMilliseconds);
-
-
-        threads.Add(Task.Run(() => cpu.DelayedRun(sw.Elapsed.TotalMilliseconds, running)));
-
+        //memory.newText.Enqueue("Stopwatch = " + sw.Elapsed.TotalMilliseconds);
+        return sw.Elapsed.TotalMilliseconds;
     }
 
     private void Form1_Shown(object? sender, EventArgs e)
@@ -137,10 +155,7 @@ public partial class Form1 : Form
             memory.adjust1Mhz = !memory.adjust1Mhz;
             if (memory.adjust1Mhz)
             {
-                WaveTone tone = new WaveTone(memory);
-                stream = new BlockAlignReductionStream(tone);
-                output.Init(stream);
-                output.Play();
+                StartSpeaker();
                 btnClockAdjust.Text = "Max";
             }
             else
@@ -165,51 +180,5 @@ public partial class Form1 : Form
                 richTextBox2.AppendText(text + Environment.NewLine);
             }
         }
-    }
-}
-
-public class WaveTone : WaveStream
-{
-    private Memory _memory;
-
-    public double frequency { get; set; }
-    public byte sample;
-    byte actualSample = 0;
-
-    public WaveTone(Memory memory)
-    {
-        _memory = memory;
-    }
-    public override WaveFormat WaveFormat
-    {
-        get
-        {
-            return new WaveFormat(180000, 8, 1);
-        }
-    }
-
-    public override long Length
-    {
-        get
-        {
-            return 1;
-        }
-    }
-
-    public override long Position { get; set; }
-
-
-    public override int Read(byte[] buffer, int offset, int count)
-    {
-        byte[] bytes = new byte[count];
-        
-        if (_memory.clickBuffer.TryDequeue(out bytes))
-        {
-            for (int i = 0; i < count; i++)
-            {
-                buffer[i] = bytes[i];
-            }
-        }
-        return count;
     }
 }

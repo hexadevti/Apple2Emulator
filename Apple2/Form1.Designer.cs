@@ -182,6 +182,9 @@ partial class Form1
         richTextBox2.Size = new Size(964, 798);
         richTextBox2.TabIndex = 15;
         richTextBox2.Text = "";
+        richTextBox2.BackColor = System.Drawing.Color.Black;
+        richTextBox2.ForeColor = System.Drawing.Color.White;
+        richTextBox2.Font = new Font("Consolas", 8, FontStyle.Regular);
         // 
         // Form1
         // 
