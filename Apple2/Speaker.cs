@@ -1,5 +1,6 @@
 using Runtime;
 using NAudio.Wave;
+using NAudio.Wave.SampleProviders;
 
 namespace Apple2;
 
@@ -36,6 +37,7 @@ public class Speaker : WaveStream
 
     public override int Read(byte[] buffer, int offset, int count)
     {
+        offset = 10;
         byte[] bytes = new byte[count];
         
         if (_memory.clickBuffer.TryDequeue(out bytes))

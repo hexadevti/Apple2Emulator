@@ -97,7 +97,7 @@ public class CPU
 
                             if (k < bufferSize)
                             {
-                                bytes[k] = (byte)(memory.softswitches.SoundClick ? 0xff : 0x80);
+                                bytes[k] = (byte)(memory.softswitches.SoundClick ? 0x80 : 0x00);
                             }
                             else
                             {

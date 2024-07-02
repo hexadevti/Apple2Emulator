@@ -22,6 +22,10 @@ public class CpuSoftswitchesOvl
             return memory.KeyPressed;
         else if (address == 0xc010)
             memory.KeyPressed = b;
+        else if (address == 0xc00c)
+            memory.softswitches.Cols40_80 = true;
+        else if (address == 0xc00d)
+            memory.softswitches.Cols40_80 = false;
         else if (address == 0xc030)
         {
             memory.softswitches.SoundClick = !memory.softswitches.SoundClick;

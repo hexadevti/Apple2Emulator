@@ -7,6 +7,8 @@ public class Softswitches
     public bool DisplayFull_Split { get; set; }
     public bool LoRes_HiRes { get; set; }
 
+    public bool Cols40_80 { get; set; }
+
     public bool DrivePhase0ON_OFF { get; set; }
     public bool DrivePhase1ON_OFF { get; set; }
     public bool DrivePhase2ON_OFF { get; set; }
