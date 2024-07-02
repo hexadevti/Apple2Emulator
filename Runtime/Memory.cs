@@ -32,6 +32,8 @@ public class Memory
     SlotsSoftSwitchesOvl ov1  = new SlotsSoftSwitchesOvl();
     CpuSoftswitchesOvl ov2  = new CpuSoftswitchesOvl();
     public Queue<string> newText = new Queue<string>();
+    public Queue<bool> cycleWait = new Queue<bool>();
+
 
     public Memory(State state)
     {

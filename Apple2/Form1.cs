@@ -59,7 +59,6 @@ public partial class Form1 : Form
 
     public void LoadThreads()
     {
-        double benchmark = Benchmark();
 
         threads.Add(Task.Run(() =>
         {
@@ -87,7 +86,7 @@ public partial class Form1 : Form
             }
         }));
 
-        threads.Add(Task.Run(() => cpu.DelayedRun(benchmark, running)));
+        threads.Add(Task.Run(() => cpu.DelayedRun(running)));
 
     }
 
@@ -97,16 +96,6 @@ public partial class Form1 : Form
         stream = new BlockAlignReductionStream(tone);
         output.Init(stream);
         output.Play();
-    }
-
-    private double Benchmark()
-    {
-        Stopwatch sw = Stopwatch.StartNew();
-        for (double i = 0; i < 300000000; i++)
-            ;
-        sw.Stop();
-        //memory.newText.Enqueue("Stopwatch = " + sw.Elapsed.TotalMilliseconds);
-        return sw.Elapsed.TotalMilliseconds;
     }
 
     private void Form1_Shown(object? sender, EventArgs e)

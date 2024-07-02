@@ -41,7 +41,6 @@ public class CPU
     {
         lastPC = state.PC;
         state.PC++;
-        memory.cpuCycles++;
     }
 
     public void RunCycle()
@@ -50,9 +49,20 @@ public class CPU
         OpCodePart? opCodePart = OpCodes.GetOpCode(instruction);
         ushort? refAddress = OpCodes.ProcessAddressing(opCodePart, state, memory, this);
         OpCodes.Process(opCodePart, state, memory, refAddress);
+        EnqueueCycles(opCodePart);
     }
 
-    public void DelayedRun(double delay, bool running)
+    public void EnqueueCycles(OpCodePart? opCodePart)
+    {
+        int cycles = opCodePart != null ? opCodePart.Cycles : 1;
+        for (int i = 0;i<cycles;i++)
+        {
+            memory.cycleWait.Enqueue(true);
+            memory.cpuCycles++;
+        }
+    }
+
+    public void DelayedRun(bool running)
     {
         int countFreq = 0;
         DateTime countTime = DateTime.Now;
@@ -60,68 +70,78 @@ public class CPU
         int soundCycles = 0;
         Stopwatch sw3 = Stopwatch.StartNew();
         int countOnCycles = 0;
-        int bufferSize = 7200;
+        int bufferSize = 6400;
         int k = 0;
-        byte[] bytes= new byte[bufferSize];
+        byte[] bytes = new byte[bufferSize];
 
         Thread.Sleep(100);
 
-        double elapsedCycleTime =  1100000 / delay ; // 3500; // 1200;
+        double elapsedCycleTime = 600; // 1100000 / delay; // 3500; // 1200;
+        double adjcycle = 100;
+        Stopwatch sw;
+        sw = Stopwatch.StartNew();
         while (running)
         {
+
             if (memory.adjust1Mhz)
             {
-                RunCycle();
-                for (int i = 0; i < (elapsedCycleTime > 0 ? elapsedCycleTime : 0); i++)
-                    ;
-
-                if (soundCycles > 0)
+                bool n = false;
+                if (sw.Elapsed.TotalNanoseconds >= elapsedCycleTime)
                 {
-                    countFreq++;
-                    
-                    if (k < bufferSize)
+                    if (!memory.cycleWait.TryDequeue(out n))
                     {
-                        bytes[k] = (byte)(memory.softswitches.SoundClick ? 0x80 : 0x00);
-                    }
-                    else
-                    {
-                        memory.clickBuffer.Enqueue(bytes);
-                        k = 0;
-                        bytes = new byte[bufferSize];
-                    }
-
-                    k++;
-
-                    TimeSpan delta2 = DateTime.Now - countTime;
-                    if (delta2.TotalMilliseconds >= 100)
-                    {
-                        // memory.newText.Enqueue("Sound Cycle = " + countFreq
-                        //  + " Queue buffer: " + memory.clickBuffer.Count()
-                        //  + " elepsedCycleTime = " + elapsedCycleTime);
-
-                        if (memory.clickBuffer.Count() > 2)
+                        RunCycle();
+                        if (soundCycles > 0)
                         {
-                            elapsedCycleTime += (memory.clickBuffer.Count() - 2) * 5;
+                            countFreq++;
+
+                            if (k < bufferSize)
+                            {
+                                bytes[k] = (byte)(memory.softswitches.SoundClick ? 0xff : 0x80);
+                            }
+                            else
+                            {
+                                memory.clickBuffer.Enqueue(bytes);
+                                k = 0;
+                                bytes = new byte[bufferSize];
+                            }
+
+                            k++;
+
+                            TimeSpan delta2 = DateTime.Now - countTime;
+                            if (delta2.TotalMilliseconds >= adjcycle)
+                            {
+                                //adjcycle = 100;
+                                memory.newText.Enqueue("Sound Cycle = " + countFreq
+                                 + " Queue buffer: " + memory.clickBuffer.Count()
+                                 + " elepsedCycleTime = " + elapsedCycleTime);
+
+                                if (memory.clickBuffer.Count() > 2)
+                                {
+                                    elapsedCycleTime += (memory.clickBuffer.Count() - 2) * 2;
+                                }
+                                else if (memory.clickBuffer.Count() < 2)
+                                {
+                                    elapsedCycleTime -= (2 - memory.clickBuffer.Count()) * 2;
+                                }
+
+                                countFreq = 0;
+                                countTime = DateTime.Now;
+                            }
+                            soundCycles = 0;
+
+                            if (countOnCycles >= 100)
+                            {
+                                memory.softswitches.SoundClick = false;
+                            }
+
                         }
-                        else if (memory.clickBuffer.Count() < 2)
+                        else
                         {
-                            elapsedCycleTime -= (2 - memory.clickBuffer.Count()) * 5;
+                            soundCycles++;
                         }
-
-                        countFreq = 0;
-                        countTime = DateTime.Now;
                     }
-                    soundCycles = 0;
-
-                    if (countOnCycles >= 100)
-                    {
-                        memory.softswitches.SoundClick = false;
-                    }
-
-                }
-                else
-                {
-                    soundCycles++;
+                    sw = Stopwatch.StartNew();
                 }
             }
             else
@@ -136,6 +156,7 @@ public class CPU
                 memory.cpuCycles = 0;
                 sw3 = Stopwatch.StartNew();
             }
+
         }
     }
 }
