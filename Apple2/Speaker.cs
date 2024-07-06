@@ -20,7 +20,7 @@ public class Speaker : WaveStream
     {
         get
         {
-            return new WaveFormat(160000, 8, 1);
+            return new WaveFormat(150000, 8, 1);
         }
     }
 
@@ -37,7 +37,7 @@ public class Speaker : WaveStream
 
     public override int Read(byte[] buffer, int offset, int count)
     {
-        offset = 10;
+        
         byte[] bytes = new byte[count];
         
         if (_memory.clickBuffer.TryDequeue(out bytes))

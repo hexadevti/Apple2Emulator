@@ -1,4 +1,5 @@
 using System.Collections;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks.Dataflow;
 
@@ -6,6 +7,7 @@ namespace Runtime;
 
 public class DiskDrive
 {
+    
     private Memory memory { get; set; }
 
     private string diskPath { get; set; }
@@ -32,7 +34,11 @@ public class DiskDrive
                             0xF7,0xF9,0xFA,0xFB,0xFC,0xFD,0xFE,0xFF
                         };
 
-    public int track { get; set;}
+    public int track { get; set; }
+
+    public int sector { get; set;}
+    
+    public bool on { get; set; }
     /* DO logical order  0 1 2 3 4 5 6 7 8 9 A B C D E F */
     /*    physical order 0 D B 9 7 5 3 1 E C A 8 6 4 2 F */
 
@@ -66,6 +72,7 @@ public class DiskDrive
             track--;
         else if (track > 0 && (phaseBuffer.SequenceEqual(start_sequence_1) || phaseBuffer.SequenceEqual(start_sequence_2)))
             track--;
+
     }
 
 
@@ -73,6 +80,7 @@ public class DiskDrive
         0x00, 0x07, 0x0e, 0x06, 0x0d, 0x05, 0x0c, 0x04, 0x0b, 0x03, 0x0a, 0x02, 0x09, 0x01, 0x08, 0x0f };
 
     ushort[] secoffset = new ushort[] { 0, 0x700, 0xe00, 0x600, 0xd00, 0x500, 0xc00, 0x400, 0xb00, 0x300, 0xa00, 0x200, 0x900, 0x100, 0x800, 0xf00 };
+
 
     public DiskDrive(string dskPath, Memory memory)
     {

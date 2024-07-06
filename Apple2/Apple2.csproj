@@ -27,7 +27,10 @@
     <Content Include="roms\diskinterface.rom">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="roms\ProDOS 1.2.dsk">
+    <Content Include="roms\Videx Videoterm ROM 2.4.bin">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="roms\Videx Videoterm Character ROM APL.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <ProjectReference Include="..\Runtime\Runtime.csproj" />
@@ -43,5 +46,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <!-- <PublishTrimmed>true</PublishTrimmed>
     <PublishAOT>true</PublishAOT> -->
+    <ForceDesignerDpiUnaware>true</ForceDesignerDpiUnaware>
   </PropertyGroup>
 </Project>

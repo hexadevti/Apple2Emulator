@@ -2,6 +2,7 @@ using Runtime.Abstractions;
 using Runtime.Overlays;
 using System.Collections;
 using System.Globalization;
+using System.Net;
 using System.Runtime.ExceptionServices;
 using System.Threading.Channels;
 
@@ -13,10 +14,13 @@ public class Memory
     
     //private readonly IList<IOverLay> overlays;
     public Dictionary<byte, bool[,]> charSet;
+    public Dictionary<byte, bool[,]> cols80CharSet;
     public bool adjust1Mhz = false;
     public double clockSpeed = 0;
     public byte[] baseRAM = new byte[0xc000];
     public byte[] slotsROM = new byte[0x700];
+    public byte[] extendedSlotsROM = new byte[0x800];
+    public byte[] cols80RAM = new byte[0x800];
     public byte[] ROM = new byte[0x4000];
     public byte[] extendedRAM = new byte[0x800];
     public byte[] memoryBankSwitchedRAM1 = new byte[0x3000];
@@ -31,8 +35,9 @@ public class Memory
     public int cpuCycles { get; set; }
     SlotsSoftSwitchesOvl ov1  = new SlotsSoftSwitchesOvl();
     CpuSoftswitchesOvl ov2  = new CpuSoftswitchesOvl();
-    public Queue<string> newText = new Queue<string>();
+    public Queue<string> screenLog = new Queue<string>();
     public Queue<bool> cycleWait = new Queue<bool>();
+    public int audioJumpInterval = 25;
 
 
     public Memory(State state)
@@ -124,6 +129,33 @@ public class Memory
         }
     }
 
+    public void Load80Chars(byte[] rom)
+    {
+        cols80CharSet = new Dictionary<byte, bool[,]>();
+
+        ushort id = 0;
+        for (byte i = 0; i < 0x80; i++)
+        {
+            bool[,] charboolItem = new bool[9, 8];
+
+            for (int charLayer = 0; charLayer < 16; charLayer++)
+            {
+                if (charLayer < 9)
+                {
+                    byte charItem = rom[id];
+                    bool[] bitsLayer = ConvertByteToBoolArray(charItem);
+                    for (int charBits = 0; charBits < 8; charBits++)
+                    {
+                        charboolItem[charLayer, charBits] = bitsLayer[charBits];
+                    }
+                }
+                id++;
+            }
+
+            cols80CharSet.Add(i, charboolItem);
+        }
+    }
+
     public void LoadROM(ushort startAddress, byte[] rom)
     {
         for (int i = 0; i < rom.Length; i++)
@@ -132,11 +164,19 @@ public class Memory
         }
     }
 
-    public void LoadSlotsROM(ushort startAddress, byte[] rom)
+    public void LoadSlotsROM(ushort startAddress, byte[] rom, int offset = 0)
+    {
+        for (int i = 0; i < 0xff; i++)
+        {
+            slotsROM[startAddress - 0xc100 + i] = rom[i + offset];
+        }
+    }
+
+    public void LoadExtendedSlotsROM(ushort startAddress, byte[] rom)
     {
         for (int i = 0; i < rom.Length; i++)
         {
-            slotsROM[startAddress - 0xc100 + i] = rom[i];
+            extendedSlotsROM[startAddress - 0xc800 + i] = rom[i];
         }
     }
     
@@ -198,9 +238,13 @@ public class Memory
                 ret = ROM[address - 0xd000];
             }
         }
+        else if (address >= 0xcc00 && address < 0xce00)
+        {
+            ret = cols80RAM[address - 0xcc00 + softswitches.cols80PageSelect * 0x100];
+        }
         else if (address >= 0xc800)
         {
-            ret = 0; //extendedRAM[address - 0xc800];
+            ret = extendedSlotsROM[address - 0xc800];
         }
         else if (address >= 0xc100)
         {
@@ -275,6 +319,22 @@ public class Memory
                 else
                     this.memoryBankSwitchedRAM1[address - 0xe000] = value;
             }
+        }
+        else if (address >= 0xcc00 && address < 0xce00)
+        {
+            cols80RAM[address - 0xcc00 + softswitches.cols80PageSelect * 0x200] = value;
+            // Console.WriteLine(  "baseRAM[0x47b] = " + baseRAM[0x47b].ToString("X2") + "|" + 
+            //                     "baseRAM[0x4fb] = " + baseRAM[0x4fb].ToString("X2") + "|" + 
+            //                     "baseRAM[0x57b] = " + baseRAM[0x57b].ToString("X2") + "|" + 
+            //                     "baseRAM[0x5fb] = " + baseRAM[0x5fb].ToString("X2") + "|" + 
+            //                     "baseRAM[0x67b] = " + baseRAM[0x67b].ToString("X2") + "|" + 
+            //                     "baseRAM[0x6fb] = " + baseRAM[0x6fb].ToString("X2") + "|" + 
+            //                     "baseRAM[0x77b] = " + baseRAM[0x77b].ToString("X2") + "|" + 
+            //                     "baseRAM[0x7fb] = " + baseRAM[0x7fb].ToString("X2"));
+            //Console.Write(baseRAM[0x6fb].ToString("X2") + ":" + softswitches.cols80PageSelect.ToString() + ":" + address.ToString("X4") + ":" +  System.Text.Encoding.ASCII.GetString(new [] { (byte)(value)}) + "|");
+            // Console.WriteLine(softswitches.cols80PageSelect.ToString() + ":" + (baseRAM[0x57b] + (baseRAM[0x5fb] * 80) + (baseRAM[0x6fb] * 16)).ToString("X4"));
+            
+
         }
         else if (address >= 0xc800)
         {

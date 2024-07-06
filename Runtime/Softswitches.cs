@@ -30,6 +30,8 @@ public class Softswitches
 
     public bool SoundClick;
 
+    public int cols80PageSelect {get; set;}
+
 
 
 }

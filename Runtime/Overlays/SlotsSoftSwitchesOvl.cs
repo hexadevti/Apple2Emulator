@@ -19,6 +19,15 @@ public class SlotsSoftSwitchesOvl
         var sec = memory.softswitches.Drive1_2 ? (memory.drive1.FlagDos_Prodos ? memory.ReadByte(0x2d) : memory.ReadByte(0xd357)) : (memory.drive2.FlagDos_Prodos ? memory.ReadByte(0x2d) : memory.ReadByte(0xd357));
         var trk = memory.softswitches.Drive1_2 ? memory.drive1.track : memory.drive2.track;
         string key = trk + "_" + sec;
+        if (memory.softswitches.Drive1_2)
+        {
+            memory.drive1.sector = sec;
+        }
+        else
+        {
+            memory.drive2.sector = sec;
+        }
+
         if (address == 0xc08d + slotOffset)
         {
             if (memory.softswitches.DriveQ6H_L == false && memory.softswitches.DriveQ7H_L == true)
@@ -76,6 +85,8 @@ public class SlotsSoftSwitchesOvl
             }
         }
 
+        
+
         ProcessSwitchc080(address, b, memory, null, slotOffset);
         
     }
@@ -87,6 +98,14 @@ public class SlotsSoftSwitchesOvl
         var sec = memory.baseRAM[0x2d];
         var trk = memory.baseRAM[0x2e];
         string key = trk + "_" + sec;
+        if (memory.softswitches.Drive1_2)
+        {
+            memory.drive1.sector = sec;
+        }
+        else
+        {
+            memory.drive2.sector = sec;
+        }
         if (address == 0xc08c + slotOffset)
         {
             if (memory.softswitches.DriveQ6H_L == false && memory.softswitches.DriveQ7H_L == false)
@@ -105,12 +124,29 @@ public class SlotsSoftSwitchesOvl
                 }
             }
         }
-
+        
         return ProcessSwitchc080(address, 0, memory, state, slotOffset);
     }
 
     private byte ProcessSwitchc080(ushort address, byte b, Memory memory, State? state, int slotOffset)
     {
+        if (address == 0xc0b0)
+        {
+            memory.softswitches.cols80PageSelect = 0;
+        }
+        else if (address == 0xc0b4)
+        {
+            memory.softswitches.cols80PageSelect = 1;
+        }
+        else if (address == 0xc0b8)
+        {
+            memory.softswitches.cols80PageSelect = 2;
+        }
+        else if (address == 0xc0bc)
+        {
+            memory.softswitches.cols80PageSelect = 3;
+        }
+
         if (address == 0xc080 + slotOffset)
         {
             memory.softswitches.DrivePhase0ON_OFF = false;
@@ -178,10 +214,24 @@ public class SlotsSoftSwitchesOvl
         else if (address == 0xc088 + slotOffset)
         {
             memory.softswitches.DriveMotorON_OFF = false;
+            if (memory.softswitches.Drive1_2)
+                memory.drive1.on = false;
+            else
+                memory.drive2.on = false;
         }
         else if (address == 0xc089 + slotOffset)
         {
             memory.softswitches.DriveMotorON_OFF = true;
+            if (memory.softswitches.Drive1_2)
+            {
+                memory.drive1.on = true;
+                memory.drive2.on = false;
+            }
+            else
+            {
+                memory.drive2.on = true;
+                memory.drive1.on = false;
+            }
         }
         else if (address == 0xc08a + slotOffset)
             memory.softswitches.Drive1_2 = true;

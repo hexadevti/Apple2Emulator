@@ -2,6 +2,8 @@ using Runtime;
 using System.Reflection;
 using NAudio.Wave;
 using System.Diagnostics;
+using System.Windows.Forms.VisualStyles;
+using System.ComponentModel;
 
 namespace Apple2;
 
@@ -19,6 +21,8 @@ public partial class Form1 : Form
 
     public Speaker tone;
 
+    public System.Windows.Forms.MethodInvoker inv;
+
     public Form1()
     {
         InitializeComponent();
@@ -31,12 +35,10 @@ public partial class Form1 : Form
         string[] parts = openFileDialog1.FileName.Split('\\');
         disk1.Text = parts[parts.Length - 1];
         openFileDialog2.FileName = "";
-        timerClockSpeed.Interval = 500;
-        timerClockSpeed.Start();
         this.Shown += Form1_Shown;
         memory = new Memory(state);
         memory.adjust1Mhz = true;
-        btnClockAdjust.Text = "Max";
+        btnClockAdjust.Text = "Fast";
         cpu = new CPU(state, memory);
         Keyboard keyboard = new Keyboard(memory, cpu);
         richTextBox1.KeyDown += keyboard.OnKeyDown;
@@ -49,23 +51,77 @@ public partial class Form1 : Form
         memory.LoadROM(0xd800, File.ReadAllBytes(assemblyPath + "roms/ApplesoftD800.rom"));
         memory.LoadROM(0xd000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftD000.rom"));
         memory.LoadSlotsROM(0xc600, File.ReadAllBytes(assemblyPath + "roms/diskinterface.rom"));
+        memory.LoadExtendedSlotsROM(0xc800, File.ReadAllBytes(assemblyPath + "roms/Videx Videoterm ROM 2.4.bin"));
+        memory.LoadSlotsROM(0xc300, File.ReadAllBytes(assemblyPath + "roms/Videx Videoterm ROM 2.4.bin"), 0x300);
         memory.LoadChars(File.ReadAllBytes(assemblyPath + "roms/CharROM.bin"));
+        memory.Load80Chars(File.ReadAllBytes(assemblyPath + "roms/Videx Videoterm Character ROM Normal.bin"));
         memory.drive1 = new DiskDrive(openFileDialog1.FileName, memory);
         memory.drive2 = new DiskDrive(openFileDialog2.FileName, memory);
+        this.FormClosing+=FormCloseEvent;
+        tbSpeed.Enabled = false;
+        tbSpeed.ValueChanged += tbSpeed_ValueChanged;
         running = true;
+        StartSpeaker();
         cpu.WarmStart();
         LoadThreads();
     }
 
+    private void tbSpeed_ValueChanged(object? sender, EventArgs e)
+    {
+        memory.clickBuffer.Clear();
+        richTextBox1.Focus();
+    }
+
+    private void FormCloseEvent(object? sender, FormClosingEventArgs e)
+    {
+        running = false;
+    }
+        
+
     public void LoadThreads()
     {
-
         threads.Add(Task.Run(() =>
         {
-            StartSpeaker();
             while (running)
             {
-                Thread.Sleep(500);
+                memory.audioJumpInterval = ReadTabBar(tbSpeed);
+                SetLabel(lblClockSpeed, (1000 / memory.clockSpeed).ToString("0.00") + " Mhz");
+                SetLabel(D1T, "T: " + memory.drive1.track.ToString());
+                SetLabel(D1S, "S: " + memory.drive1.sector.ToString());
+                SetCheckbox(D1O, memory.drive1.on);
+                SetLabel(D2T, "T: " + memory.drive2.track.ToString());
+                SetLabel(D2S, "S: " + memory.drive2.sector.ToString());
+                SetCheckbox(D2O, memory.drive2.on);
+                string text = "";
+                if (memory.screenLog.TryDequeue(out text))
+                    SetRichTextBox(richTextBox2, text + Environment.NewLine);
+                Thread.Sleep(100);
+
+                for (int j = 0;j < 24;j++)
+                {
+                    for (int i = 0;i < 80;i++)
+                    {
+                        ushort pos = (ushort)((i + (j * 0x50) + memory.baseRAM[0x6fb] * 0x10) % 0x800);
+                        Console.SetCursorPosition(i, j);
+                        Console.Write(System.Text.Encoding.ASCII.GetString(new [] { memory.cols80RAM[pos] }));
+                    }
+                }
+
+                // Console.SetCursorPosition(0, 25);
+                // Console.WriteLine(memory.baseRAM[0x6fb].ToString("X4"));
+                Console.SetCursorPosition(0, 26);
+                Console.WriteLine(memory.baseRAM[0x57b].ToString("X4"));
+                Console.SetCursorPosition(0, 27);
+                Console.WriteLine(memory.baseRAM[0x5fb].ToString("X4"));
+                // Console.SetCursorPosition(0, 28);
+                // Console.WriteLine(memory.baseRAM[0x57b].ToString("X4"));
+                // Console.SetCursorPosition(0, 29);
+                // Console.WriteLine(memory.baseRAM[0x5fb].ToString("X4"));
+                // Console.SetCursorPosition(0, 30);
+                // Console.WriteLine(memory.baseRAM[0x67b].ToString("X4"));
+                // Console.WriteLine(memory.baseRAM[0x6fb].ToString("X4"));
+                // Console.WriteLine(memory.baseRAM[0x77b].ToString("X4"));
+                // Console.WriteLine(memory.baseRAM[0x7fb].ToString("X4"));
             }
         }));
 
@@ -78,7 +134,10 @@ public partial class Form1 : Form
                 {
                     try
                     {
-                        pictureBox1.Image = Video.Generate(memory, pixelSize, true);
+                        if (memory.softswitches.Cols40_80)
+                            pictureBox1.Image = Video.Generate(memory, pixelSize, true);
+                        else
+                            pictureBox1.Image = Cols80Video.Generate(memory, pixelSize, true);
                     }
                     catch { }
                 }
@@ -88,6 +147,7 @@ public partial class Form1 : Form
 
         threads.Add(Task.Run(() => cpu.DelayedRun(running)));
 
+        
     }
 
     private void StartSpeaker()
@@ -144,30 +204,76 @@ public partial class Form1 : Form
             memory.adjust1Mhz = !memory.adjust1Mhz;
             if (memory.adjust1Mhz)
             {
-                StartSpeaker();
-                btnClockAdjust.Text = "Max";
+                memory.clickBuffer.Clear();
+                tbSpeed.Value = 1;
+                tbSpeed.Enabled = false;
+                btnClockAdjust.Text = "Fast";
             }
             else
             {
-                stream.Dispose();
-                output.Dispose();
+                memory.clickBuffer.Clear();
+                tbSpeed.Enabled = true;
                 btnClockAdjust.Text = "1Mhz";
             }
         }
         richTextBox1.Focus();
     }
 
-    private void timerClockSpeed_Tick(object sender, EventArgs e)
+    public void SetLabel(Control control, string text)
     {
-        if (memory != null)
+        if (D1T.InvokeRequired)
         {
-            lblClockSpeed.Text = (1000 / memory.clockSpeed).ToString("0.00") + " Mhz";
-            string text = "";
-
-            while (memory.newText.TryDequeue(out text))
-            {
-                richTextBox2.AppendText(text + Environment.NewLine);
-            }
+            Action safeWrite = delegate { SetLabel(control, text); };
+            control.Invoke(safeWrite);
         }
+        else
+        {
+            control.Text = text;
+        }
+            
     }
+
+    public static int ReadTabBar(TrackBar control)
+    {
+        if (control.InvokeRequired)
+        {
+            return (int)control.Invoke(new Func<int>(() => ReadTabBar(control)));
+        }
+        else
+        {
+            return control.Value;
+        }
+            
+    }
+
+    public void SetCheckbox(CheckBox control, bool check)
+    {
+        if (D1T.InvokeRequired)
+        {
+            Action safeWrite = delegate { SetCheckbox(control, check); };
+            control.Invoke(safeWrite);
+        }
+        else
+        {
+            control.Checked = check;
+        }
+            
+    }
+
+    public void SetRichTextBox(RichTextBox control, string text)
+    {
+        if (control.InvokeRequired)
+        {
+            Action safeWrite = delegate { SetLabel(control, text); };
+            control.Invoke(safeWrite);
+        }
+        else
+        {
+            control.AppendText(text);
+        }
+            
+    }
+
+
+    
 }

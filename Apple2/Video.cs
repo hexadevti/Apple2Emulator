@@ -1,7 +1,6 @@
 
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
-using NAudio.Wave;
 
 namespace Apple2;
 

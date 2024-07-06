@@ -22,10 +22,10 @@ public class CpuSoftswitchesOvl
             return memory.KeyPressed;
         else if (address == 0xc010)
             memory.KeyPressed = b;
-        else if (address == 0xc00c)
-            memory.softswitches.Cols40_80 = true;
-        else if (address == 0xc00d)
-            memory.softswitches.Cols40_80 = false;
+        // else if (address == 0xc00c)
+        //     memory.softswitches.Cols40_80 = true; // Apple IIc IIe
+        // else if (address == 0xc00d)
+        //     memory.softswitches.Cols40_80 = false; // Apple IIc IIe
         else if (address == 0xc030)
         {
             memory.softswitches.SoundClick = !memory.softswitches.SoundClick;
@@ -56,7 +56,10 @@ public class CpuSoftswitchesOvl
             memory.softswitches.LoRes_HiRes = true;
         else if (address == 0xc057)
             memory.softswitches.LoRes_HiRes = false;
-
+        else if (address == 0xc058)
+            memory.softswitches.Cols40_80 = true;
+        else if (address == 0xc059)
+            memory.softswitches.Cols40_80 = false;
         else if (address >= 0xc080)
         {
             var last4bits = (address & 0b00001111);
