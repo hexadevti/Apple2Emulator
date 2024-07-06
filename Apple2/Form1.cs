@@ -97,31 +97,22 @@ public partial class Form1 : Form
                     SetRichTextBox(richTextBox2, text + Environment.NewLine);
                 Thread.Sleep(100);
 
-                for (int j = 0;j < 24;j++)
-                {
-                    for (int i = 0;i < 80;i++)
-                    {
-                        ushort pos = (ushort)((i + (j * 0x50) + memory.baseRAM[0x6fb] * 0x10) % 0x800);
-                        Console.SetCursorPosition(i, j);
-                        Console.Write(System.Text.Encoding.ASCII.GetString(new [] { memory.cols80RAM[pos] }));
-                    }
-                }
+                // for (int j = 0;j < 24;j++)
+                // {
+                //     for (int i = 0;i < 80;i++)
+                //     {
+                //         ushort pos = (ushort)((i + (j * 0x50) + memory.baseRAM[0x6fb] * 0x10) % 0x800);
+                //         Console.SetCursorPosition(i, j);
+                //         Console.Write(System.Text.Encoding.ASCII.GetString(new [] { memory.cols80RAM[pos] }));
+                //     }
+                // }
 
-                // Console.SetCursorPosition(0, 25);
-                // Console.WriteLine(memory.baseRAM[0x6fb].ToString("X4"));
-                Console.SetCursorPosition(0, 26);
-                Console.WriteLine(memory.baseRAM[0x57b].ToString("X4"));
-                Console.SetCursorPosition(0, 27);
-                Console.WriteLine(memory.baseRAM[0x5fb].ToString("X4"));
-                // Console.SetCursorPosition(0, 28);
+                // // Console.SetCursorPosition(0, 25);
+                // // Console.WriteLine(memory.baseRAM[0x6fb].ToString("X4"));
+                // Console.SetCursorPosition(0, 26);
                 // Console.WriteLine(memory.baseRAM[0x57b].ToString("X4"));
-                // Console.SetCursorPosition(0, 29);
+                // Console.SetCursorPosition(0, 27);
                 // Console.WriteLine(memory.baseRAM[0x5fb].ToString("X4"));
-                // Console.SetCursorPosition(0, 30);
-                // Console.WriteLine(memory.baseRAM[0x67b].ToString("X4"));
-                // Console.WriteLine(memory.baseRAM[0x6fb].ToString("X4"));
-                // Console.WriteLine(memory.baseRAM[0x77b].ToString("X4"));
-                // Console.WriteLine(memory.baseRAM[0x7fb].ToString("X4"));
             }
         }));
 
