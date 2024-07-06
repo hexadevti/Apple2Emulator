@@ -23,6 +23,7 @@ public class Keyboard
     {
         if (e.KeyChar < 32 || e.KeyChar >= 127)
             return;
+        
         memory.KeyPressed = (byte)(Encoding.ASCII.GetBytes(new[] { e.KeyChar.ToString().ToUpper()[0] })[0] | 0b10000000);
         e.Handled = true;
     }

@@ -24,13 +24,9 @@ public static class Cols80Video
             {
                 posH = c;
                 var chr = memory.cols80RAM[(ushort)((c + (posV * 0x50) + memory.baseRAM[0x6fb] * 0x10) % 0x800)];
-                // if (chr >= 0x40 && chr < 0x80)
-                //     chr = Math.Floor((float)(DateTime.Now.Millisecond / 500)) % 2 == 0 ? (byte)(chr) : chr;
                 if (posV == cursorV && posH == cursorH)
                 {
-                    //if (chr == 0x60)
-                    //    chr = 0xa0;
-                    chr = Math.Floor((float)(DateTime.Now.Millisecond / 500)) % 2 == 0 ? (byte)(chr + 0x80) : chr;
+                    chr = Math.Floor((float)(DateTime.Now.Millisecond / 500)) % 2 == 0 ? (byte)(chr + 0x80) : (byte)(chr);
                 }
 
                 linha[c] = chr;

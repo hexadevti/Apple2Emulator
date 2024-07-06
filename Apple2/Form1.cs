@@ -107,8 +107,8 @@ public partial class Form1 : Form
                 //     }
                 // }
 
-                // // Console.SetCursorPosition(0, 25);
-                // // Console.WriteLine(memory.baseRAM[0x6fb].ToString("X4"));
+                //Console.SetCursorPosition(0, 25);
+                //Console.WriteLine(memory.baseRAM[0x7fb].ToString("B8"));
                 // Console.SetCursorPosition(0, 26);
                 // Console.WriteLine(memory.baseRAM[0x57b].ToString("X4"));
                 // Console.SetCursorPosition(0, 27);

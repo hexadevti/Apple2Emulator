@@ -40,15 +40,21 @@ public class CPU
 
     public void IncPC()
     {
-        lastPC = state.PC;
         state.PC++;
     }
 
     public void RunCycle()
     {
         byte instruction = memory.ReadByte(state.PC);
+        lastPC = state.PC;
         OpCodePart? opCodePart = OpCodes.GetOpCode(instruction);
+        if (lastPC == 0xc87d)
+        {
+            Thread.Sleep(1);
+        }
         ushort? refAddress = OpCodes.ProcessAddressing(opCodePart, state, memory, this);
+
+        
         OpCodes.Process(opCodePart, state, memory, refAddress);
         EnqueueCycles(opCodePart);
     }

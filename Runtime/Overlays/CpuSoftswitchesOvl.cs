@@ -21,7 +21,7 @@ public class CpuSoftswitchesOvl
         if (address == 0xc000)
             return memory.KeyPressed;
         else if (address == 0xc010)
-            memory.KeyPressed = b;
+            memory.KeyPressed = memory.KeyPressed < 0x80 ? memory.KeyPressed :(byte)(memory.KeyPressed ^ 0b10000000);
         // else if (address == 0xc00c)
         //     memory.softswitches.Cols40_80 = true; // Apple IIc IIe
         // else if (address == 0xc00d)
@@ -60,6 +60,8 @@ public class CpuSoftswitchesOvl
             memory.softswitches.Cols40_80 = true;
         else if (address == 0xc059)
             memory.softswitches.Cols40_80 = false;
+        else if (address == 0xc063)
+            return 0x80; // Apple II+ default. For Apple IIe it is defined by shift key pressed
         else if (address >= 0xc080)
         {
             var last4bits = (address & 0b00001111);
