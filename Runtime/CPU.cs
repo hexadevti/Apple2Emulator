@@ -48,7 +48,7 @@ public class CPU
         byte instruction = memory.ReadByte(state.PC);
         lastPC = state.PC;
         OpCodePart? opCodePart = OpCodes.GetOpCode(instruction);
-        if (lastPC == 0xc87d)
+        if (lastPC == 0xc876)
         {
             Thread.Sleep(1);
         }

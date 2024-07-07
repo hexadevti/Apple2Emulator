@@ -7,7 +7,7 @@ using Runtime.Abstractions;
 
 namespace Runtime.Overlays;
 
-public class SlotsSoftSwitchesOvl
+public class DiskIICard
 {
     int slot = 6;
     int pointer = 0;
@@ -130,22 +130,6 @@ public class SlotsSoftSwitchesOvl
 
     private byte ProcessSwitchc080(ushort address, byte b, Memory memory, State? state, int slotOffset)
     {
-        if (address == 0xc0b0)
-        {
-            memory.softswitches.cols80PageSelect = 0;
-        }
-        else if (address == 0xc0b4)
-        {
-            memory.softswitches.cols80PageSelect = 1;
-        }
-        else if (address == 0xc0b8)
-        {
-            memory.softswitches.cols80PageSelect = 2;
-        }
-        else if (address == 0xc0bc)
-        {
-            memory.softswitches.cols80PageSelect = 3;
-        }
 
         if (address == 0xc080 + slotOffset)
         {

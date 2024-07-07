@@ -107,10 +107,10 @@ public partial class Form1 : Form
                 //     }
                 // }
 
-                //Console.SetCursorPosition(0, 25);
-                //Console.WriteLine(memory.baseRAM[0x7fb].ToString("B8"));
+                // Console.SetCursorPosition(0, 25);
+                // Console.WriteLine(memory.baseRAM[0x4fb].ToString("X2") + memory.baseRAM[0x47b].ToString("X2"));
                 // Console.SetCursorPosition(0, 26);
-                // Console.WriteLine(memory.baseRAM[0x57b].ToString("X4"));
+                // Console.WriteLine(memory.baseRAM[0x6fb].ToString("X2"));
                 // Console.SetCursorPosition(0, 27);
                 // Console.WriteLine(memory.baseRAM[0x5fb].ToString("X4"));
             }
@@ -202,7 +202,9 @@ public partial class Form1 : Form
             }
             else
             {
+
                 memory.clickBuffer.Clear();
+                tbSpeed.Value = 10;
                 tbSpeed.Enabled = true;
                 btnClockAdjust.Text = "1Mhz";
             }

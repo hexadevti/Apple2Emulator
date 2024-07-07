@@ -33,8 +33,10 @@ public class Memory
     public State state { get; set; }
     public Queue<byte[]> clickBuffer = new Queue<byte[]>(100);
     public int cpuCycles { get; set; }
-    SlotsSoftSwitchesOvl ov1  = new SlotsSoftSwitchesOvl();
-    CpuSoftswitchesOvl ov2  = new CpuSoftswitchesOvl();
+    DiskIICard diskIIcard  = new DiskIICard();
+    CpuSoftswitchesOvl cpuSoftswitches  = new CpuSoftswitchesOvl();
+    Cols80Card cols80Card = new Cols80Card();
+    LanguageCard languageCard = new LanguageCard();
     public Queue<string> screenLog = new Queue<string>();
     public Queue<bool> cycleWait = new Queue<bool>();
     public int audioJumpInterval = 25;
@@ -240,7 +242,7 @@ public class Memory
         }
         else if (address >= 0xcc00 && address < 0xce00)
         {
-            ret = cols80RAM[address - 0xcc00 + softswitches.cols80PageSelect * 0x100];
+            ret = cols80RAM[address - 0xcc00 + softswitches.cols80PageSelect * 0x200];
         }
         else if (address >= 0xc800)
         {
@@ -250,13 +252,18 @@ public class Memory
         {
             ret = slotsROM[address - 0xc100];
         }
-        else if (address >= 0xc090)
+        else if (address >= 0xc080)
         {
-            ret = ov1.Read(address, this, state);
+            if (address >= 0xc0d0) // Slot 6
+                ret = diskIIcard.Read(address, this, state);
+            else if (address >= 0xc0b0) // Slot 3
+                ret = cols80Card.Read(address, this, state);
+            else if (address >= 0xc080) // Slot 0
+                ret = languageCard.Read(address, this, state);
         }
         else if (address >= 0xc000)
         {
-            ret = ov2.Read(address, this, state);
+            ret = cpuSoftswitches.Read(address, this, state);
         }
         
         return ret;
@@ -320,33 +327,26 @@ public class Memory
                     this.memoryBankSwitchedRAM1[address - 0xe000] = value;
             }
         }
-        else if (address >= 0xcc00 && address < 0xce00)
+        else if (address >= 0xcc00 && address < 0xce00) // Slots reserved ROM 
         {
             cols80RAM[address - 0xcc00 + softswitches.cols80PageSelect * 0x200] = value;
-            // Console.WriteLine(  "baseRAM[0x47b] = " + baseRAM[0x47b].ToString("X2") + "|" + 
-            //                     "baseRAM[0x4fb] = " + baseRAM[0x4fb].ToString("X2") + "|" + 
-            //                     "baseRAM[0x57b] = " + baseRAM[0x57b].ToString("X2") + "|" + 
-            //                     "baseRAM[0x5fb] = " + baseRAM[0x5fb].ToString("X2") + "|" + 
-            //                     "baseRAM[0x67b] = " + baseRAM[0x67b].ToString("X2") + "|" + 
-            //                     "baseRAM[0x6fb] = " + baseRAM[0x6fb].ToString("X2") + "|" + 
-            //                     "baseRAM[0x77b] = " + baseRAM[0x77b].ToString("X2") + "|" + 
-            //                     "baseRAM[0x7fb] = " + baseRAM[0x7fb].ToString("X2"));
-            //Console.Write(baseRAM[0x6fb].ToString("X2") + ":" + softswitches.cols80PageSelect.ToString() + ":" + address.ToString("X4") + ":" +  System.Text.Encoding.ASCII.GetString(new [] { (byte)(value)}) + "|");
-            // Console.WriteLine(softswitches.cols80PageSelect.ToString() + ":" + (baseRAM[0x57b] + (baseRAM[0x5fb] * 80) + (baseRAM[0x6fb] * 16)).ToString("X4"));
-            
-
         }
         else if (address >= 0xc800)
         {
             extendedRAM[address - 0xc800] = value;
         }
-        else if (address >= 0xc090)
+        else if (address >= 0xc080) // Slots SoftSwitches
         {
-            ov1.Write(address, value, this);
+            if (address >= 0xc0d0) // Slot 6
+                diskIIcard.Write(address, value, this);
+            else if (address >= 0xc0b0) // Slot 3
+                cols80Card.Write(address, value, this);
+            else if (address >= 0xc080) // Slot 0
+                languageCard.Write(address, value, this);
         }
         else if (address >= 0xc000)
         {
-            ov2.Write(address, value, this);
+            cpuSoftswitches.Write(address, value, this);
         }
         
     }
