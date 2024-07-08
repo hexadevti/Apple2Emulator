@@ -21,7 +21,7 @@
     <Content Include="roms\OriginalF800.rom">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="roms\CharROM.rom">
+    <Content Include="roms\CharROM.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="roms\diskinterface.rom">
@@ -31,6 +31,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="roms\Videx Videoterm Character ROM Normal.bin">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="roms\Apple DOS 3.3 January 1983.dsk">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <ProjectReference Include="..\Runtime\Runtime.csproj" />

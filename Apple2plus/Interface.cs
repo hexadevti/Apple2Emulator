@@ -32,7 +32,7 @@ public partial class Interface : Form
         if (assemblyPath != null)
             assemblyPath += "/";
 
-        openFileDialog1.FileName = assemblyPath + "roms/teste.dsk";
+        openFileDialog1.FileName = assemblyPath + "roms/Apple DOS 3.3 January 1983.dsk";
         string[] parts = openFileDialog1.FileName.Split('\\');
         disk1.Text = parts[parts.Length - 1];
         openFileDialog2.FileName = "";
