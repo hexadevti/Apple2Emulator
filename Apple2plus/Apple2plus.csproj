@@ -18,9 +18,6 @@
     <Content Include="roms\ApplesoftF800.rom">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="roms\OriginalF800.rom">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="roms\CharROM.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -36,6 +33,13 @@
     <Content Include="roms\Apple DOS 3.3 January 1983.dsk">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="roms\ProDOS 1.2.dsk">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="roms\DOS 3.3 System Master - 680-0051-00.dsk">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    
     <ProjectReference Include="..\Runtime\Runtime.csproj" />
   </ItemGroup>
   <ItemGroup>

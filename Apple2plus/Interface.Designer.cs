@@ -63,7 +63,7 @@ partial class Interface
         pictureBox1.Location = new Point(11, 0);
         pictureBox1.Margin = new Padding(2);
         pictureBox1.Name = "pictureBox1";
-        pictureBox1.Size = new Size(880, 522);
+        pictureBox1.Size = new Size(880, 545);
         pictureBox1.TabIndex = 0;
         pictureBox1.TabStop = false;
         pictureBox1.Click += pictureBox1_Click;
@@ -268,7 +268,7 @@ partial class Interface
         ckbColor.AutoSize = true;
         ckbColor.Checked = true;
         ckbColor.CheckState = CheckState.Checked;
-        ckbColor.Location = new Point(16, 535);
+        ckbColor.Location = new Point(447, 564);
         ckbColor.Name = "ckbColor";
         ckbColor.Size = new Size(55, 19);
         ckbColor.TabIndex = 18;
