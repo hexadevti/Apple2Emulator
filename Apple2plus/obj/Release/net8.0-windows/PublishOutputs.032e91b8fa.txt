@@ -1,0 +1,25 @@
+C:\Users\luciano\repos\6502\Apple2\bin\Release\net8.0-windows\publish\roms\ApplesoftD000.rom
+C:\Users\luciano\repos\6502\Apple2\bin\Release\net8.0-windows\publish\roms\ApplesoftD800.rom
+C:\Users\luciano\repos\6502\Apple2\bin\Release\net8.0-windows\publish\roms\ApplesoftE000.rom
+C:\Users\luciano\repos\6502\Apple2\bin\Release\net8.0-windows\publish\roms\ApplesoftE800.rom
+C:\Users\luciano\repos\6502\Apple2\bin\Release\net8.0-windows\publish\roms\ApplesoftF000.rom
+C:\Users\luciano\repos\6502\Apple2\bin\Release\net8.0-windows\publish\roms\ApplesoftF800.rom
+C:\Users\luciano\repos\6502\Apple2\bin\Release\net8.0-windows\publish\roms\OriginalF800.rom
+C:\Users\luciano\repos\6502\Apple2\bin\Release\net8.0-windows\publish\roms\CharROM.rom
+C:\Users\luciano\repos\6502\Apple2\bin\Release\net8.0-windows\publish\roms\diskinterface.rom
+C:\Users\luciano\repos\6502\Apple2\bin\Release\net8.0-windows\publish\roms\Videx Videoterm ROM 2.4.bin
+C:\Users\luciano\repos\6502\Apple2\bin\Release\net8.0-windows\publish\roms\Videx Videoterm Character ROM APL.bin
+C:\Users\luciano\repos\6502\Apple2\bin\Release\net8.0-windows\publish\Apple2.exe
+C:\Users\luciano\repos\6502\Apple2\bin\Release\net8.0-windows\publish\Apple2.dll
+C:\Users\luciano\repos\6502\Apple2\bin\Release\net8.0-windows\publish\Apple2.deps.json
+C:\Users\luciano\repos\6502\Apple2\bin\Release\net8.0-windows\publish\Apple2.runtimeconfig.json
+C:\Users\luciano\repos\6502\Apple2\bin\Release\net8.0-windows\publish\Apple2.pdb
+C:\Users\luciano\repos\6502\Apple2\bin\Release\net8.0-windows\publish\NAudio.dll
+C:\Users\luciano\repos\6502\Apple2\bin\Release\net8.0-windows\publish\NAudio.Asio.dll
+C:\Users\luciano\repos\6502\Apple2\bin\Release\net8.0-windows\publish\NAudio.Core.dll
+C:\Users\luciano\repos\6502\Apple2\bin\Release\net8.0-windows\publish\NAudio.Midi.dll
+C:\Users\luciano\repos\6502\Apple2\bin\Release\net8.0-windows\publish\NAudio.Wasapi.dll
+C:\Users\luciano\repos\6502\Apple2\bin\Release\net8.0-windows\publish\NAudio.WinForms.dll
+C:\Users\luciano\repos\6502\Apple2\bin\Release\net8.0-windows\publish\NAudio.WinMM.dll
+C:\Users\luciano\repos\6502\Apple2\bin\Release\net8.0-windows\publish\Runtime.dll
+C:\Users\luciano\repos\6502\Apple2\bin\Release\net8.0-windows\publish\Runtime.pdb

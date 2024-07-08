@@ -1,11 +1,11 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Runtime", "Runtime\Runtime.csproj", "{97073BCB-5AD8-4798-BC0F-B1D1A4A43DFB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apple2", "Apple2\Apple2.csproj", "{1091685E-4702-48B5-B778-61B075440669}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apple2plus", "Apple2plus\Apple2plus.csproj", "{1091685E-4702-48B5-B778-61B075440669}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

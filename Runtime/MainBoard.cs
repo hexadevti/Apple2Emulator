@@ -178,15 +178,6 @@ public class MainBoard
         return result;
     }
 
-    // private IOverLay? GetOverlay(ushort address) 
-    // {
-    //     return overlays.FirstOrDefault(x => x.Start <= address && x.End >= address);
-    // }
-    // public void RegisterOverlay(IOverLay overlay)
-    // {
-    //     overlays.Add(overlay);
-    // }
-
     public byte ReadByte(ushort address)
     {
         byte ret = 0;
