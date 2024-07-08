@@ -28,6 +28,7 @@ partial class Interface
     /// </summary>
     private void InitializeComponent()
     {
+        System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Interface));
         pictureBox1 = new PictureBox();
         disk1 = new TextBox();
         groupBox1 = new GroupBox();
@@ -49,7 +50,6 @@ partial class Interface
         lblClockSpeed = new Label();
         richTextBox2 = new RichTextBox();
         tbSpeed = new TrackBar();
-        waveViewer1 = new NAudio.Gui.WaveViewer();
         ckbColor = new CheckBox();
         ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
         groupBox1.SuspendLayout();
@@ -92,7 +92,7 @@ partial class Interface
         // D1O
         // 
         D1O.AutoSize = true;
-        D1O.Location = new Point(615, 16);
+        D1O.Location = new Point(615, 18);
         D1O.Name = "D1O";
         D1O.Size = new Size(15, 14);
         D1O.TabIndex = 5;
@@ -157,7 +157,7 @@ partial class Interface
         // D2O
         // 
         D2O.AutoSize = true;
-        D2O.Location = new Point(616, 15);
+        D2O.Location = new Point(616, 17);
         D2O.Name = "D2O";
         D2O.Size = new Size(15, 14);
         D2O.TabIndex = 8;
@@ -236,10 +236,10 @@ partial class Interface
         richTextBox2.BackColor = Color.Black;
         richTextBox2.Font = new Font("Consolas", 8F);
         richTextBox2.ForeColor = Color.White;
-        richTextBox2.Location = new Point(895, 0);
+        richTextBox2.Location = new Point(918, 0);
         richTextBox2.Margin = new Padding(2);
         richTextBox2.Name = "richTextBox2";
-        richTextBox2.Size = new Size(489, 287);
+        richTextBox2.Size = new Size(466, 287);
         richTextBox2.TabIndex = 15;
         richTextBox2.Text = "";
         // 
@@ -250,18 +250,6 @@ partial class Interface
         tbSpeed.Size = new Size(223, 45);
         tbSpeed.TabIndex = 16;
         tbSpeed.Value = 1;
-        // 
-        // waveViewer1
-        // 
-        waveViewer1.BackColor = SystemColors.ControlText;
-        waveViewer1.ForeColor = SystemColors.Window;
-        waveViewer1.Location = new Point(895, 291);
-        waveViewer1.Name = "waveViewer1";
-        waveViewer1.SamplesPerPixel = 128;
-        waveViewer1.Size = new Size(488, 192);
-        waveViewer1.StartPosition = 0L;
-        waveViewer1.TabIndex = 17;
-        waveViewer1.WaveStream = null;
         // 
         // ckbColor
         // 
@@ -281,9 +269,8 @@ partial class Interface
         // 
         AutoScaleDimensions = new SizeF(7F, 15F);
         AutoScaleMode = AutoScaleMode.Font;
-        ClientSize = new Size(1392, 826);
+        ClientSize = new Size(904, 721);
         Controls.Add(ckbColor);
-        Controls.Add(waveViewer1);
         Controls.Add(groupBox1);
         Controls.Add(tbSpeed);
         Controls.Add(richTextBox2);
@@ -293,6 +280,7 @@ partial class Interface
         Controls.Add(groupBox2);
         Controls.Add(btn_restart);
         Controls.Add(pictureBox1);
+        Icon = (Icon)resources.GetObject("$this.Icon");
         Margin = new Padding(2);
         Name = "Interface";
         Text = "Apple II+";
@@ -329,6 +317,5 @@ partial class Interface
     private Label D2S;
     private Label D2T;
     private TrackBar tbSpeed;
-    private NAudio.Gui.WaveViewer waveViewer1;
     private CheckBox ckbColor;
 }

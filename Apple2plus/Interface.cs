@@ -71,6 +71,7 @@ public partial class Interface : Form
         StartSpeaker();
         cpu.WarmStart();
         LoadThreads();
+        
     }
 
     private void tbSpeed_ValueChanged(object? sender, EventArgs e)
@@ -127,16 +128,17 @@ public partial class Interface : Form
         }));
 
         threads.Add(Task.Run(() => cpu.DelayedRun(running)));
-
-
     }
 
     private void StartSpeaker()
     {
         tone = new Speaker(mainBoard);
-        stream = new BlockAlignReductionStream(tone);
-        output.Init(stream);
+        //stream = new BlockAlignReductionStream(tone);
+        output.Init(tone);
         output.Play();
+        
+
+        
     }
 
     private void Form1_Shown(object? sender, EventArgs e)

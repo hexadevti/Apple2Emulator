@@ -1,5 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
+    <Content Include="appleLogo.ico" />
     <Content Include="roms\ApplesoftD000.rom">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -39,7 +40,6 @@
     <Content Include="roms\DOS 3.3 System Master - 680-0051-00.dsk">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    
     <ProjectReference Include="..\Runtime\Runtime.csproj" />
   </ItemGroup>
   <ItemGroup>
@@ -54,5 +54,6 @@
     <!-- <PublishTrimmed>true</PublishTrimmed>
     <PublishAOT>true</PublishAOT> -->
     <ForceDesignerDpiUnaware>true</ForceDesignerDpiUnaware>
+    <ApplicationIcon>appleLogo.ico</ApplicationIcon>
   </PropertyGroup>
 </Project>
