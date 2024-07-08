@@ -30,7 +30,7 @@
     <Content Include="roms\Videx Videoterm ROM 2.4.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="roms\Videx Videoterm Character ROM APL.bin">
+    <Content Include="roms\Videx Videoterm Character ROM Normal.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <ProjectReference Include="..\Runtime\Runtime.csproj" />
