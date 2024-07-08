@@ -3,23 +3,10 @@
     // for the documentation about the tasks.json format
     "version": "2.0.0",
     "tasks": [
-        // {
-		// 	"type": "dotnet",
-		// 	"task": "build c:\\Users\\luciano\\repos\\6502\\ConsoleApp\\ConsoleApp.csproj",
-		// 	"file": "c:\\Users\\luciano\\repos\\6502\\ConsoleApp\\ConsoleApp.csproj",
-		// 	"group": "build",
-		// 	"problemMatcher": [],
-		// 	"label": "build"
-		// },
-        {
-            "label": "buildConsole",
-            "type": "shell",
-            "command": "dotnet build ${workspaceFolder}/ConsoleApp/ConsoleApp.csproj"
-        },
         {
             "label": "buildForms",
             "type": "shell",
-            "command": "dotnet build ${workspaceFolder}/Apple2/Apple2.csproj"
+            "command": "dotnet build ${workspaceFolder}/Apple2plus/Apple2plus.csproj"
         }
     ]
 }
