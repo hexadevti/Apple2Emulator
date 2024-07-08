@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Apple2plus")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+60febe694f82ebdb0d78646ad52b16c4798d1b80")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d1e609f9380510f00536a1e629c56e2dbe25a02c")]
 [assembly: System.Reflection.AssemblyProductAttribute("Apple2plus")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Apple2plus")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
