@@ -95,6 +95,7 @@ public class CPU
         int baseAudioJumpInterval = 20;
         bool n = false;
         int audioFineTuning = 0;
+        //int cpuCycles = 0;
 
         while (running)
         {
@@ -107,6 +108,7 @@ public class CPU
                     if (!mainBoard.cycleWait.TryDequeue(out n))
                     {
                         RunCycle();
+                        //cpuCycles++;
                         if (soundCycles > (switchJumpInterval ? 1 : 0))
                         {
                             switchJumpInterval = !switchJumpInterval;
@@ -148,6 +150,11 @@ public class CPU
                             soundCycles++;
                         }
                     }
+                    // if (cpuCycles >= 8000)
+                    // {
+                    //     Thread.Sleep(1);
+                    //     cpuCycles = 0;
+                    // }
                     sw = Stopwatch.StartNew();
                 }
             }
