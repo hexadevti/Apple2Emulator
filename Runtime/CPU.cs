@@ -158,7 +158,6 @@ public class CPU
                     if (mainBoard.audioJumpInterval == 10 || !mainBoard.cycleWait.TryDequeue(out n))
                     {
                         RunCycle();
-                        cpuCycles++;
                         
                         if (mainBoard.audioJumpInterval != 10 && soundCycles > mainBoard.audioJumpInterval + baseAudioJumpInterval)
                         {
