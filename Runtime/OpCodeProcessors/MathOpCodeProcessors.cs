@@ -3,17 +3,17 @@ namespace Runtime.OpCodeProcessors;
 internal static class MathOpCodeProcessors
 {
 
-    public static void Process_ADC(State processorState, Memory memory, ushort address) 
+    public static void Process_ADC(State processorState, MainBoard mainBoard, ushort address) 
     {
-        ProcessAdc(processorState, ReadByte(address, memory));
+        ProcessAdc(processorState, ReadByte(address, mainBoard));
     }
 
-    public static void Process_SBC(State processorState, Memory memory, ushort address) 
+    public static void Process_SBC(State processorState, MainBoard mainBoard, ushort address) 
     {
         if (processorState.D)
-            ProcessSbc(processorState, ReadByte(address, memory));
+            ProcessSbc(processorState, ReadByte(address, mainBoard));
         else
-            ProcessAdc(processorState, ReadAndInvertByte(address, memory));
+            ProcessAdc(processorState, ReadAndInvertByte(address, mainBoard));
     }
 
     private static void ProcessAdc(State processorState, byte value)
@@ -99,14 +99,14 @@ internal static class MathOpCodeProcessors
         }
     }
 
-    private static byte ReadAndInvertByte(ushort address, Memory memory) 
+    private static byte ReadAndInvertByte(ushort address, MainBoard mainBoard) 
     {
-        return (byte)~ReadByte(address, memory);
+        return (byte)~ReadByte(address, mainBoard);
 
     } 
 
-    private static byte ReadByte(ushort address, Memory memory)
+    private static byte ReadByte(ushort address, MainBoard mainBoard)
     {
-        return memory.ReadByte(address);
+        return mainBoard.ReadByte(address);
     }
 }

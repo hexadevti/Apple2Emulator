@@ -7,15 +7,15 @@ namespace Apple2;
 
 public class Keyboard
 {
-    public Runtime.Memory memory { get; set; }
+    public Runtime.MainBoard mainBoard { get; set; }
 
     private CPU cpu { get; set;}
 
     private List<char> buffer = new List<char>();
 
-    public Keyboard(Memory memory, CPU cpu)
+    public Keyboard(MainBoard mainBoard, CPU cpu)
     {
-        this.memory = memory;
+        this.mainBoard = mainBoard;
         this.cpu = cpu;
     }
 
@@ -24,7 +24,7 @@ public class Keyboard
         if (e.KeyChar < 32 || e.KeyChar >= 127)
             return;
         
-        memory.KeyPressed = (byte)(Encoding.ASCII.GetBytes(new[] { e.KeyChar.ToString().ToUpper()[0] })[0] | 0b10000000);
+        mainBoard.KeyPressed = (byte)(Encoding.ASCII.GetBytes(new[] { e.KeyChar.ToString().ToUpper()[0] })[0] | 0b10000000);
         e.Handled = true;
     }
 
@@ -56,7 +56,7 @@ public class Keyboard
                     return;
                 default:
                     if (e.KeyValue > 0x40 && e.KeyValue < 0x60)
-                        memory.KeyPressed = (byte)(e.KeyValue + 0x40);
+                        mainBoard.KeyPressed = (byte)(e.KeyValue + 0x40);
                     break;
             }
         }
@@ -65,26 +65,26 @@ public class Keyboard
             switch (e.KeyCode)
             {
                 case Keys.Left:
-                    memory.KeyPressed = 0x88;
+                    mainBoard.KeyPressed = 0x88;
                     break;
                 case Keys.Back:
-                    memory.KeyPressed = 0x88;
+                    mainBoard.KeyPressed = 0x88;
                     break;
                 case Keys.Right:
-                    memory.KeyPressed = 0x95;
+                    mainBoard.KeyPressed = 0x95;
                     break;
                 case Keys.Up:
-                    memory.KeyPressed = 0x8b;
+                    mainBoard.KeyPressed = 0x8b;
                     break;
                 case Keys.Down:
-                    memory.KeyPressed = 0x8a;
+                    mainBoard.KeyPressed = 0x8a;
                     break;
                 case Keys.Escape:
-                    memory.KeyPressed = 0x9b;
+                    mainBoard.KeyPressed = 0x9b;
                     e.SuppressKeyPress = true;
                     break;
                 case Keys.Enter:
-                    memory.KeyPressed = 0x8d;
+                    mainBoard.KeyPressed = 0x8d;
                     e.SuppressKeyPress = true;
                     break;
             }
@@ -107,11 +107,11 @@ public class Keyboard
                 {
                     if (item == '\n')
                     {
-                        memory.KeyPressed = 0x8d;
+                        mainBoard.KeyPressed = 0x8d;
                         Thread.Sleep(100);
                     }
                     else
-                        memory.KeyPressed = (byte)(Encoding.ASCII.GetBytes(new[] { item.ToString().ToUpper()[0] })[0] | 0b10000000);
+                        mainBoard.KeyPressed = (byte)(Encoding.ASCII.GetBytes(new[] { item.ToString().ToUpper()[0] })[0] | 0b10000000);
                     Thread.Sleep(1);
                 }
             });

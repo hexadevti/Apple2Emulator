@@ -2,23 +2,23 @@ namespace Runtime.OpCodeProcessors;
 
 internal static class BitwiseLogicOpCodeProcessors
 {
-    public static void Process_EOR(State processorState, Memory memory, ushort address)
+    public static void Process_EOR(State processorState, MainBoard mainBoard, ushort address)
     {
-        var value = memory.ReadByte(address);
+        var value = mainBoard.ReadByte(address);
         var result = (byte)(value ^ processorState.A);
         WithFlags(processorState, result);
     }
 
-    public static void Process_ORA(State processorState, Memory memory, ushort address)
+    public static void Process_ORA(State processorState, MainBoard mainBoard, ushort address)
     {
-        var value = memory.ReadByte(address);
+        var value = mainBoard.ReadByte(address);
         var result = (byte)(value | processorState.A);
         WithFlags(processorState, result);
     }
 
-    public static void Process_AND(State processorState, Memory memory, ushort address)
+    public static void Process_AND(State processorState, MainBoard mainBoard, ushort address)
     {
-        var b = memory.ReadByte(address);
+        var b = mainBoard.ReadByte(address);
         var result = (byte)(b & processorState.A);
         WithFlags(processorState, result); 
     }

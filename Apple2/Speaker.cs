@@ -6,15 +6,15 @@ namespace Apple2;
 
 public class Speaker : WaveStream
 {
-    private Memory _memory;
+    private MainBoard _mainBoard;
 
     public double frequency { get; set; }
     public byte sample;
     byte actualSample = 0;
 
-    public Speaker(Memory memory)
+    public Speaker(MainBoard mainBoard)
     {
-        _memory = memory;
+        _mainBoard = mainBoard;
     }
     public override WaveFormat WaveFormat
     {
@@ -40,7 +40,7 @@ public class Speaker : WaveStream
         
         byte[] bytes = new byte[count];
         
-        if (_memory.clickBuffer.TryDequeue(out bytes))
+        if (_mainBoard.clickBuffer.TryDequeue(out bytes))
         {
             for (int i = 0; i < count; i++)
             {

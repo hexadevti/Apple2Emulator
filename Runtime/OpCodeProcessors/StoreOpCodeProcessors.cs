@@ -2,18 +2,18 @@ namespace Runtime.OpCodeProcessors;
 
 internal static class StoreOpCodeProcessors
 {
-    public static void Process_STY(State processorState, Memory memory, ushort address)
+    public static void Process_STY(State processorState, MainBoard mainBoard, ushort address)
     {
-        memory.Write(address, processorState.Y);
+        mainBoard.Write(address, processorState.Y);
     }
 
-    public static void Process_STX(State processorState, Memory memory, ushort address)
+    public static void Process_STX(State processorState, MainBoard mainBoard, ushort address)
     {
-        memory.Write(address, processorState.X);
+        mainBoard.Write(address, processorState.X);
     }
 
-    public static void Process_STA(State processorState, Memory memory, ushort address)
+    public static void Process_STA(State processorState, MainBoard mainBoard, ushort address)
     {
-        memory.Write(address, processorState.A);
+        mainBoard.Write(address, processorState.A);
     }
 }

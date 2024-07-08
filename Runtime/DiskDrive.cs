@@ -2,13 +2,14 @@ using System.Collections;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks.Dataflow;
+using Runtime.Cards;
 
 namespace Runtime;
 
 public class DiskDrive
 {
     
-    private Memory memory { get; set; }
+    private DiskIICard card { get; set; }
 
     private string diskPath { get; set; }
 
@@ -82,11 +83,11 @@ public class DiskDrive
     ushort[] secoffset = new ushort[] { 0, 0x700, 0xe00, 0x600, 0xd00, 0x500, 0xc00, 0x400, 0xb00, 0x300, 0xa00, 0x200, 0x900, 0x100, 0x800, 0xf00 };
 
 
-    public DiskDrive(string dskPath, Memory memory)
+    public DiskDrive(string dskPath, DiskIICard card)
     {
         track = 0;
         diskPath = dskPath;
-        this.memory = memory;
+        this.card = card;
 
         if (!string.IsNullOrEmpty(diskPath))
             this.diskImage = File.ReadAllBytes(dskPath);
@@ -413,7 +414,7 @@ public class DiskDrive
                 List<byte> b = new List<byte>();
                 selectedSector.AddRange(new List<byte>() { 0xff, 0xff, 0xff });
                 selectedSector.AddRange(new List<byte>() { 0xd5, 0xaa, 0x96 }); // Prologue address
-                var volume = memory.drive1.GetVolume();
+                var volume = GetVolume();
                 b = this.EncodeByte(volume).ToList();
                 selectedSector.AddRange(b); // Volume
                 b = this.EncodeByte((byte)track).ToList();

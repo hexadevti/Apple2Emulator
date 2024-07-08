@@ -2,13 +2,13 @@ namespace Runtime.OpCodeProcessors;
 
 internal static class CompareOpCodeProcessors
 {
-    public static void Process_CPX(State processorState, Memory memory, ushort address) => Compare(processorState, memory.ReadByte(address), processorState.X);
-    public static void Process_CPY(State processorState, Memory memory, ushort address) => Compare(processorState, memory.ReadByte(address), processorState.Y);
-    public static void Process_CMP(State processorState, Memory memory, ushort address) => Compare(processorState, memory.ReadByte(address), processorState.A);
+    public static void Process_CPX(State processorState, MainBoard mainBoard, ushort address) => Compare(processorState, mainBoard.ReadByte(address), processorState.X);
+    public static void Process_CPY(State processorState, MainBoard mainBoard, ushort address) => Compare(processorState, mainBoard.ReadByte(address), processorState.Y);
+    public static void Process_CMP(State processorState, MainBoard mainBoard, ushort address) => Compare(processorState, mainBoard.ReadByte(address), processorState.A);
 
-    public static void Process_BIT(State processorState, Memory memory, ushort address)
+    public static void Process_BIT(State processorState, MainBoard mainBoard, ushort address)
     {
-        var b = memory.ReadByte(address);
+        var b = mainBoard.ReadByte(address);
         var result = (byte)(b & processorState.A);
        
         

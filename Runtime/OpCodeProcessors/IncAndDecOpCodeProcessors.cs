@@ -30,19 +30,19 @@ internal static class IncAndDecOpCodeProcessors
         WithFlags(processorState, value);
     }
 
-    public static void Process_DEC(State processorState, Memory memory, ushort address)
+    public static void Process_DEC(State processorState, MainBoard mainBoard, ushort address)
     {
-        var value = memory.ReadByte(address);
+        var value = mainBoard.ReadByte(address);
         value = (byte)(value - 1);
-        memory.Write(address, value);
+        mainBoard.Write(address, value);
         WithFlags(processorState, value);
     }
 
-    public static void Process_INC(State processorState, Memory memory, ushort address)
+    public static void Process_INC(State processorState, MainBoard mainBoard, ushort address)
     {
-        var value = memory.ReadByte(address);
+        var value = mainBoard.ReadByte(address);
         var result = (byte)(value + 1);
-        memory.Write(address, result);
+        mainBoard.Write(address, result);
         WithFlags(processorState, result);
     }
 

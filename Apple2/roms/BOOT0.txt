@@ -85,7 +85,7 @@ c612: 29 7e                      and     #$7e              ;clear hi and lo bits
 c614: b0 08        :check_dub0   bcs     :reject           ;initial hi bit set *or* adjacent 0 bits set
 c616: 4a                         lsr     A                 ;shift right, low bit into carry
 c617: d0 fb                      bne     :check_dub0       ;if more bits in byte, loop
-c619: 98                         tya                       ;we have a winner... store Y-reg to memory
+c619: 98                         tya                       ;we have a winner... store Y-reg to mainBoard
 c61a: 9d 56 03                   sta     CONV_TAB,x        ;actual lookup will be on bytes with hi bit set
 c61d: c8                         iny                       ; so they'll read from CONV_TAB-128
 c61e: e8           :reject       inx                       ;try next candidate

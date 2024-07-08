@@ -3,23 +3,23 @@ namespace Runtime.Internal;
 internal static class StackFunctions
 {
     
-    public static byte PullFromStack(State processorState, Memory memory)
+    public static byte PullFromStack(State processorState, MainBoard mainBoard)
     {
         processorState.S = (byte)(processorState.S + 1);
-        var pulledValue = memory.ReadByte(GetCurrentStackAddress(processorState));
+        var pulledValue = mainBoard.ReadByte(GetCurrentStackAddress(processorState));
         return (pulledValue);
     }
 
 
-    public static void PushToStack(State processorState, Memory memory, ushort value) 
+    public static void PushToStack(State processorState, MainBoard mainBoard, ushort value) 
     {
-        BitConverter.GetBytes(value).Reverse().Aggregate(processorState, (current, b) => PushToStack(processorState, memory, b));
+        BitConverter.GetBytes(value).Reverse().Aggregate(processorState, (current, b) => PushToStack(processorState, mainBoard, b));
 
     }
 
-    public static State PushToStack(State processorState, Memory memory, byte value)
+    public static State PushToStack(State processorState, MainBoard mainBoard, byte value)
     {
-        memory.Write(GetCurrentStackAddress(processorState), value);
+        mainBoard.Write(GetCurrentStackAddress(processorState), value);
         processorState.S = (byte)(processorState.S - 1);
         return processorState;  
     }

@@ -7,11 +7,11 @@ namespace Apple2;
 public static class Video
 {
     
-    public static Bitmap Generate(Runtime.Memory memory, int pixelSize, bool color)
+    public static Bitmap Generate(Runtime.MainBoard mainBoard, int pixelSize, bool color)
     {
         int byteid = 0;
-        var cursorH = memory.baseRAM[0x24];
-        var cursorV = memory.baseRAM[0x25];
+        var cursorH = mainBoard.baseRAM[0x24];
+        var cursorV = mainBoard.baseRAM[0x25];
         ushort graphicsPage = 0x2000;
         ushort textPage = 0x400;
         byte[] bmp = new byte[280 * pixelSize * 192 * pixelSize];
@@ -21,8 +21,8 @@ public static class Video
         int posV = 0;
         byte[] linha = new byte[0x28];
 
-        graphicsPage = (ushort)(memory.softswitches.TextPage1_Page2 ? 0x2000 : 0x4000);
-        textPage = (ushort)(memory.softswitches.TextPage1_Page2 ? 0x400 : 0x800);
+        graphicsPage = (ushort)(mainBoard.softswitches.TextPage1_Page2 ? 0x2000 : 0x4000);
+        textPage = (ushort)(mainBoard.softswitches.TextPage1_Page2 ? 0x400 : 0x800);
 
         for (int b = 0; b < 3; b++)
         {
@@ -31,14 +31,14 @@ public static class Video
             {
 
                 linha = new byte[0x28];
-                if ((memory.softswitches.Graphics_Text && memory.softswitches.DisplayFull_Split) ||
-                    (memory.softswitches.Graphics_Text && !memory.softswitches.DisplayFull_Split && (b < 2 || (b == 2 && l < 4))))
+                if ((mainBoard.softswitches.Graphics_Text && mainBoard.softswitches.DisplayFull_Split) ||
+                    (mainBoard.softswitches.Graphics_Text && !mainBoard.softswitches.DisplayFull_Split && (b < 2 || (b == 2 && l < 4))))
                 {
-                    if (memory.softswitches.LoRes_HiRes)
+                    if (mainBoard.softswitches.LoRes_HiRes)
                     {
                         for (ushort c = 0; c < 0x28; c++)
                         {
-                            var chr = memory.baseRAM[(ushort)(textPage + (b * 0x28) + (l * 0x80) + c)];
+                            var chr = mainBoard.baseRAM[(ushort)(textPage + (b * 0x28) + (l * 0x80) + c)];
                             linha[c] = chr;
                         }
 
@@ -80,8 +80,8 @@ public static class Video
                                 bool[] blocklineAnt = [false, false, false, false, false, false, false, false];
                                 for (ushort c = 0; c < 0x28; c++)
                                 {
-                                    var chr = memory.baseRAM[(ushort)(((graphicsPage) + (b * 0x28) + (l * 0x80) + c) + block * 0x400)];
-                                    bool[] blockline = memory.ConvertByteToBoolArray(chr);
+                                    var chr = mainBoard.baseRAM[(ushort)(((graphicsPage) + (b * 0x28) + (l * 0x80) + c) + block * 0x400)];
+                                    bool[] blockline = mainBoard.ConvertByteToBoolArray(chr);
                                     if (color)
                                     {
                                         int[] pixels = new int[7];
@@ -143,7 +143,7 @@ public static class Video
                     {
                         posH = c;
 
-                        var chr = memory.baseRAM[(ushort)(textPage + (b * 0x28) + (l * 0x80) + c)];
+                        var chr = mainBoard.baseRAM[(ushort)(textPage + (b * 0x28) + (l * 0x80) + c)];
                         if (chr >= 0x40 && chr <0x80)
                             chr = Math.Floor((float)(DateTime.Now.Millisecond / 500)) % 2 == 0 ? (byte)(chr + 0x40) : chr;
                         if (posV == cursorV && posH == cursorH)
@@ -165,7 +165,7 @@ public static class Video
                             {
                                 for (int k = 0; k < 7; k++)
                                 {
-                                    object? objout = memory.charSet[linha[j]].GetValue(i, k);
+                                    object? objout = mainBoard.charSet[linha[j]].GetValue(i, k);
                                     for (int ps2 = 0; ps2 < pixelSize; ps2++)
                                     {
                                         if (objout != null)
@@ -191,7 +191,7 @@ public static class Video
 
         Bitmap bitmap = new Bitmap(280 * pixelSize, 192 * pixelSize, System.Drawing.Imaging.PixelFormat.Format8bppIndexed);
         ColorPalette pal = bitmap.Palette;
-        if (memory.softswitches.LoRes_HiRes)
+        if (mainBoard.softswitches.LoRes_HiRes)
         {
             pal.Entries[0x00] = Color.Black;
             pal.Entries[0x01] = Color.MediumVioletRed;

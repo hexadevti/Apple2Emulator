@@ -204,7 +204,7 @@ namespace Runtime
             return ret;
         }
 
-        public static ushort? ProcessAddressing(OpCodePart? opCodePart, State state, Memory memory, CPU cpu)
+        public static ushort? ProcessAddressing(OpCodePart? opCodePart, State state, MainBoard mainBoard, CPU cpu)
         {
             ushort? refAddress = null;
             if (opCodePart != null)
@@ -218,7 +218,7 @@ namespace Runtime
                         break;
                     case Addressing.absolute:
                         cpu.IncPC();
-                        refAddress = memory.ReadAddressLLHH(state.PC);
+                        refAddress = mainBoard.ReadAddressLLHH(state.PC);
                         if (opCodePart.Register != null)
                         {
                             if (opCodePart.Register == Register.Y)
@@ -231,7 +231,7 @@ namespace Runtime
                         break;
                     case Addressing.zeropage:
                         cpu.IncPC();
-                        refAddress = memory.ReadZeroPageAddress(state.PC);
+                        refAddress = mainBoard.ReadZeroPageAddress(state.PC);
 
                         if (refAddress != null && opCodePart.Register != null)
                         {
@@ -246,32 +246,32 @@ namespace Runtime
                         if (opCodePart.Register != null)
                         {
                             cpu.IncPC();
-                            refAddress = memory.ReadZeroPageAddress(state.PC);
+                            refAddress = mainBoard.ReadZeroPageAddress(state.PC);
                             if (refAddress != null)
                             {
                                 if (opCodePart.Register == Register.Y)
                                 {
-                                    var pointer = memory.ReadAddressLLHH(refAddress);
+                                    var pointer = mainBoard.ReadAddressLLHH(refAddress);
                                     refAddress = (ushort?)(pointer + state.Y);
                                 }
                                 else
-                                    refAddress = memory.ReadAddressLLHH((byte)((byte)refAddress + (byte)state.X));
+                                    refAddress = mainBoard.ReadAddressLLHH((byte)((byte)refAddress + (byte)state.X));
                             }
                             cpu.IncPC();
                         }
                         else
                         {
                             cpu.IncPC();
-                            var indirectAddress = memory.ReadAddressLLHH(state.PC);
+                            var indirectAddress = mainBoard.ReadAddressLLHH(state.PC);
                             if (indirectAddress != null)
-                                refAddress = memory.ReadAddressLLHH(indirectAddress);
+                                refAddress = mainBoard.ReadAddressLLHH(indirectAddress);
                             cpu.IncPC();
                             cpu.IncPC();
                         }
                         break;
                     case Addressing.relative:
                         cpu.IncPC();
-                        var b = memory.ReadByte(state.PC);
+                        var b = mainBoard.ReadByte(state.PC);
                         var offset = unchecked((sbyte)b);
                         refAddress = (ushort)(state.PC + 1 + offset);
                         cpu.IncPC();
@@ -286,7 +286,7 @@ namespace Runtime
             return refAddress;
         }
 
-        public static void Process(OpCodePart? operation, State state, Memory memory, ushort? refAddress)
+        public static void Process(OpCodePart? operation, State state, MainBoard mainBoard, ushort? refAddress)
         {
             if (operation != null)
             {
@@ -314,34 +314,34 @@ namespace Runtime
                         FlagOpCodeProcessors.Process_CLD(state);
                         break;
                     case "LDY":
-                        LoadOpCodeProcessors.Process_LDY(state, memory, refAddress ?? 0);
+                        LoadOpCodeProcessors.Process_LDY(state, mainBoard, refAddress ?? 0);
                         break;
                     case "LDX":
-                        LoadOpCodeProcessors.Process_LDX(state, memory, refAddress ?? 0);
+                        LoadOpCodeProcessors.Process_LDX(state, mainBoard, refAddress ?? 0);
                         break;
                     case "LDA":
-                        LoadOpCodeProcessors.Process_LDA(state, memory, refAddress ?? 0);
+                        LoadOpCodeProcessors.Process_LDA(state, mainBoard, refAddress ?? 0);
                         break;
                     case "STY":
-                        StoreOpCodeProcessors.Process_STY(state, memory, refAddress ?? 0);
+                        StoreOpCodeProcessors.Process_STY(state, mainBoard, refAddress ?? 0);
                         break;
                     case "STX":
-                        StoreOpCodeProcessors.Process_STX(state, memory, refAddress ?? 0);
+                        StoreOpCodeProcessors.Process_STX(state, mainBoard, refAddress ?? 0);
                         break;
                     case "STA":
-                        StoreOpCodeProcessors.Process_STA(state, memory, refAddress ?? 0);
+                        StoreOpCodeProcessors.Process_STA(state, mainBoard, refAddress ?? 0);
                         break;
                     case "CPX":
-                        CompareOpCodeProcessors.Process_CPX(state, memory, refAddress ?? 0);
+                        CompareOpCodeProcessors.Process_CPX(state, mainBoard, refAddress ?? 0);
                         break;
                     case "CPY":
-                        CompareOpCodeProcessors.Process_CPY(state, memory, refAddress ?? 0);
+                        CompareOpCodeProcessors.Process_CPY(state, mainBoard, refAddress ?? 0);
                         break;
                     case "CMP":
-                        CompareOpCodeProcessors.Process_CMP(state, memory, refAddress ?? 0);
+                        CompareOpCodeProcessors.Process_CMP(state, mainBoard, refAddress ?? 0);
                         break;
                     case "BIT":
-                        CompareOpCodeProcessors.Process_BIT(state, memory, refAddress ?? 0);
+                        CompareOpCodeProcessors.Process_BIT(state, mainBoard, refAddress ?? 0);
                         break;
                     case "BPL":
                         BranchOpCodeProcessors.Process_BPL(state, refAddress ?? 0);
@@ -383,22 +383,22 @@ namespace Runtime
                         IncAndDecOpCodeProcessors.Process_INY(state);
                         break;
                     case "DEC":
-                        IncAndDecOpCodeProcessors.Process_DEC(state, memory, refAddress ?? 0);
+                        IncAndDecOpCodeProcessors.Process_DEC(state, mainBoard, refAddress ?? 0);
                         break;
                     case "INC":
-                        IncAndDecOpCodeProcessors.Process_INC(state, memory, refAddress ?? 0);
+                        IncAndDecOpCodeProcessors.Process_INC(state, mainBoard, refAddress ?? 0);
                         break;
                     case "RTS":
-                        SubRoutineOpCodeProcessors.Process_RTS(state, memory);
+                        SubRoutineOpCodeProcessors.Process_RTS(state, mainBoard);
                         break;
                     case "JSR":
-                        SubRoutineOpCodeProcessors.Process_JSR(state, memory, refAddress ?? 0);
+                        SubRoutineOpCodeProcessors.Process_JSR(state, mainBoard, refAddress ?? 0);
                         break;
                     case "RTI":
-                        SubRoutineOpCodeProcessors.Process_RTI(state, memory);
+                        SubRoutineOpCodeProcessors.Process_RTI(state, mainBoard);
                         break;
                     case "BRK":
-                        SubRoutineOpCodeProcessors.Process_BRK(state, memory);
+                        SubRoutineOpCodeProcessors.Process_BRK(state, mainBoard);
                         break;
                     case "TYA":
                         TransferOpCodeProcessors.Process_TYA(state);
@@ -419,43 +419,43 @@ namespace Runtime
                         TransferOpCodeProcessors.Process_TAY(state);
                         break;
                     case "ROL":
-                        ShiftAndRollOpCodeProcessors.Process_ROL(state, memory, refAddress);
+                        ShiftAndRollOpCodeProcessors.Process_ROL(state, mainBoard, refAddress);
                         break;
                     case "ROR":
-                        ShiftAndRollOpCodeProcessors.Process_ROR(state, memory, refAddress);
+                        ShiftAndRollOpCodeProcessors.Process_ROR(state, mainBoard, refAddress);
                         break;
                     case "LSR":
-                        ShiftAndRollOpCodeProcessors.Process_LSR(state, memory, refAddress);
+                        ShiftAndRollOpCodeProcessors.Process_LSR(state, mainBoard, refAddress);
                         break;
                     case "ASL":
-                        ShiftAndRollOpCodeProcessors.Process_ASL(state, memory, refAddress);
+                        ShiftAndRollOpCodeProcessors.Process_ASL(state, mainBoard, refAddress);
                         break;
                     case "EOR":
-                        BitwiseLogicOpCodeProcessors.Process_EOR(state, memory, refAddress ?? 0);
+                        BitwiseLogicOpCodeProcessors.Process_EOR(state, mainBoard, refAddress ?? 0);
                         break;
                     case "ORA":
-                        BitwiseLogicOpCodeProcessors.Process_ORA(state, memory, refAddress ?? 0);
+                        BitwiseLogicOpCodeProcessors.Process_ORA(state, mainBoard, refAddress ?? 0);
                         break;
                     case "AND":
-                        BitwiseLogicOpCodeProcessors.Process_AND(state, memory, refAddress ?? 0);
+                        BitwiseLogicOpCodeProcessors.Process_AND(state, mainBoard, refAddress ?? 0);
                         break;
                     case "ADC":
-                        MathOpCodeProcessors.Process_ADC(state, memory, refAddress ?? 0);
+                        MathOpCodeProcessors.Process_ADC(state, mainBoard, refAddress ?? 0);
                         break;
                     case "SBC":
-                        MathOpCodeProcessors.Process_SBC(state, memory, refAddress ?? 0);
+                        MathOpCodeProcessors.Process_SBC(state, mainBoard, refAddress ?? 0);
                         break;
                     case "PHP":
-                        StackOpCodeProcessors.Process_PHP(state, memory);
+                        StackOpCodeProcessors.Process_PHP(state, mainBoard);
                         break;
                     case "PLP":
-                        StackOpCodeProcessors.Process_PLP(state, memory);
+                        StackOpCodeProcessors.Process_PLP(state, mainBoard);
                         break;
                     case "PLA":
-                        StackOpCodeProcessors.Process_PLA(state, memory);
+                        StackOpCodeProcessors.Process_PLA(state, mainBoard);
                         break;
                     case "PHA":
-                        StackOpCodeProcessors.Process_PHA(state, memory);
+                        StackOpCodeProcessors.Process_PHA(state, mainBoard);
                         break;
                     default:
                         break;

@@ -4,12 +4,13 @@ using NAudio.Wave;
 using System.Diagnostics;
 using System.Windows.Forms.VisualStyles;
 using System.ComponentModel;
+using Runtime.Cards;
 
 namespace Apple2;
 
-public partial class Form1 : Form
+public partial class Interface : Form
 {
-    public Memory? memory { get; set; }
+    public MainBoard? mainBoard { get; set; }
     public CPU? cpu { get; set; }
     Runtime.State state = new Runtime.State();
     bool running = true;
@@ -23,7 +24,7 @@ public partial class Form1 : Form
 
     public System.Windows.Forms.MethodInvoker inv;
 
-    public Form1()
+    public Interface()
     {
         InitializeComponent();
         pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
@@ -36,27 +37,33 @@ public partial class Form1 : Form
         disk1.Text = parts[parts.Length - 1];
         openFileDialog2.FileName = "";
         this.Shown += Form1_Shown;
-        memory = new Memory(state);
-        memory.adjust1Mhz = true;
+        mainBoard = new MainBoard(state);
+        mainBoard.adjust1Mhz = true;
         btnClockAdjust.Text = "Fast";
-        cpu = new CPU(state, memory);
-        Keyboard keyboard = new Keyboard(memory, cpu);
+        cpu = new CPU(state, mainBoard);
+        Keyboard keyboard = new Keyboard(mainBoard, cpu);
         richTextBox1.KeyDown += keyboard.OnKeyDown;
         richTextBox1.KeyPress += keyboard.OnKeyPress;
         richTextBox1.TextChanged += keyboard.Keyb_TextChanged;
-        memory.LoadROM(0xf800, File.ReadAllBytes(assemblyPath + "roms/ApplesoftF800.rom"));
-        memory.LoadROM(0xf000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftF000.rom"));
-        memory.LoadROM(0xe800, File.ReadAllBytes(assemblyPath + "roms/ApplesoftE800.rom"));
-        memory.LoadROM(0xe000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftE000.rom"));
-        memory.LoadROM(0xd800, File.ReadAllBytes(assemblyPath + "roms/ApplesoftD800.rom"));
-        memory.LoadROM(0xd000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftD000.rom"));
-        memory.LoadSlotsROM(0xc600, File.ReadAllBytes(assemblyPath + "roms/diskinterface.rom"));
-        memory.LoadExtendedSlotsROM(0xc800, File.ReadAllBytes(assemblyPath + "roms/Videx Videoterm ROM 2.4.bin"));
-        memory.LoadSlotsROM(0xc300, File.ReadAllBytes(assemblyPath + "roms/Videx Videoterm ROM 2.4.bin"), 0x300);
-        memory.LoadChars(File.ReadAllBytes(assemblyPath + "roms/CharROM.bin"));
-        memory.Load80Chars(File.ReadAllBytes(assemblyPath + "roms/Videx Videoterm Character ROM Normal.bin"));
-        memory.drive1 = new DiskDrive(openFileDialog1.FileName, memory);
-        memory.drive2 = new DiskDrive(openFileDialog2.FileName, memory);
+        mainBoard.LoadROM(0xf800, File.ReadAllBytes(assemblyPath + "roms/ApplesoftF800.rom"));
+        mainBoard.LoadROM(0xf000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftF000.rom"));
+        mainBoard.LoadROM(0xe800, File.ReadAllBytes(assemblyPath + "roms/ApplesoftE800.rom"));
+        mainBoard.LoadROM(0xe000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftE000.rom"));
+        mainBoard.LoadROM(0xd800, File.ReadAllBytes(assemblyPath + "roms/ApplesoftD800.rom"));
+        mainBoard.LoadROM(0xd000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftD000.rom"));
+        mainBoard.slot0 = new LanguageCard();
+        mainBoard.slot1 = new EmptySlot(1);
+        mainBoard.slot2 = new EmptySlot(2);
+        mainBoard.slot3 = new Cols80Card(3, Tools.LoadROM(File.ReadAllBytes(assemblyPath + "roms/Videx Videoterm ROM 2.4.bin"), 0x300), 
+                                        Tools.LoadExtendedSlotsROM(0xc800, File.ReadAllBytes(assemblyPath + "roms/Videx Videoterm ROM 2.4.bin")),
+                                        Tools.Load80Chars(File.ReadAllBytes(assemblyPath + "roms/Videx Videoterm Character ROM Normal.bin")));
+        mainBoard.slot4 = new EmptySlot(4);
+        mainBoard.slot5 = new EmptySlot(5);
+        mainBoard.slot6 = new DiskIICard(6, File.ReadAllBytes(assemblyPath + "roms/diskinterface.rom"),
+                                        new DiskDrive(openFileDialog1.FileName, (DiskIICard)mainBoard.slot6),
+                                        new DiskDrive(openFileDialog2.FileName, (DiskIICard)mainBoard.slot6));
+        mainBoard.slot7 = new EmptySlot(7);
+        mainBoard.LoadChars(File.ReadAllBytes(assemblyPath + "roms/CharROM.bin"));
         this.FormClosing+=FormCloseEvent;
         tbSpeed.Enabled = false;
         tbSpeed.ValueChanged += tbSpeed_ValueChanged;
@@ -68,7 +75,7 @@ public partial class Form1 : Form
 
     private void tbSpeed_ValueChanged(object? sender, EventArgs e)
     {
-        memory.clickBuffer.Clear();
+        mainBoard.clickBuffer.Clear();
         richTextBox1.Focus();
     }
 
@@ -84,35 +91,18 @@ public partial class Form1 : Form
         {
             while (running)
             {
-                memory.audioJumpInterval = ReadTabBar(tbSpeed);
-                SetLabel(lblClockSpeed, (1000 / memory.clockSpeed).ToString("0.00") + " Mhz");
-                SetLabel(D1T, "T: " + memory.drive1.track.ToString());
-                SetLabel(D1S, "S: " + memory.drive1.sector.ToString());
-                SetCheckbox(D1O, memory.drive1.on);
-                SetLabel(D2T, "T: " + memory.drive2.track.ToString());
-                SetLabel(D2S, "S: " + memory.drive2.sector.ToString());
-                SetCheckbox(D2O, memory.drive2.on);
+                mainBoard.audioJumpInterval = ReadTabBar(tbSpeed);
+                SetLabel(lblClockSpeed, (1000 / mainBoard.clockSpeed).ToString("0.00") + " Mhz");
+                SetLabel(D1T, "T: " + ((DiskIICard)mainBoard.slot6).drive1.track.ToString());
+                SetLabel(D1S, "S: " + ((DiskIICard)mainBoard.slot6).drive1.sector.ToString());
+                SetCheckbox(D1O, ((DiskIICard)mainBoard.slot6).drive1.on);
+                SetLabel(D2T, "T: " + ((DiskIICard)mainBoard.slot6).drive2.track.ToString());
+                SetLabel(D2S, "S: " + ((DiskIICard)mainBoard.slot6).drive2.sector.ToString());
+                SetCheckbox(D2O, ((DiskIICard)mainBoard.slot6).drive2.on);
                 string text = "";
-                if (memory.screenLog.TryDequeue(out text))
+                if (mainBoard.screenLog.TryDequeue(out text))
                     SetRichTextBox(richTextBox2, text + Environment.NewLine);
                 Thread.Sleep(100);
-
-                // for (int j = 0;j < 24;j++)
-                // {
-                //     for (int i = 0;i < 80;i++)
-                //     {
-                //         ushort pos = (ushort)((i + (j * 0x50) + memory.baseRAM[0x6fb] * 0x10) % 0x800);
-                //         Console.SetCursorPosition(i, j);
-                //         Console.Write(System.Text.Encoding.ASCII.GetString(new [] { memory.cols80RAM[pos] }));
-                //     }
-                // }
-
-                // Console.SetCursorPosition(0, 25);
-                // Console.WriteLine(memory.baseRAM[0x4fb].ToString("X2") + memory.baseRAM[0x47b].ToString("X2"));
-                // Console.SetCursorPosition(0, 26);
-                // Console.WriteLine(memory.baseRAM[0x6fb].ToString("X2"));
-                // Console.SetCursorPosition(0, 27);
-                // Console.WriteLine(memory.baseRAM[0x5fb].ToString("X4"));
             }
         }));
 
@@ -121,14 +111,14 @@ public partial class Form1 : Form
         {
             while (running)
             {
-                lock (memory.displayLock)
+                lock (mainBoard.displayLock)
                 {
                     try
                     {
-                        if (memory.softswitches.Cols40_80)
-                            pictureBox1.Image = Video.Generate(memory, pixelSize, true);
+                        if (mainBoard.softswitches.Cols40_80)
+                            pictureBox1.Image = Video.Generate(mainBoard, pixelSize, false);
                         else
-                            pictureBox1.Image = Cols80Video.Generate(memory, pixelSize, true);
+                            pictureBox1.Image = ((Cols80Card)mainBoard.slot3).Generate(mainBoard, pixelSize);
                     }
                     catch { }
                 }
@@ -143,7 +133,7 @@ public partial class Form1 : Form
 
     private void StartSpeaker()
     {
-        tone = new Speaker(memory);
+        tone = new Speaker(mainBoard);
         stream = new BlockAlignReductionStream(tone);
         output.Init(stream);
         output.Play();
@@ -160,8 +150,7 @@ public partial class Form1 : Form
         {
             string[] parts = openFileDialog1.FileName.Split('\\');
             disk1.Text = parts[parts.Length - 1];
-            if (memory != null)
-                memory.drive1 = new DiskDrive(openFileDialog1.FileName, memory);
+            ((DiskIICard)mainBoard.slot6).drive1 = new DiskDrive(openFileDialog1.FileName, (DiskIICard)mainBoard.slot6);
             richTextBox1.Focus();
         }
     }
@@ -171,8 +160,7 @@ public partial class Form1 : Form
         {
             string[] parts = openFileDialog2.FileName.Split('\\');
             disk2.Text = parts[parts.Length - 1];
-            if (memory != null)
-                memory.drive2 = new DiskDrive(openFileDialog2.FileName, memory);
+            ((DiskIICard)mainBoard.slot6).drive2 = new DiskDrive(openFileDialog2.FileName, (DiskIICard)mainBoard.slot6);
             richTextBox1.Focus();
         }
     }
@@ -190,12 +178,12 @@ public partial class Form1 : Form
 
     private void btnClockAdjust_Click(object sender, EventArgs e)
     {
-        if (memory != null)
+        if (mainBoard != null)
         {
-            memory.adjust1Mhz = !memory.adjust1Mhz;
-            if (memory.adjust1Mhz)
+            mainBoard.adjust1Mhz = !mainBoard.adjust1Mhz;
+            if (mainBoard.adjust1Mhz)
             {
-                memory.clickBuffer.Clear();
+                mainBoard.clickBuffer.Clear();
                 tbSpeed.Value = 1;
                 tbSpeed.Enabled = false;
                 btnClockAdjust.Text = "Fast";
@@ -203,7 +191,7 @@ public partial class Form1 : Form
             else
             {
 
-                memory.clickBuffer.Clear();
+                mainBoard.clickBuffer.Clear();
                 tbSpeed.Value = 10;
                 tbSpeed.Enabled = true;
                 btnClockAdjust.Text = "1Mhz";
