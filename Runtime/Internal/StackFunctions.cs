@@ -19,7 +19,7 @@ internal static class StackFunctions
 
     public static State PushToStack(State processorState, MainBoard mainBoard, byte value)
     {
-        mainBoard.Write(GetCurrentStackAddress(processorState), value);
+        mainBoard.WriteByte(GetCurrentStackAddress(processorState), value);
         processorState.S = (byte)(processorState.S - 1);
         return processorState;  
     }

@@ -54,7 +54,7 @@ public partial class Interface : Form
         mainBoard.slot0 = new LanguageCard();
         mainBoard.slot1 = new EmptySlot(1);
         mainBoard.slot2 = new EmptySlot(2);
-        mainBoard.slot3 = new Cols80Card(3, Tools.LoadROM(File.ReadAllBytes(assemblyPath + "roms/Videx Videoterm ROM 2.4.bin"), 0x300), 
+        mainBoard.slot3 = new Cols80Card(3, Tools.LoadROM(File.ReadAllBytes(assemblyPath + "roms/Videx Videoterm ROM 2.4.bin"), 0x300),
                                         Tools.LoadExtendedSlotsROM(0xc800, File.ReadAllBytes(assemblyPath + "roms/Videx Videoterm ROM 2.4.bin")),
                                         Tools.Load80Chars(File.ReadAllBytes(assemblyPath + "roms/Videx Videoterm Character ROM Normal.bin")));
         mainBoard.slot4 = new EmptySlot(4);
@@ -64,7 +64,7 @@ public partial class Interface : Form
                                         new DiskDrive(openFileDialog2.FileName, (DiskIICard)mainBoard.slot6));
         mainBoard.slot7 = new EmptySlot(7);
         mainBoard.LoadChars(File.ReadAllBytes(assemblyPath + "roms/CharROM.bin"));
-        this.FormClosing+=FormCloseEvent;
+        this.FormClosing += FormCloseEvent;
         tbSpeed.Enabled = false;
         tbSpeed.ValueChanged += tbSpeed_ValueChanged;
         running = true;
@@ -83,7 +83,7 @@ public partial class Interface : Form
     {
         running = false;
     }
-        
+
 
     public void LoadThreads()
     {
@@ -116,7 +116,7 @@ public partial class Interface : Form
                     try
                     {
                         if (mainBoard.softswitches.Cols40_80)
-                            pictureBox1.Image = Video.Generate(mainBoard, pixelSize, false);
+                            pictureBox1.Image = Video.Generate(mainBoard, pixelSize);
                         else
                             pictureBox1.Image = ((Cols80Card)mainBoard.slot3).Generate(mainBoard, pixelSize);
                     }
@@ -128,7 +128,7 @@ public partial class Interface : Form
 
         threads.Add(Task.Run(() => cpu.DelayedRun(running)));
 
-        
+
     }
 
     private void StartSpeaker()
@@ -211,7 +211,7 @@ public partial class Interface : Form
         {
             control.Text = text;
         }
-            
+
     }
 
     public static int ReadTabBar(TrackBar control)
@@ -224,7 +224,7 @@ public partial class Interface : Form
         {
             return control.Value;
         }
-            
+
     }
 
     public void SetCheckbox(CheckBox control, bool check)
@@ -238,7 +238,7 @@ public partial class Interface : Form
         {
             control.Checked = check;
         }
-            
+
     }
 
     public void SetRichTextBox(RichTextBox control, string text)
@@ -252,9 +252,12 @@ public partial class Interface : Form
         {
             control.AppendText(text);
         }
-            
+
     }
 
-
-    
+    private void ckbColor_Click(object sender, EventArgs e)
+    {
+        if (mainBoard != null)
+            mainBoard.videoColor = ckbColor.Checked;
+    }
 }

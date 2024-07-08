@@ -50,6 +50,7 @@ partial class Interface
         richTextBox2 = new RichTextBox();
         tbSpeed = new TrackBar();
         waveViewer1 = new NAudio.Gui.WaveViewer();
+        ckbColor = new CheckBox();
         ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
         groupBox1.SuspendLayout();
         groupBox2.SuspendLayout();
@@ -262,11 +263,26 @@ partial class Interface
         waveViewer1.TabIndex = 17;
         waveViewer1.WaveStream = null;
         // 
-        // Form1
+        // ckbColor
+        // 
+        ckbColor.AutoSize = true;
+        ckbColor.Checked = true;
+        ckbColor.CheckState = CheckState.Checked;
+        ckbColor.Location = new Point(16, 535);
+        ckbColor.Name = "ckbColor";
+        ckbColor.Size = new Size(55, 19);
+        ckbColor.TabIndex = 18;
+        ckbColor.Text = "Color";
+        ckbColor.TextAlign = ContentAlignment.MiddleCenter;
+        ckbColor.UseVisualStyleBackColor = true;
+        ckbColor.Click += ckbColor_Click;
+        // 
+        // Interface
         // 
         AutoScaleDimensions = new SizeF(7F, 15F);
         AutoScaleMode = AutoScaleMode.Font;
         ClientSize = new Size(1392, 826);
+        Controls.Add(ckbColor);
         Controls.Add(waveViewer1);
         Controls.Add(groupBox1);
         Controls.Add(tbSpeed);
@@ -278,7 +294,7 @@ partial class Interface
         Controls.Add(btn_restart);
         Controls.Add(pictureBox1);
         Margin = new Padding(2);
-        Name = "Form1";
+        Name = "Interface";
         Text = "Apple II+";
         ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
         groupBox1.ResumeLayout(false);
@@ -314,4 +330,5 @@ partial class Interface
     private Label D2T;
     private TrackBar tbSpeed;
     private NAudio.Gui.WaveViewer waveViewer1;
+    private CheckBox ckbColor;
 }

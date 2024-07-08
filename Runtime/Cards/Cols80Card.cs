@@ -17,6 +17,7 @@ public class Cols80Card : ICard
     private byte[] _cc00ROM;
     private Dictionary<byte, bool[,]> _charSet;
     public byte[] extendedSlotsROM = new byte[0x800];
+    public byte[] cols80RAM = new byte[0x800];
     public int SlotNumber
     {
         get { return _slotNumber; }
@@ -42,14 +43,27 @@ public class Cols80Card : ICard
     }
     public void Write(ushort address, byte b, MainBoard mainBoard)
     {
-        ProcessC0xx(address, mainBoard);
+        if (address >= 0xcc00 && address < 0xce00)
+            cols80RAM[address - 0xcc00 + mainBoard.softswitches.cols80PageSelect * 0x200] = b;
+        else
+            ProcessC0xx(address, mainBoard);
     }
 
 
     public byte Read(ushort address, MainBoard mainBoard, State state)
     {
-        ProcessC0xx(address, mainBoard);
-        return 0;
+        byte ret = 0;
+        if (address >= 0xc800 && address < 0xcc00)
+        {
+            ret = CC00ROM[address - 0xc800];
+        }
+        else if (address >= 0xcc00 && address < 0xce00)
+        {
+            ret = cols80RAM[address - 0xcc00 + mainBoard.softswitches.cols80PageSelect * 0x200];
+        }
+        else
+            ProcessC0xx(address, mainBoard);
+        return ret;
     }
 
     private void ProcessC0xx(ushort address, MainBoard mainBoard)
@@ -88,7 +102,7 @@ public class Cols80Card : ICard
             for (ushort c = 0; c < 0x50; c++)
             {
                 posH = c;
-                var chr = mainBoard.cols80RAM[(ushort)((c + (posV * 0x50) + mainBoard.baseRAM[0x6fb] * 0x10) % 0x800)];
+                var chr = cols80RAM[(ushort)((c + (posV * 0x50) + mainBoard.baseRAM[0x6fb] * 0x10) % 0x800)];
                 if (posV == cursorV && posH == cursorH)
                 {
                     chr = Math.Floor((float)(DateTime.Now.Millisecond / 500)) % 2 == 0 ? (byte)(chr + 0x80) : (byte)(chr);

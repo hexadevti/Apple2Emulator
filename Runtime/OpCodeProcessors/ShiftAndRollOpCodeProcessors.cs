@@ -10,7 +10,7 @@ internal static class ShiftAndRollOpCodeProcessors
         value = (byte)((byte)(value << 1) | (byte)(value >> 7));
         var carry = (value & 0b0000001) == 1;
         value = (byte)(processorState.C ? value | 1 : value & 0b11111110);
-        if(address!=null) mainBoard.Write(address.Value, value);
+        if(address!=null) mainBoard.WriteByte(address.Value, value);
 
         processorState.Z = value == 0;
         processorState.C = carry;
@@ -29,7 +29,7 @@ internal static class ShiftAndRollOpCodeProcessors
         var carry = (value & 0b10000000) == 0b10000000;
         value = (byte)(processorState.C ? value | 0b10000000 : value & 0b01111111);
 
-        if (address != null) mainBoard.Write(address.Value, value);
+        if (address != null) mainBoard.WriteByte(address.Value, value);
 
         processorState.Z = value == 0;
         processorState.C = carry;
@@ -47,7 +47,7 @@ internal static class ShiftAndRollOpCodeProcessors
 
         value = (byte)(value >> 1);
 
-        if (address != null) mainBoard.Write(address.Value, value);
+        if (address != null) mainBoard.WriteByte(address.Value, value);
 
         processorState.Z = value == 0;
         processorState.C = carry;
@@ -71,7 +71,7 @@ internal static class ShiftAndRollOpCodeProcessors
     {
         var currentValue = mainBoard.ReadByte(address);
         var newValue = (byte)(currentValue << 1);
-        mainBoard.Write(address,newValue);
+        mainBoard.WriteByte(address,newValue);
         WithFlags(processorState, newValue, currentValue);
     }
 

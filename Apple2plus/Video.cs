@@ -1,13 +1,14 @@
 
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+using Runtime;
 
 namespace Apple2;
 
 public static class Video
 {
     
-    public static Bitmap Generate(Runtime.MainBoard mainBoard, int pixelSize, bool color)
+    public static Bitmap Generate(Runtime.MainBoard mainBoard, int pixelSize)
     {
         int byteid = 0;
         var cursorH = mainBoard.baseRAM[0x24];
@@ -81,8 +82,8 @@ public static class Video
                                 for (ushort c = 0; c < 0x28; c++)
                                 {
                                     var chr = mainBoard.baseRAM[(ushort)(((graphicsPage) + (b * 0x28) + (l * 0x80) + c) + block * 0x400)];
-                                    bool[] blockline = mainBoard.ConvertByteToBoolArray(chr);
-                                    if (color)
+                                    bool[] blockline = Tools.ConvertByteToBoolArray(chr);
+                                    if (mainBoard.videoColor)
                                     {
                                         int[] pixels = new int[7];
                                         if ((byteid / pixelSize) % 2 == 0) // Odd

@@ -34,7 +34,7 @@ internal static class IncAndDecOpCodeProcessors
     {
         var value = mainBoard.ReadByte(address);
         value = (byte)(value - 1);
-        mainBoard.Write(address, value);
+        mainBoard.WriteByte(address, value);
         WithFlags(processorState, value);
     }
 
@@ -42,7 +42,7 @@ internal static class IncAndDecOpCodeProcessors
     {
         var value = mainBoard.ReadByte(address);
         var result = (byte)(value + 1);
-        mainBoard.Write(address, result);
+        mainBoard.WriteByte(address, result);
         WithFlags(processorState, result);
     }
 

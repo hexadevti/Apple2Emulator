@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Runtime.ExceptionServices;
 
 namespace Runtime;
@@ -69,4 +70,14 @@ public static class Tools
 
     }
 
+    public static byte[] ImportStringHexData(string image, ushort size)
+    {
+        byte[] ret = new byte[size];
+        for (int i = 0; i < size; i = i + 1)
+        {
+            ret[i] = byte.Parse(image.Substring(i * 2, 2), NumberStyles.HexNumber);
+        }
+        return ret;
+    }
+    
 }
