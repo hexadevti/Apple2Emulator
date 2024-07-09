@@ -60,7 +60,7 @@ public class CPU
 
     public void EnqueueCycles(OpCodePart? opCodePart)
     {
-        if (mainBoard.adjust1Mhz)
+        if (mainBoard.adjust1Mhz || (!mainBoard.adjust1Mhz && mainBoard.audioJumpInterval != 10))
         {
             int cycles = opCodePart != null ? opCodePart.Cycles : 1;
             for (int i = 0; i < cycles; i++)
@@ -91,11 +91,10 @@ public class CPU
         Stopwatch sw;
         sw = Stopwatch.StartNew();
         bool switchJumpInterval = false;
-        int baseAudioJumpInterval = 20;
         bool n = false;
-        int audioFineTuning = 0;
         int cpuCycles = 0;
         int cyclesPerMilliseconds = 19500;
+        int cyclesPerMillisecondsAdj = cyclesPerMilliseconds;
 
         while (running)
         {
@@ -162,14 +161,22 @@ public class CPU
             }
             else
             {
-                if (mainBoard.audioJumpInterval == 10 || sw.Elapsed.TotalNanoseconds >= elapsedCycleTime - 60 * mainBoard.audioJumpInterval + audioFineTuning)
+                if (mainBoard.audioJumpInterval == 10)
                 {
-                    if (mainBoard.audioJumpInterval == 10 || !mainBoard.cycleWait.TryDequeue(out n))
+                    RunCycle();
+                }
+                else
+                {
+                    cyclesPerMillisecondsAdj = cyclesPerMilliseconds + ((mainBoard.audioJumpInterval) * 3000);
+                    cpuCycles++;
+                    if (!mainBoard.cycleWait.TryDequeue(out n))
                     {
+                        
                         RunCycle();
                         
-                        if (mainBoard.audioJumpInterval != 10 && soundCycles > mainBoard.audioJumpInterval + baseAudioJumpInterval)
+                        if (soundCycles > (switchJumpInterval ? mainBoard.audioJumpInterval /2 + 1 : mainBoard.audioJumpInterval / 2 + 1))
                         {
+                            switchJumpInterval = !switchJumpInterval;
 
                             if (k < mainBoard.audioBuffer)
                             {
@@ -188,38 +195,33 @@ public class CPU
                             if (delta2.TotalMilliseconds >= adjcycle)
                             {
                                 mainBoard.screenLog.Enqueue(" Queue buffer: " + mainBoard.clickBuffer.Count()
-                                 + " audioJumpInterval = " + mainBoard.audioJumpInterval + baseAudioJumpInterval
-                                 + " elepsedCycleTime = " + (elapsedCycleTime - 60 * mainBoard.audioJumpInterval + audioFineTuning));
+                                 + " cyclesPerMillisecondsAdj = " + cyclesPerMillisecondsAdj);
 
-                                if (mainBoard.clickBuffer.Count() > 1)
+                                if (mainBoard.clickBuffer.Count() > 2)
                                 {
-                                    baseAudioJumpInterval += (mainBoard.clickBuffer.Count() - 1);
+                                    cyclesPerMillisecondsAdj -= (mainBoard.clickBuffer.Count() - 2) * 10;
                                 }
-                                else if (mainBoard.clickBuffer.Count() < 1)
+                                else if (mainBoard.clickBuffer.Count() < 2)
                                 {
-                                    baseAudioJumpInterval -= (1 - mainBoard.clickBuffer.Count());
-                                }
-                                if (mainBoard.clickBuffer.Count() > 1)
-                                {
-                                    audioFineTuning += (mainBoard.clickBuffer.Count() - 1) * 2;
-                                }
-                                else if (mainBoard.clickBuffer.Count() < 1)
-                                {
-                                    audioFineTuning -= (1 - mainBoard.clickBuffer.Count()) * 2;
+                                    cyclesPerMillisecondsAdj += (2 - mainBoard.clickBuffer.Count()) * 10;
                                 }
 
                                 countTime = DateTime.Now;
                             }
                             soundCycles = 0;
                         }
-                        else if (mainBoard.audioJumpInterval != 10)
+                        else
                         {
                             soundCycles++;
                         }
                     }
-                    if (mainBoard.audioJumpInterval != 10)
-                        sw = Stopwatch.StartNew();
-                        
+                    
+                    if (cpuCycles >= cyclesPerMillisecondsAdj)
+                    {
+                        Thread.Sleep(1);
+                        cpuCycles = 0;
+                    }
+
                 }
                 
             }

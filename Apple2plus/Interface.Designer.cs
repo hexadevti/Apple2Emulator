@@ -84,7 +84,7 @@ partial class Interface
         groupBox1.Controls.Add(disk1);
         groupBox1.Location = new Point(11, 589);
         groupBox1.Name = "groupBox1";
-        groupBox1.Size = new Size(687, 60);
+        groupBox1.Size = new Size(706, 60);
         groupBox1.TabIndex = 2;
         groupBox1.TabStop = false;
         groupBox1.Text = "DISK 1";
@@ -149,7 +149,7 @@ partial class Interface
         groupBox2.Controls.Add(disk2);
         groupBox2.Location = new Point(11, 651);
         groupBox2.Name = "groupBox2";
-        groupBox2.Size = new Size(687, 60);
+        groupBox2.Size = new Size(706, 60);
         groupBox2.TabIndex = 6;
         groupBox2.TabStop = false;
         groupBox2.Text = "DISK 2";

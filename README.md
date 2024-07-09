@@ -4,16 +4,16 @@ Este é um emulador de Apple II+ juntamente com o processador 6502. Feito por pu
 
 Esse emulador traz alguns recursos como:
 
-- Video Colorido/Monocromático
+- Video Colorido/Monocromático (Hires)
 - Som emulado como Speaker (usando componente NAudio https://github.com/naudio/NAudio)
 - Acelerador de Clock (Até aproximadamente 50Mhz, dependendo do Hardware usado)
-- Language card (64kb expansion)
+- Language card (16kb expansion)
 - 80 Columns Card
 - Disk II Card DOS/Prodos compatible
 
 Alguns pontos de melhorias necessários, como: maior estabilidade do som e redução do consumo da máquina devido ao controle de clock. (C# possui algumas limitações de Thread.Sleep, mínimo de 1ms, com pouca precisão).
 
-Sugestões são ben-vindas e agradeço qualquer tipo de contribuição ao projeto.
+Sugestões são bem-vindas e agradeço qualquer tipo de contribuição ao projeto.
 
 Referências importantes:
 

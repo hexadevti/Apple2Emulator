@@ -96,14 +96,17 @@ public partial class Interface : Form
                 mainBoard.audioJumpInterval = ReadTrackBar(tbSpeed);
                 SetLabel(lblClockSpeed, (1000 / mainBoard.clockSpeed).ToString("0.00") + " Mhz");
                 SetLabel(D1T, "T: " + ((DiskIICard)mainBoard.slot6).drive1.track.ToString());
-                SetLabel(D1S, "S: " + ((DiskIICard)mainBoard.slot6).drive1.sector.ToString());
+                SetLabel(D1S, "S: " +  (((DiskIICard)mainBoard.slot6).drive1.sector > 16 ? "?" : ((DiskIICard)mainBoard.slot6).drive1.sector.ToString()));
                 SetCheckbox(D1O, ((DiskIICard)mainBoard.slot6).drive1.on);
                 SetLabel(D2T, "T: " + ((DiskIICard)mainBoard.slot6).drive2.track.ToString());
-                SetLabel(D2S, "S: " + ((DiskIICard)mainBoard.slot6).drive2.sector.ToString());
+                SetLabel(D2S, "S: " + (((DiskIICard)mainBoard.slot6).drive2.sector > 16 ? "?" : ((DiskIICard)mainBoard.slot6).drive2.sector.ToString()));
                 SetCheckbox(D2O, ((DiskIICard)mainBoard.slot6).drive2.on);
                 string text = "";
-                if (mainBoard.screenLog.TryDequeue(out text))
-                    SetRichTextBox(richTextBox2, text + Environment.NewLine);
+                for (int i=0; i< mainBoard.screenLog.Count; i++)
+                {
+                    if (mainBoard.screenLog.TryDequeue(out text))
+                        SetRichTextBox(richTextBox2, text + Environment.NewLine);
+                }
                 Thread.Sleep(100);
             }
         }));
@@ -196,7 +199,7 @@ public partial class Interface : Form
             {
 
                 mainBoard.clickBuffer.Clear();
-                tbSpeed.Value = 10;
+                tbSpeed.Value = 2;
                 tbSpeed.Enabled = true;
                 btnClockAdjust.Text = "1Mhz";
             }
