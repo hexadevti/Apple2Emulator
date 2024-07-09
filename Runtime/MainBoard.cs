@@ -43,6 +43,8 @@ public class MainBoard
 
     public bool videoColor = true;
 
+    public int audioBuffer { get;set;}
+
 
     public MainBoard(State state)
     {

@@ -17,12 +17,13 @@ public partial class Interface : Form
     string? assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
     List<Task> threads = new List<Task>();
     int pixelSize = 2;
-    private DirectSoundOut output = new DirectSoundOut();
-    public BlockAlignReductionStream? stream;
+    private DirectSoundOut soundOutput = new DirectSoundOut();
 
-    public Speaker tone;
+    public Speaker speaker;
 
     public System.Windows.Forms.MethodInvoker inv;
+
+    public WaveFormat waveFormat;
 
     public Interface()
     {
@@ -71,7 +72,7 @@ public partial class Interface : Form
         StartSpeaker();
         cpu.WarmStart();
         LoadThreads();
-        
+
     }
 
     private void tbSpeed_ValueChanged(object? sender, EventArgs e)
@@ -92,7 +93,7 @@ public partial class Interface : Form
         {
             while (running)
             {
-                mainBoard.audioJumpInterval = ReadTabBar(tbSpeed);
+                mainBoard.audioJumpInterval = ReadTrackBar(tbSpeed);
                 SetLabel(lblClockSpeed, (1000 / mainBoard.clockSpeed).ToString("0.00") + " Mhz");
                 SetLabel(D1T, "T: " + ((DiskIICard)mainBoard.slot6).drive1.track.ToString());
                 SetLabel(D1S, "S: " + ((DiskIICard)mainBoard.slot6).drive1.sector.ToString());
@@ -132,13 +133,14 @@ public partial class Interface : Form
 
     private void StartSpeaker()
     {
-        tone = new Speaker(mainBoard);
-        //stream = new BlockAlignReductionStream(tone);
-        output.Init(tone);
-        output.Play();
-        
+        waveFormat = new WaveFormat(120000, 8, 1);
+        mainBoard.audioBuffer = 4800;
+        speaker = new Speaker(mainBoard, waveFormat);
+        soundOutput.Init(speaker);
+        soundOutput.Play();
 
-        
+
+
     }
 
     private void Form1_Shown(object? sender, EventArgs e)
@@ -216,11 +218,11 @@ public partial class Interface : Form
 
     }
 
-    public static int ReadTabBar(TrackBar control)
+    public static int ReadTrackBar(TrackBar control)
     {
         if (control.InvokeRequired)
         {
-            return (int)control.Invoke(new Func<int>(() => ReadTabBar(control)));
+            return (int)control.Invoke(new Func<int>(() => ReadTrackBar(control)));
         }
         else
         {
@@ -247,12 +249,13 @@ public partial class Interface : Form
     {
         if (control.InvokeRequired)
         {
-            Action safeWrite = delegate { SetLabel(control, text); };
+            Action safeWrite = delegate { SetRichTextBox(control, text); };
             control.Invoke(safeWrite);
         }
         else
         {
             control.AppendText(text);
+            control.ScrollToCaret();
         }
 
     }
@@ -262,4 +265,6 @@ public partial class Interface : Form
         if (mainBoard != null)
             mainBoard.videoColor = ckbColor.Checked;
     }
+
+    
 }

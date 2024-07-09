@@ -7,21 +7,25 @@ namespace Apple2;
 public class Speaker : WaveStream
 {
     private MainBoard _mainBoard;
+    private WaveFormat _waveFormat;
 
     public double frequency { get; set; }
     public byte sample;
     byte actualSample = 0;
 
-    public Speaker(MainBoard mainBoard)
+
+    public Speaker(MainBoard mainBoard, WaveFormat waveFormat)
     {
         _mainBoard = mainBoard;
+        _waveFormat = waveFormat;
     }
     public override WaveFormat WaveFormat
     {
         get
         {
-            return new WaveFormat(120000, 8, 1);
+            return _waveFormat;
         }
+        
     }
 
     public override long Length
@@ -37,7 +41,6 @@ public class Speaker : WaveStream
 
     public override int Read(byte[] buffer, int offset, int count)
     {
-        
         byte[] bytes = new byte[count];
         
         if (_mainBoard.clickBuffer.TryDequeue(out bytes))
@@ -47,6 +50,7 @@ public class Speaker : WaveStream
                 buffer[i] = bytes[i];
             }
         }
+        
         return count;
     }
 }

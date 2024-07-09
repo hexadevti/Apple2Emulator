@@ -48,13 +48,12 @@ public class CPU
         byte instruction = mainBoard.ReadByte(state.PC);
         lastPC = state.PC;
         OpCodePart? opCodePart = OpCodes.GetOpCode(instruction);
-        if (lastPC == 0xc876)
-        {
-            Thread.Sleep(1);
-        }
+        // Break point with lastPC
+        // if (lastPC == 0xc876)
+        // {
+        //     Thread.Sleep(1);
+        // }
         ushort? refAddress = OpCodes.ProcessAddressing(opCodePart, state, mainBoard, this);
-
-        
         OpCodes.Process(opCodePart, state, mainBoard, refAddress);
         EnqueueCycles(opCodePart);
     }
@@ -81,9 +80,9 @@ public class CPU
         DateTime countTime = DateTime.Now;
         int soundCycles = 0;
         Stopwatch sw3 = Stopwatch.StartNew();
-        int bufferSize = 4800;
+        
         int k = 0;
-        byte[] bytes = new byte[bufferSize];
+        byte[] bytes = new byte[mainBoard.audioBuffer];
 
         Thread.Sleep(100);
 
@@ -96,25 +95,26 @@ public class CPU
         bool n = false;
         int audioFineTuning = 0;
         int cpuCycles = 0;
-        int cyclesPerMilliseconds = 6000;
+        int cyclesPerMilliseconds = 19500;
 
         while (running)
         {
 
             if (mainBoard.adjust1Mhz)
             {
-                
+                cpuCycles++;
                 // if (sw.Elapsed.TotalNanoseconds >= elapsedCycleTime)
                 // {
                     if (!mainBoard.cycleWait.TryDequeue(out n))
                     {
+                        
                         RunCycle();
-                        cpuCycles++;
+                        
                         if (soundCycles > (switchJumpInterval ? 1 : 1))
                         {
                             switchJumpInterval = !switchJumpInterval;
 
-                            if (k < bufferSize)
+                            if (k < mainBoard.audioBuffer)
                             {
                                 bytes[k] = (byte)(mainBoard.softswitches.SoundClick ? 0x80 : 0x00);
                             }
@@ -122,7 +122,7 @@ public class CPU
                             {
                                 mainBoard.clickBuffer.Enqueue(bytes);
                                 k = 0;
-                                bytes = new byte[bufferSize];
+                                bytes = new byte[mainBoard.audioBuffer];
                             }
 
                             k++;
@@ -151,6 +151,7 @@ public class CPU
                             soundCycles++;
                         }
                     }
+                    
                     if (cpuCycles >= cyclesPerMilliseconds)
                     {
                         Thread.Sleep(1);
@@ -170,7 +171,7 @@ public class CPU
                         if (mainBoard.audioJumpInterval != 10 && soundCycles > mainBoard.audioJumpInterval + baseAudioJumpInterval)
                         {
 
-                            if (k < bufferSize)
+                            if (k < mainBoard.audioBuffer)
                             {
                                 bytes[k] = (byte)(mainBoard.softswitches.SoundClick ? 0x80 : 0x00);
                             }
@@ -178,7 +179,7 @@ public class CPU
                             {
                                 mainBoard.clickBuffer.Enqueue(bytes);
                                 k = 0;
-                                bytes = new byte[bufferSize];
+                                bytes = new byte[mainBoard.audioBuffer];
                             }
 
                             k++;
