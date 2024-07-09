@@ -20,7 +20,7 @@ public class Speaker : WaveStream
     {
         get
         {
-            return new WaveFormat(150000, 8, 1);
+            return new WaveFormat(120000, 8, 1);
         }
     }
 

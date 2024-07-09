@@ -11,7 +11,7 @@ Esse emulador traz alguns recursos como:
 - 80 Columns Card
 - Disk II Card DOS/Prodos compatible
 
-Algun pontos de melhorias necessários como: maior estabilidade do som e redução do consumo da máquina devido ao controle de clock. (C# possui algumas limitações de Thread.Sleep que não consuma muitos recursos).
+Alguns pontos de melhorias necessários, como: maior estabilidade do som e redução do consumo da máquina devido ao controle de clock. (C# possui algumas limitações de Thread.Sleep, mínimo de 1ms, com pouca precisão).
 
 Sugestões são ben-vindas e agradeço qualquer tipo de contribuição ao projeto.
 
@@ -29,3 +29,10 @@ Livros essenciais:
 - Beneath Apple DOS/Prodos: https://datassette.s3.us-west-004.backblazeb2.com/livros/beneath_apple_dos_prodos_2020.pdf
 - Videx: file:///C:/Users/luciano/OneDrive/%C3%81rea%20de%20Trabalho/Apple/books/Videx%20Videoterm%20-%20Installation%20and%20Operation%20Manual.pdf
 
+Próximos recursos:
+
+- Joystick
+- 65c02 (Apple //e)
+- Hard Drive
+- Memory expansion
+- Double-High Resolution
