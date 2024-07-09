@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
     <Content Include="AppIcon.ico" />
     <Content Include="roms\ApplesoftD000.rom">

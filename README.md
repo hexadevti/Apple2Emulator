@@ -27,5 +27,5 @@ Livros essenciais:
 - Apple II Reference Manual: file:///C:/Users/luciano/OneDrive/%C3%81rea%20de%20Trabalho/Apple/books/Apple%20II%20Reference%20Manual.pdf
 - Guia do programador DOS: https://datassette.s3.us-west-004.backblazeb2.com/livros/guia_do_programador_dos.pdf
 - Beneath Apple DOS/Prodos: https://datassette.s3.us-west-004.backblazeb2.com/livros/beneath_apple_dos_prodos_2020.pdf
-
+- Videx: file:///C:/Users/luciano/OneDrive/%C3%81rea%20de%20Trabalho/Apple/books/Videx%20Videoterm%20-%20Installation%20and%20Operation%20Manual.pdf
 
