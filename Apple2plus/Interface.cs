@@ -66,13 +66,13 @@ public partial class Interface : Form
 
     private void InitSlots()
     {
-        mainBoard.slot0 = new RamCard(0, 8);
-        mainBoard.slot1 = new RamCard(1, 4);
-        mainBoard.slot2 = new RamCard(2, 3);
+        mainBoard.slot0 = new LanguageCard();
+        mainBoard.slot1 = new RamCard(1, 8);
+        mainBoard.slot2 = new EmptySlot();
         mainBoard.slot3 = new Cols80Card(3, Tools.LoadROM(File.ReadAllBytes(assemblyPath + "roms/Videx Videoterm ROM 2.4.bin"), 0x300),
                                         Tools.LoadExtendedSlotsROM(0xc800, File.ReadAllBytes(assemblyPath + "roms/Videx Videoterm ROM 2.4.bin")),
                                         Tools.Load80Chars(File.ReadAllBytes(assemblyPath + "roms/Videx Videoterm Character ROM Normal.bin")));
-        mainBoard.slot4 = new RamCard(4, 2);
+        mainBoard.slot4 = new EmptySlot();
         mainBoard.slot5 = new EmptySlot();
         mainBoard.slot6 = new DiskIICard(6, File.ReadAllBytes(assemblyPath + "roms/diskinterface.rom"),
                                         new DiskDrive(openFileDialog1.FileName, (DiskIICard)mainBoard.slot6),
@@ -112,7 +112,7 @@ public partial class Interface : Form
                     if (mainBoard.screenLog.TryDequeue(out text))
                         SetRichTextBox(richTextBox2, text + Environment.NewLine);
                 }
-                Thread.Sleep(100);
+                Thread.Sleep(50);
             }
         }));
 
@@ -132,7 +132,7 @@ public partial class Interface : Form
                     }
                     catch { }
                 }
-                Thread.Sleep(20);
+                Thread.Sleep(50);
             }
         }));
 
@@ -205,7 +205,7 @@ public partial class Interface : Form
             {
 
                 mainBoard.clickBuffer.Clear();
-                tbSpeed.Value = 2;
+                tbSpeed.Value = 10;
                 tbSpeed.Enabled = true;
                 btnClockAdjust.Text = "1Mhz";
             }

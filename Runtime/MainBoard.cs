@@ -156,28 +156,6 @@ public class MainBoard
         }
         else if (address >= 0xd000)
         {
-            // if (slot0 is IRamCard)
-            // {
-            //     if (((IRamCard)slot0).MemoryBankReadRAM_ROM)
-            //     {
-            //         ret = slot0.Read(address, this, state);
-            //     }
-            //     else
-            //     {
-            //         ret = ROM[address - 0xd000];    
-            //     }
-            // }
-            // if (slot1 is IRamCard)
-            // {
-            //     if (((IRamCard)slot1).MemoryBankReadRAM_ROM)
-            //     {
-            //         ret = slot1.Read(address, this, state);
-            //     }
-            //     else
-            //     {
-            //         ret = ROM[address - 0xd000];    
-            //     }
-            // }
             if (slot0 is IRamCard && ((IRamCard)slot0).MemoryBankReadRAM_ROM)
             {
                 ret = slot0.Read(address, this, state);
@@ -206,6 +184,7 @@ public class MainBoard
         }
         else if (address >= 0xc800) // Extended ROM Area
         {
+
             //TODO: Put condition to redirect to correct slot
             ret = slot3.Read(address, this, state);
         }
@@ -327,18 +306,12 @@ public class MainBoard
 
     public ushort? ReadAddressLLHH(ushort? address)
     {
-        if (address != null)
-            return (ushort)(ReadByte((ushort)(address.Value + 1)) << 8 | ReadByte(address.Value));
-        else
-            return null;
+        return (ushort)(ReadByte((ushort)(address.Value + 1)) << 8 | ReadByte(address.Value));
     }
    
     public byte? ReadZeroPageAddress(ushort? address)
     {
-        if (address.HasValue)
-            return (byte?)ReadByte(address.Value);
-        else
-            return null;
+        return (byte?)ReadByte(address.Value);
     }
 
     public ushort GetIRQVector()

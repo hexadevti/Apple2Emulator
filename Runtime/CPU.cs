@@ -47,7 +47,7 @@ public class CPU
     public void RunCycle()
     {
         byte instruction = mainBoard.ReadByte(state.PC);
-        lastPC = state.PC;
+        //lastPC = state.PC;
         OpCodePart? opCodePart = OpCodes.GetOpCode(instruction);
         // Break point with lastPC
         // if (lastPC == 0xc876)
