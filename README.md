@@ -8,6 +8,7 @@ Esse emulador traz alguns recursos como:
 - Som emulado como Speaker (usando componente NAudio https://github.com/naudio/NAudio)
 - Acelerador de Clock (Até aproximadamente 50Mhz, dependendo do Hardware usado)
 - Language card (16kb expansion)
+- Saturn 128kb RAM card
 - 80 Columns Card
 - Disk II Card DOS/Prodos compatible
 
@@ -34,5 +35,4 @@ Próximos recursos:
 - Joystick
 - 65c02 (Apple //e)
 - Hard Drive
-- Memory expansion
 - Double-High Resolution
