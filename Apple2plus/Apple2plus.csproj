@@ -50,7 +50,7 @@
     <TargetFramework>net8.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <ImplicitUsings>disable</ImplicitUsings>
     <!-- <PublishTrimmed>true</PublishTrimmed>
     <PublishAOT>true</PublishAOT> -->
     <ForceDesignerDpiUnaware>true</ForceDesignerDpiUnaware>

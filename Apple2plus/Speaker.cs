@@ -2,55 +2,58 @@ using Runtime;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 
-namespace Apple2;
-
-public class Speaker : WaveStream
+namespace Apple2
 {
-    private MainBoard _mainBoard;
-    private WaveFormat _waveFormat;
-
-    public double frequency { get; set; }
-    public byte sample;
-    byte actualSample = 0;
 
 
-    public Speaker(MainBoard mainBoard, WaveFormat waveFormat)
+    public class Speaker : WaveStream
     {
-        _mainBoard = mainBoard;
-        _waveFormat = waveFormat;
-    }
-    public override WaveFormat WaveFormat
-    {
-        get
+        private MainBoard _mainBoard;
+        private WaveFormat _waveFormat;
+
+        public double frequency { get; set; }
+        public byte sample;
+        byte actualSample = 0;
+
+
+        public Speaker(MainBoard mainBoard, WaveFormat waveFormat)
         {
-            return _waveFormat;
+            _mainBoard = mainBoard;
+            _waveFormat = waveFormat;
         }
-        
-    }
-
-    public override long Length
-    {
-        get
+        public override WaveFormat WaveFormat
         {
-            return 1;
-        }
-    }
-
-    public override long Position { get; set; }
-
-
-    public override int Read(byte[] buffer, int offset, int count)
-    {
-        byte[] bytes = new byte[count];
-        
-        if (_mainBoard.clickBuffer.TryDequeue(out bytes))
-        {
-            for (int i = 0; i < count; i++)
+            get
             {
-                buffer[i] = bytes[i];
+                return _waveFormat;
+            }
+
+        }
+
+        public override long Length
+        {
+            get
+            {
+                return 1;
             }
         }
-        
-        return count;
+
+        public override long Position { get; set; }
+
+
+        public override int Read(byte[] buffer, int offset, int count)
+        {
+            byte[] bytes = new byte[count];
+
+            if (_mainBoard.clickBuffer.TryDequeue(out bytes))
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    buffer[i] = bytes[i];
+                }
+            }
+
+            return count;
+        }
     }
 }

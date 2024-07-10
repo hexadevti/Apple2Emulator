@@ -1,31 +1,32 @@
-namespace Runtime.OpCodeProcessors;
-
-internal static class CompareOpCodeProcessors
+namespace Runtime.OpCodeProcessors
 {
-    public static void Process_CPX(State processorState, MainBoard mainBoard, ushort address) => Compare(processorState, mainBoard.ReadByte(address), processorState.X);
-    public static void Process_CPY(State processorState, MainBoard mainBoard, ushort address) => Compare(processorState, mainBoard.ReadByte(address), processorState.Y);
-    public static void Process_CMP(State processorState, MainBoard mainBoard, ushort address) => Compare(processorState, mainBoard.ReadByte(address), processorState.A);
-
-    public static void Process_BIT(State processorState, MainBoard mainBoard, ushort address)
+    internal static class CompareOpCodeProcessors
     {
-        var b = mainBoard.ReadByte(address);
-        var result = (byte)(b & processorState.A);
-       
-        
-        processorState.Z = result == 0;
-        processorState.N = b.IsNegative();
-        processorState.V = b.OverflowSet();
-    
-    }
+        public static void Process_CPX(State processorState, MainBoard mainBoard, ushort address) => Compare(processorState, mainBoard.ReadByte(address), processorState.X);
+        public static void Process_CPY(State processorState, MainBoard mainBoard, ushort address) => Compare(processorState, mainBoard.ReadByte(address), processorState.Y);
+        public static void Process_CMP(State processorState, MainBoard mainBoard, ushort address) => Compare(processorState, mainBoard.ReadByte(address), processorState.A);
 
-    private static void Compare(State processorState, byte value, byte register)
-    {
-        value = (byte)(value ^ 0xff);
-        var carry = register + value + 1;
+        public static void Process_BIT(State processorState, MainBoard mainBoard, ushort address)
+        {
+            var b = mainBoard.ReadByte(address);
+            var result = (byte)(b & processorState.A);
 
-        var b = (byte)carry;
-        processorState.C = carry > 0xff;
-        processorState.Z = b == 0;
-        processorState.N = ((byte)(b & 0xff)).IsNegative();
+
+            processorState.Z = result == 0;
+            processorState.N = b.IsNegative();
+            processorState.V = b.OverflowSet();
+
+        }
+
+        private static void Compare(State processorState, byte value, byte register)
+        {
+            value = (byte)(value ^ 0xff);
+            var carry = register + value + 1;
+
+            var b = (byte)carry;
+            processorState.C = carry > 0xff;
+            processorState.Z = b == 0;
+            processorState.N = ((byte)(b & 0xff)).IsNegative();
+        }
     }
 }

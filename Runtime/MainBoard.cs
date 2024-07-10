@@ -1,74 +1,76 @@
 using Runtime.Abstractions;
 using Runtime.Cards;
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Net;
 using System.Runtime.ExceptionServices;
 using System.Threading.Channels;
 
-namespace Runtime;
-
-public class MainBoard
+namespace Runtime
 {
-    public object displayLock = new object();
-    
-    //private readonly IList<IOverLay> overlays;
-    public Dictionary<byte, bool[,]> charSet;
-    
-    public bool adjust1Mhz = false;
-    public double clockSpeed = 0;
-    public byte[] baseRAM = new byte[0xc000];
-    
-    public byte[] ROM = new byte[0x4000];
-    public byte KeyPressed { get; set; }
-    public Softswitches softswitches = new Softswitches();
-    
-    public State state { get; set; }
-    public Queue<byte[]> clickBuffer = new Queue<byte[]>(100);
-    public int cpuCycles { get; set; }
-    
-    public ICard slot0;
-    public ICard slot1;
-    public ICard slot2;
-    public ICard slot3;
-    public ICard slot4;
-    public ICard slot5;
-    public ICard slot6;
-    public ICard slot7;
-    CpuSoftswitches cpuSoftswitches  = new CpuSoftswitches();
-    
-    public Queue<string> screenLog = new Queue<string>();
-    public Queue<bool> cycleWait = new Queue<bool>();
-    public int audioJumpInterval = 25;
-
-    public bool videoColor = true;
-
-    public int audioBuffer { get;set;}
-
-    public int SlotRamEnable = 0;
-
-
-    public MainBoard(State state)
+    public class MainBoard
     {
-        //overlays = new List<IOverLay>();
-        this.state = state;
-    }
+        public object displayLock = new object();
 
-    public void ClearBaseRAM()
-    {
-        Random rnd = new Random();
-        byte[] b = new byte[0xbfff];
-        rnd.NextBytes(b);
-        for (ushort i = 0; i < b.Length; i++)
+        //private readonly IList<IOverLay> overlays;
+        public Dictionary<byte, bool[,]> charSet;
+
+        public bool adjust1Mhz = true;
+        public double clockSpeed = 0;
+        public byte[] baseRAM = new byte[0xc000];
+
+        public byte[] ROM = new byte[0x4000];
+        public byte KeyPressed { get; set; }
+        public Softswitches softswitches = new Softswitches();
+
+        public State state { get; set; }
+        public Queue<byte[]> clickBuffer = new Queue<byte[]>(100);
+        public int cpuCycles { get; set; }
+
+        public ICard slot0;
+        public ICard slot1;
+        public ICard slot2;
+        public ICard slot3;
+        public ICard slot4;
+        public ICard slot5;
+        public ICard slot6;
+        public ICard slot7;
+        CpuSoftswitches cpuSoftswitches = new CpuSoftswitches();
+
+        public Queue<string> screenLog = new Queue<string>();
+        public Queue<bool> cycleWait = new Queue<bool>();
+        public int audioJumpInterval = 25;
+
+        public bool videoColor = true;
+
+        public int audioBuffer { get; set; }
+
+        public int SlotRamEnable = 0;
+
+
+        public MainBoard(State state)
         {
-            baseRAM[i] = b[i];
+            //overlays = new List<IOverLay>();
+            this.state = state;
         }
-    }
 
-    public void LoadChars(byte[] rom)
-    {
-        charSet = new Dictionary<byte, bool[,]>();
-        byte[] chars = new byte[] {
+        public void ClearBaseRAM()
+        {
+            Random rnd = new Random();
+            byte[] b = new byte[0xbfff];
+            rnd.NextBytes(b);
+            for (ushort i = 0; i < b.Length; i++)
+            {
+                baseRAM[i] = b[i];
+            }
+        }
+
+        public void LoadChars(byte[] rom)
+        {
+            charSet = new Dictionary<byte, bool[,]>();
+            byte[] chars = new byte[] {
 
                                     0xc0, 0xc1, 0xc2, 0xc3, 0xc4, 0xc5, 0xc6, 0xc7, 0xc8, 0xc9, 0xca, 0xcb, 0xcc, 0xcd, 0xce, 0xcf,
                                     0xd0, 0xd1, 0xd2, 0xd3, 0xd4, 0xd5, 0xd6, 0xd7, 0xd8, 0xd9, 0xda, 0xdb, 0xdc, 0xdd, 0xde, 0xdf,
@@ -113,226 +115,227 @@ public class MainBoard
                                      };
 
 
-        ushort id = 0;
-        foreach (var item in chars)
-        {
-
-            bool[,] charboolItem = new bool[8, 7];
-
-            for (int charLayer = 0; charLayer < 8; charLayer++)
+            ushort id = 0;
+            foreach (var item in chars)
             {
-                byte charItem = rom[id];
-                bool[] bitsLayer = Tools.ConvertByteToBoolArray(charItem);
-                for (int charBits = 1; charBits < 8; charBits++)
+
+                bool[,] charboolItem = new bool[8, 7];
+
+                for (int charLayer = 0; charLayer < 8; charLayer++)
                 {
-                    if (bitsLayer[0])
-                        charboolItem[charLayer, charBits - 1] = !bitsLayer[charBits];
-                    else
-                        charboolItem[charLayer, charBits - 1] = bitsLayer[charBits];
+                    byte charItem = rom[id];
+                    bool[] bitsLayer = Tools.ConvertByteToBoolArray(charItem);
+                    for (int charBits = 1; charBits < 8; charBits++)
+                    {
+                        if (bitsLayer[0])
+                            charboolItem[charLayer, charBits - 1] = !bitsLayer[charBits];
+                        else
+                            charboolItem[charLayer, charBits - 1] = bitsLayer[charBits];
+                    }
+                    id++;
                 }
-                id++;
-            }
 
-            charSet.Add(item, charboolItem);
+                charSet.Add(item, charboolItem);
+            }
         }
-    }
 
-    public void LoadROM(ushort startAddress, byte[] rom)
-    {
-        for (int i = 0; i < rom.Length; i++)
+        public void LoadROM(ushort startAddress, byte[] rom)
         {
-            ROM[startAddress - 0xd000 + i] = rom[i];
+            for (int i = 0; i < rom.Length; i++)
+            {
+                ROM[startAddress - 0xd000 + i] = rom[i];
+            }
         }
-    }
 
-    
 
-    public byte ReadByte(ushort address)
-    {
-        byte ret = 0;
-        if (address < 0xc000)
+
+        public byte ReadByte(ushort address)
         {
-            ret = baseRAM[address];
-        }
-        else if (address >= 0xd000)
-        {
-            if (slot0 is IRamCard && ((IRamCard)slot0).MemoryBankReadRAM_ROM)
+            byte ret = 0;
+            if (address < 0xc000)
             {
-                ret = slot0.Read(address, this, state);
+                ret = baseRAM[address];
             }
-            else if (slot1 is IRamCard && ((IRamCard)slot1).MemoryBankReadRAM_ROM)
+            else if (address >= 0xd000)
             {
-                ret = slot1.Read(address, this, state);
+                if (slot0 is IRamCard && ((IRamCard)slot0).MemoryBankReadRAM_ROM)
+                {
+                    ret = slot0.Read(address, this, state);
+                }
+                else if (slot1 is IRamCard && ((IRamCard)slot1).MemoryBankReadRAM_ROM)
+                {
+                    ret = slot1.Read(address, this, state);
+                }
+                else if (slot2 is IRamCard && ((IRamCard)slot2).MemoryBankReadRAM_ROM)
+                {
+                    ret = slot2.Read(address, this, state);
+                }
+                else if (slot3 is IRamCard && ((IRamCard)slot3).MemoryBankReadRAM_ROM)
+                {
+                    ret = slot3.Read(address, this, state);
+                }
+                else if (slot4 is IRamCard && ((IRamCard)slot4).MemoryBankReadRAM_ROM)
+                {
+                    ret = slot4.Read(address, this, state);
+                }
+                else
+                {
+                    ret = ROM[address - 0xd000];
+                }
+
             }
-            else if (slot2 is IRamCard && ((IRamCard)slot2).MemoryBankReadRAM_ROM)
+            else if (address >= 0xc800) // Extended ROM Area
             {
-                ret = slot2.Read(address, this, state);
-            }
-            else if (slot3 is IRamCard && ((IRamCard)slot3).MemoryBankReadRAM_ROM)
-            {
+
+                //TODO: Put condition to redirect to correct slot
                 ret = slot3.Read(address, this, state);
             }
-            else if (slot4 is IRamCard && ((IRamCard)slot4).MemoryBankReadRAM_ROM)
+            else if (address >= 0xc700)
             {
-                ret = slot4.Read(address, this, state);
+                ret = slot7.C000ROM[address - 0xc700];
             }
-            else
+            else if (address >= 0xc600)
             {
-                ret = ROM[address - 0xd000];
-            } 
+                ret = slot6.C000ROM[address - 0xc600];
+            }
+            else if (address >= 0xc500)
+            {
+                ret = slot5.C000ROM[address - 0xc500];
+            }
+            else if (address >= 0xc400)
+            {
+                ret = slot4.C000ROM[address - 0xc400];
+            }
+            else if (address >= 0xc300)
+            {
+                ret = slot3.C000ROM[address - 0xc300];
+            }
+            else if (address >= 0xc200)
+            {
+                ret = slot2.C000ROM[address - 0xc200];
+            }
+            else if (address >= 0xc100)
+            {
+                ret = slot1.C000ROM[address - 0xc100];
+            }
+            else if (address >= 0xc080)
+            {
+                if (address >= 0xc0f0) // Slot 7
+                    ret = slot7.Read(address, this, state);
+                else if (address >= 0xc0e0) // Slot 6
+                    ret = slot6.Read(address, this, state);
+                else if (address >= 0xc0d0) // Slot 5
+                    ret = slot5.Read(address, this, state);
+                else if (address >= 0xc0c0) // Slot 4
+                    ret = slot4.Read(address, this, state);
+                else if (address >= 0xc0b0) // Slot 3
+                    ret = slot3.Read(address, this, state);
+                else if (address >= 0xc0a0) // Slot 2
+                    ret = slot2.Read(address, this, state);
+                else if (address >= 0xc090) // Slot 1
+                    ret = slot1.Read(address, this, state);
+                else if (address >= 0xc080) // Slot 0
+                    ret = slot0.Read(address, this, state);
+            }
+            else if (address >= 0xc000)
+            {
+                ret = cpuSoftswitches.Read(address, this, state);
+            }
+
+            return ret;
+        }
+
+
+        public void WriteByte(ushort address, byte value)
+        {
+            if (address < 0xc000)
+            {
+                baseRAM[address] = value;
+            }
+            else if (address >= 0xd000)
+            {
+                if (slot0 is IRamCard && ((IRamCard)slot0).MemoryBankReadRAM_ROM && ((IRamCard)slot0).MemoryBankWriteRAM_NoWrite)
+                {
+                    slot0.Write(address, value, this);
+                }
+                else if (slot1 is IRamCard && ((IRamCard)slot1).MemoryBankReadRAM_ROM && ((IRamCard)slot1).MemoryBankWriteRAM_NoWrite)
+                {
+                    slot1.Write(address, value, this);
+                }
+                else if (slot2 is IRamCard && ((IRamCard)slot2).MemoryBankReadRAM_ROM && ((IRamCard)slot2).MemoryBankWriteRAM_NoWrite)
+                {
+                    slot2.Write(address, value, this);
+                }
+                else if (slot3 is IRamCard && ((IRamCard)slot3).MemoryBankReadRAM_ROM && ((IRamCard)slot3).MemoryBankWriteRAM_NoWrite)
+                {
+                    slot3.Write(address, value, this);
+                }
+                else if (slot4 is IRamCard && ((IRamCard)slot4).MemoryBankReadRAM_ROM && ((IRamCard)slot4).MemoryBankWriteRAM_NoWrite)
+                {
+                    slot4.Write(address, value, this);
+                }
+            }
+            else if (address >= 0xc800) // Slots reserved ROM 
+            {
+                //TODO: Condition to select right slot
+                slot3.Write(address, value, this); //cols80RAM[address - 0xcc00 + softswitches.cols80PageSelect * 0x200] = value;
+            }
+            else if (address >= 0xc080) // Slots SoftSwitches
+            {
+                if (address >= 0xc0f0) // Slot 7
+                    slot7.Write(address, value, this);
+                else if (address >= 0xc0e0) // Slot 6
+                    slot6.Write(address, value, this);
+                else if (address >= 0xc0d0) // Slot 5
+                    slot5.Write(address, value, this);
+                else if (address >= 0xc0c0) // Slot 4
+                    slot6.Write(address, value, this);
+                else if (address >= 0xc0b0) // Slot 3
+                    slot3.Write(address, value, this);
+                else if (address >= 0xc0a0) // Slot 2
+                    slot2.Write(address, value, this);
+                else if (address >= 0xc090) // Slot 1
+                    slot1.Write(address, value, this);
+                else if (address >= 0xc080) // Slot 0
+                    slot0.Write(address, value, this);
+            }
+            else if (address >= 0xc000)
+            {
+                cpuSoftswitches.Write(address, value, this);
+            }
 
         }
-        else if (address >= 0xc800) // Extended ROM Area
-        {
 
-            //TODO: Put condition to redirect to correct slot
-            ret = slot3.Read(address, this, state);
-        }
-        else if (address >= 0xc700)
+        public ushort? ReadAddressLLHH(ushort? address)
         {
-            ret = slot7.C000ROM[address - 0xc700];
+            return (ushort)(ReadByte((ushort)(address.Value + 1)) << 8 | ReadByte(address.Value));
         }
-        else if (address >= 0xc600)
-        {
-            ret = slot6.C000ROM[address - 0xc600];
-        }
-        else if (address >= 0xc500)
-        {
-            ret = slot5.C000ROM[address - 0xc500];
-        }
-        else if (address >= 0xc400)
-        {
-            ret = slot4.C000ROM[address - 0xc400];
-        }
-        else if (address >= 0xc300)
-        {
-            ret = slot3.C000ROM[address - 0xc300];
-        }
-        else if (address >= 0xc200)
-        {
-            ret = slot2.C000ROM[address - 0xc200];
-        }
-        else if (address >= 0xc100)
-        {
-            ret = slot1.C000ROM[address - 0xc100];
-        }
-        else if (address >= 0xc080)
-        {
-            if (address >= 0xc0f0) // Slot 7
-                ret = slot7.Read(address, this, state);
-            else if (address >= 0xc0e0) // Slot 6
-                ret = slot6.Read(address, this, state);
-            else if (address >= 0xc0d0) // Slot 5
-                ret = slot5.Read(address, this, state);
-            else if (address >= 0xc0c0) // Slot 4
-                ret = slot4.Read(address, this, state);
-            else if (address >= 0xc0b0) // Slot 3
-                ret = slot3.Read(address, this, state);
-            else if (address >= 0xc0a0) // Slot 2
-                ret = slot2.Read(address, this, state);
-            else if (address >= 0xc090) // Slot 1
-                ret = slot1.Read(address, this, state);
-            else if (address >= 0xc080) // Slot 0
-                ret = slot0.Read(address, this, state);
-        }
-        else if (address >= 0xc000)
-        {
-            ret = cpuSoftswitches.Read(address, this, state);
-        }
-        
-        return ret;
-    }
 
-    
-    public void WriteByte(ushort address, byte value)
-    {
-        if (address < 0xc000)
+        public byte? ReadZeroPageAddress(ushort? address)
         {
-            baseRAM[address] = value;
-        } 
-        else if (address >= 0xd000)
-        {
-            if (slot0 is IRamCard && ((IRamCard)slot0).MemoryBankReadRAM_ROM && ((IRamCard)slot0).MemoryBankWriteRAM_NoWrite)
-            {
-                slot0.Write(address, value, this);
-            }
-            else if (slot1 is IRamCard && ((IRamCard)slot1).MemoryBankReadRAM_ROM && ((IRamCard)slot1).MemoryBankWriteRAM_NoWrite)
-            {
-                slot1.Write(address, value, this);
-            }
-            else if (slot2 is IRamCard && ((IRamCard)slot2).MemoryBankReadRAM_ROM && ((IRamCard)slot2).MemoryBankWriteRAM_NoWrite)
-            {
-                slot2.Write(address, value, this);
-            }
-            else if (slot3 is IRamCard && ((IRamCard)slot3).MemoryBankReadRAM_ROM && ((IRamCard)slot3).MemoryBankWriteRAM_NoWrite)
-            {
-                slot3.Write(address, value, this);
-            }
-            else if (slot4 is IRamCard && ((IRamCard)slot4).MemoryBankReadRAM_ROM && ((IRamCard)slot4).MemoryBankWriteRAM_NoWrite)
-            {
-                slot4.Write(address, value, this);
-            }
+            return (byte?)ReadByte(address.Value);
         }
-        else if (address >= 0xc800) // Slots reserved ROM 
-        {
-            //TODO: Condition to select right slot
-            slot3.Write(address, value, this); //cols80RAM[address - 0xcc00 + softswitches.cols80PageSelect * 0x200] = value;
-        }
-        else if (address >= 0xc080) // Slots SoftSwitches
-        {
-            if (address >= 0xc0f0) // Slot 7
-                slot7.Write(address, value, this);
-            else if (address >= 0xc0e0) // Slot 6
-                slot6.Write(address, value, this);
-            else if (address >= 0xc0d0) // Slot 5
-                slot5.Write(address, value, this);
-            else if (address >= 0xc0c0) // Slot 4
-                slot6.Write(address, value, this);
-            else if (address >= 0xc0b0) // Slot 3
-                slot3.Write(address, value, this);
-            else if (address >= 0xc0a0) // Slot 2
-                slot2.Write(address, value, this);
-            else if (address >= 0xc090) // Slot 1
-                slot1.Write(address, value, this);
-            else if (address >= 0xc080) // Slot 0
-                slot0.Write(address, value, this);
-        }
-        else if (address >= 0xc000)
-        {
-            cpuSoftswitches.Write(address, value, this);
-        }
-        
-    }
 
-    public ushort? ReadAddressLLHH(ushort? address)
-    {
-        return (ushort)(ReadByte((ushort)(address.Value + 1)) << 8 | ReadByte(address.Value));
-    }
-   
-    public byte? ReadZeroPageAddress(ushort? address)
-    {
-        return (byte?)ReadByte(address.Value);
-    }
-
-    public ushort GetIRQVector()
-    {
-        var bytes = new byte[]
+        public ushort GetIRQVector()
         {
+            var bytes = new byte[]
+            {
             ReadByte(0xFFFE),
             ReadByte(0xFFFE + 1)
-        };
+            };
 
-        return BitConverter.ToUInt16(bytes);
-    }
-
-    public byte[] MemoryDump(ushort startAddress, ushort endAddress)
-    {
-        byte[] ret = new byte[endAddress-startAddress];
-        for (ushort i = startAddress; i < endAddress; i++)
-        {
-            ret[i - startAddress] = ReadByte(i);
+            return BitConverter.ToUInt16(bytes);
         }
-        return ret;
-    }
 
+        public byte[] MemoryDump(ushort startAddress, ushort endAddress)
+        {
+            byte[] ret = new byte[endAddress - startAddress];
+            for (ushort i = startAddress; i < endAddress; i++)
+            {
+                ret[i - startAddress] = ReadByte(i);
+            }
+            return ret;
+        }
+
+    }
 }

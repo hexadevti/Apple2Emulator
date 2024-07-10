@@ -1,14 +1,16 @@
 using System.Runtime.CompilerServices;
 
-namespace Runtime.Abstractions;
-
-public interface ICard
+namespace Runtime.Abstractions
 {
-    int SlotNumber { get; set;}
-    void Write(ushort address, byte b, MainBoard mainBoard);
-    byte Read(ushort address, MainBoard mainBoard, State state);
 
-    byte[] C000ROM { get; }
+    public interface ICard
+    {
+        int SlotNumber { get; set; }
+        void Write(ushort address, byte b, MainBoard mainBoard);
+        byte Read(ushort address, MainBoard mainBoard, State state);
 
-    byte[] CC00ROM { get; set;}
+        byte[] C000ROM { get; }
+
+        byte[] CC00ROM { get; set; }
+    }
 }
