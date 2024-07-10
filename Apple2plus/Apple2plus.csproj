@@ -1,28 +1,28 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
     <Content Include="AppIcon.ico" />
-    <Content Include="roms\ApplesoftD000.rom">
+    <Content Include="roms\ApplesoftD000.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="roms\ApplesoftD800.rom">
+    <Content Include="roms\ApplesoftD800.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="roms\ApplesoftE000.rom">
+    <Content Include="roms\ApplesoftE000.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="roms\ApplesoftE800.rom">
+    <Content Include="roms\ApplesoftE800.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="roms\ApplesoftF000.rom">
+    <Content Include="roms\ApplesoftF000.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="roms\ApplesoftF800.rom">
+    <Content Include="roms\ApplesoftF800.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="roms\CharROM.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="roms\diskinterface.rom">
+    <Content Include="roms\diskinterface.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="roms\Videx Videoterm ROM 2.4.bin">
@@ -31,13 +31,13 @@
     <Content Include="roms\Videx Videoterm Character ROM Normal.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="roms\Apple DOS 3.3 January 1983.dsk">
+    <Content Include="disks\Apple DOS 3.3 January 1983.dsk">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="roms\ProDOS 1.2.dsk">
+    <Content Include="disks\ProDOS 1.2.dsk">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="roms\DOS 3.3 System Master - 680-0051-00.dsk">
+    <Content Include="disks\DOS 3.3 System Master - 680-0051-00.dsk">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <ProjectReference Include="..\Runtime\Runtime.csproj" />

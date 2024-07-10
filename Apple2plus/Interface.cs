@@ -39,7 +39,7 @@ namespace Apple2
             if (assemblyPath != null)
                 assemblyPath += "/";
 
-            openFileDialog1.FileName = assemblyPath + "roms/ProDOS 1.2.dsk";
+            openFileDialog1.FileName = assemblyPath + "disks/ProDOS 1.2.dsk";
             string[] parts = openFileDialog1.FileName.Split('\\');
             disk1.Text = parts[parts.Length - 1];
             openFileDialog2.FileName = "";
@@ -52,12 +52,12 @@ namespace Apple2
             richTextBox1.KeyDown += keyboard.OnKeyDown;
             richTextBox1.KeyPress += keyboard.OnKeyPress;
             richTextBox1.TextChanged += keyboard.Keyb_TextChanged;
-            mainBoard.LoadROM(0xf800, File.ReadAllBytes(assemblyPath + "roms/ApplesoftF800.rom"));
-            mainBoard.LoadROM(0xf000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftF000.rom"));
-            mainBoard.LoadROM(0xe800, File.ReadAllBytes(assemblyPath + "roms/ApplesoftE800.rom"));
-            mainBoard.LoadROM(0xe000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftE000.rom"));
-            mainBoard.LoadROM(0xd800, File.ReadAllBytes(assemblyPath + "roms/ApplesoftD800.rom"));
-            mainBoard.LoadROM(0xd000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftD000.rom"));
+            mainBoard.LoadROM(0xf800, File.ReadAllBytes(assemblyPath + "roms/ApplesoftF800.bin"));
+            mainBoard.LoadROM(0xf000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftF000.bin"));
+            mainBoard.LoadROM(0xe800, File.ReadAllBytes(assemblyPath + "roms/ApplesoftE800.bin"));
+            mainBoard.LoadROM(0xe000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftE000.bin"));
+            mainBoard.LoadROM(0xd800, File.ReadAllBytes(assemblyPath + "roms/ApplesoftD800.bin"));
+            mainBoard.LoadROM(0xd000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftD000.bin"));
             InitSlots();
             mainBoard.LoadChars(File.ReadAllBytes(assemblyPath + "roms/CharROM.bin"));
             this.FormClosing += FormCloseEvent;
@@ -80,7 +80,7 @@ namespace Apple2
                                             Tools.Load80Chars(File.ReadAllBytes(assemblyPath + "roms/Videx Videoterm Character ROM Normal.bin")));
             mainBoard.slot4 = new EmptySlot();
             mainBoard.slot5 = new EmptySlot();
-            mainBoard.slot6 = new DiskIICard(6, File.ReadAllBytes(assemblyPath + "roms/diskinterface.rom"),
+            mainBoard.slot6 = new DiskIICard(6, File.ReadAllBytes(assemblyPath + "roms/diskinterface.bin"),
                                             new DiskDrive(openFileDialog1.FileName, (DiskIICard)mainBoard.slot6),
                                             new DiskDrive(openFileDialog2.FileName, (DiskIICard)mainBoard.slot6));
             mainBoard.slot7 = new EmptySlot();
