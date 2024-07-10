@@ -27,6 +27,7 @@ public class CPU
 
     public void WarmStart()
     {
+        
         mainBoard.ClearBaseRAM();
         Thread.Sleep(100);
         Reset();

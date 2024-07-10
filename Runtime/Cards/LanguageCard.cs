@@ -4,7 +4,7 @@ using Runtime.Abstractions;
 
 namespace Runtime.Cards;
 
-public class LanguageCard : ICard
+public class LanguageCard : ICard, IRamCard
 {
     public int SlotNumber { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
@@ -12,25 +12,52 @@ public class LanguageCard : ICard
 
     public byte[] CC00ROM { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-    public byte[] memoryBankSwitchedRAM1 = new byte[0x3000];
-    public byte[] memoryBankSwitchedRAM2_1 = new byte[0x1000];
-    public byte[] memoryBankSwitchedRAM2_2 = new byte[0x1000];
+    private byte[,] _memoryBankSwitchedRAM1 = new byte[1,0x2000];
+    private byte[,] _memoryBankSwitchedRAM2_1 = new byte[1,0x1000];
+    private byte[,] _memoryBankSwitchedRAM2_2 = new byte[1,0x1000];
+
+    public bool MemoryBankBankSelect1_2 { get; set; }
+
+    public bool MemoryBankReadRAM_ROM { get; set; }
+
+    public bool MemoryBankWriteRAM_NoWrite { get; set; }
+    public byte[,] MemoryBankSwitchedRAM1 { 
+        get { return _memoryBankSwitchedRAM1; }
+        set { _memoryBankSwitchedRAM1 = value; }
+    }
+    public byte[,] MemoryBankSwitchedRAM2_1 { 
+        get { return _memoryBankSwitchedRAM2_1; }
+        set { _memoryBankSwitchedRAM2_1 = value; }
+    }
+
+    public byte[,] MemoryBankSwitchedRAM2_2 { 
+        get { return _memoryBankSwitchedRAM2_2; }
+        set { _memoryBankSwitchedRAM2_2 = value; }
+    }
+    
+    public int SelectedBank { 
+        get { return _selectedBank; }
+        set { _selectedBank = value; }
+     }
+
+    private int _selectedBank = 0;
+
 
     public void Write(ushort address, byte b, MainBoard mainBoard)
     {
         if (address >= 0xd000)
         {
-            if (mainBoard.softswitches.MemoryBankReadRAM_ROM)
+            if (MemoryBankReadRAM_ROM)
             {
                 if (address >= 0xd000 && address < 0xe000)
                 {
-                    if (mainBoard.softswitches.MemoryBankBankSelect1_2)
-                        this.memoryBankSwitchedRAM2_1[address - 0xd000] = b;
+                    if (MemoryBankBankSelect1_2)
+                        _memoryBankSwitchedRAM2_1[_selectedBank,address - 0xd000] = b;
                     else
-                        this.memoryBankSwitchedRAM2_2[address - 0xd000] = b;
+                        _memoryBankSwitchedRAM2_2[_selectedBank,address - 0xd000] = b;
                 }
                 else
-                    this.memoryBankSwitchedRAM1[address - 0xe000] = b;
+                    _memoryBankSwitchedRAM1[_selectedBank,address - 0xe000] = b;
             }
         }
         ProcessSwitch(address, b, mainBoard, null);
@@ -41,13 +68,13 @@ public class LanguageCard : ICard
         byte ret = 0;
         if (address >= 0xd000 && address < 0xe000)
         {
-            if (mainBoard.softswitches.MemoryBankBankSelect1_2)
-                ret = memoryBankSwitchedRAM2_1[address - 0xd000];
+            if (MemoryBankBankSelect1_2)
+                ret = _memoryBankSwitchedRAM2_1[_selectedBank,address - 0xd000];
             else
-                ret = memoryBankSwitchedRAM2_2[address - 0xd000];
+                ret = _memoryBankSwitchedRAM2_2[_selectedBank,address - 0xd000];
         }
         else if (address >= 0xd000)
-            ret = memoryBankSwitchedRAM1[address - 0xe000];
+            ret = _memoryBankSwitchedRAM1[_selectedBank,address - 0xe000];
 
         return ProcessSwitch(address, ret, mainBoard, state);
     }
@@ -58,26 +85,26 @@ public class LanguageCard : ICard
         {
             var last4bits = (address & 0b00001111);
             BitArray bits = new BitArray(new byte[] { (byte)last4bits });
-            mainBoard.softswitches.MemoryBankBankSelect1_2 = bits[3];
+            MemoryBankBankSelect1_2 = bits[3];
             if (bits[1] && bits[0])
             {
-                mainBoard.softswitches.MemoryBankReadRAM_ROM = true;
-                mainBoard.softswitches.MemoryBankWriteRAM_NoWrite = true;
+                MemoryBankReadRAM_ROM = true;
+                MemoryBankWriteRAM_NoWrite = true;
             }
             else if (!bits[1] && bits[0])
             {
-                mainBoard.softswitches.MemoryBankReadRAM_ROM = false;
-                mainBoard.softswitches.MemoryBankWriteRAM_NoWrite = true;
+                MemoryBankReadRAM_ROM = false;
+                MemoryBankWriteRAM_NoWrite = true;
             }
             else if (bits[1] && !bits[0])
             {
-                mainBoard.softswitches.MemoryBankReadRAM_ROM = false;
-                mainBoard.softswitches.MemoryBankWriteRAM_NoWrite = false;
+                MemoryBankReadRAM_ROM = false;
+                MemoryBankWriteRAM_NoWrite = false;
             }
             else if (!bits[1] && !bits[0])
             {
-                mainBoard.softswitches.MemoryBankReadRAM_ROM = true;
-                mainBoard.softswitches.MemoryBankWriteRAM_NoWrite = false;
+                MemoryBankReadRAM_ROM = true;
+                MemoryBankWriteRAM_NoWrite = false;
             }
         }
 

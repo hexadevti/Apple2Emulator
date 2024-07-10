@@ -52,18 +52,7 @@ public partial class Interface : Form
         mainBoard.LoadROM(0xe000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftE000.rom"));
         mainBoard.LoadROM(0xd800, File.ReadAllBytes(assemblyPath + "roms/ApplesoftD800.rom"));
         mainBoard.LoadROM(0xd000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftD000.rom"));
-        mainBoard.slot0 = new LanguageCard();
-        mainBoard.slot1 = new EmptySlot(1);
-        mainBoard.slot2 = new EmptySlot(2);
-        mainBoard.slot3 = new Cols80Card(3, Tools.LoadROM(File.ReadAllBytes(assemblyPath + "roms/Videx Videoterm ROM 2.4.bin"), 0x300),
-                                        Tools.LoadExtendedSlotsROM(0xc800, File.ReadAllBytes(assemblyPath + "roms/Videx Videoterm ROM 2.4.bin")),
-                                        Tools.Load80Chars(File.ReadAllBytes(assemblyPath + "roms/Videx Videoterm Character ROM Normal.bin")));
-        mainBoard.slot4 = new EmptySlot(4);
-        mainBoard.slot5 = new EmptySlot(5);
-        mainBoard.slot6 = new DiskIICard(6, File.ReadAllBytes(assemblyPath + "roms/diskinterface.rom"),
-                                        new DiskDrive(openFileDialog1.FileName, (DiskIICard)mainBoard.slot6),
-                                        new DiskDrive(openFileDialog2.FileName, (DiskIICard)mainBoard.slot6));
-        mainBoard.slot7 = new EmptySlot(7);
+        InitSlots();
         mainBoard.LoadChars(File.ReadAllBytes(assemblyPath + "roms/CharROM.bin"));
         this.FormClosing += FormCloseEvent;
         tbSpeed.Enabled = false;
@@ -73,6 +62,22 @@ public partial class Interface : Form
         cpu.WarmStart();
         LoadThreads();
 
+    }
+
+    private void InitSlots()
+    {
+        mainBoard.slot0 = new RamCard(0, 8);
+        mainBoard.slot1 = new RamCard(1, 4);
+        mainBoard.slot2 = new RamCard(2, 3);
+        mainBoard.slot3 = new Cols80Card(3, Tools.LoadROM(File.ReadAllBytes(assemblyPath + "roms/Videx Videoterm ROM 2.4.bin"), 0x300),
+                                        Tools.LoadExtendedSlotsROM(0xc800, File.ReadAllBytes(assemblyPath + "roms/Videx Videoterm ROM 2.4.bin")),
+                                        Tools.Load80Chars(File.ReadAllBytes(assemblyPath + "roms/Videx Videoterm Character ROM Normal.bin")));
+        mainBoard.slot4 = new RamCard(4, 2);
+        mainBoard.slot5 = new EmptySlot();
+        mainBoard.slot6 = new DiskIICard(6, File.ReadAllBytes(assemblyPath + "roms/diskinterface.rom"),
+                                        new DiskDrive(openFileDialog1.FileName, (DiskIICard)mainBoard.slot6),
+                                        new DiskDrive(openFileDialog2.FileName, (DiskIICard)mainBoard.slot6));
+        mainBoard.slot7 = new EmptySlot();
     }
 
     private void tbSpeed_ValueChanged(object? sender, EventArgs e)
@@ -179,6 +184,7 @@ public partial class Interface : Form
 
     private void btn_restart_Click(object sender, EventArgs e)
     {
+        InitSlots();
         cpu.WarmStart();
         richTextBox1.Focus();
     }

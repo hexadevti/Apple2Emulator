@@ -25,9 +25,8 @@ public class EmptySlot : ICard
     public byte[] CC00ROM { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     
 
-    public EmptySlot(int slotNumber)
+    public EmptySlot()
     {
-        _slotNumber = slotNumber;
         _c000ROM = new byte[0x100];
     }
 

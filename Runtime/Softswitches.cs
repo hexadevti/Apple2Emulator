@@ -22,12 +22,6 @@ public class Softswitches
 
     public bool Drive1_2 { get; set; }
 
-    public bool MemoryBankBankSelect1_2 { get; set; }
-
-    public bool MemoryBankReadRAM_ROM { get; set; }
-
-    public bool MemoryBankWriteRAM_NoWrite { get; set; }
-
     public bool SoundClick;
 
     public int cols80PageSelect {get; set;}

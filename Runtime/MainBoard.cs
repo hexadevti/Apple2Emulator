@@ -45,6 +45,8 @@ public class MainBoard
 
     public int audioBuffer { get;set;}
 
+    public int SlotRamEnable = 0;
+
 
     public MainBoard(State state)
     {
@@ -154,14 +156,53 @@ public class MainBoard
         }
         else if (address >= 0xd000)
         {
-            if (softswitches.MemoryBankReadRAM_ROM)
+            // if (slot0 is IRamCard)
+            // {
+            //     if (((IRamCard)slot0).MemoryBankReadRAM_ROM)
+            //     {
+            //         ret = slot0.Read(address, this, state);
+            //     }
+            //     else
+            //     {
+            //         ret = ROM[address - 0xd000];    
+            //     }
+            // }
+            // if (slot1 is IRamCard)
+            // {
+            //     if (((IRamCard)slot1).MemoryBankReadRAM_ROM)
+            //     {
+            //         ret = slot1.Read(address, this, state);
+            //     }
+            //     else
+            //     {
+            //         ret = ROM[address - 0xd000];    
+            //     }
+            // }
+            if (slot0 is IRamCard && ((IRamCard)slot0).MemoryBankReadRAM_ROM)
             {
                 ret = slot0.Read(address, this, state);
+            }
+            else if (slot1 is IRamCard && ((IRamCard)slot1).MemoryBankReadRAM_ROM)
+            {
+                ret = slot1.Read(address, this, state);
+            }
+            else if (slot2 is IRamCard && ((IRamCard)slot2).MemoryBankReadRAM_ROM)
+            {
+                ret = slot2.Read(address, this, state);
+            }
+            else if (slot3 is IRamCard && ((IRamCard)slot3).MemoryBankReadRAM_ROM)
+            {
+                ret = slot3.Read(address, this, state);
+            }
+            else if (slot4 is IRamCard && ((IRamCard)slot4).MemoryBankReadRAM_ROM)
+            {
+                ret = slot4.Read(address, this, state);
             }
             else
             {
                 ret = ROM[address - 0xd000];
-            }
+            } 
+
         }
         else if (address >= 0xc800) // Extended ROM Area
         {
@@ -232,7 +273,26 @@ public class MainBoard
         } 
         else if (address >= 0xd000)
         {
-            slot0.Write(address, value, this);
+            if (slot0 is IRamCard && ((IRamCard)slot0).MemoryBankReadRAM_ROM && ((IRamCard)slot0).MemoryBankWriteRAM_NoWrite)
+            {
+                slot0.Write(address, value, this);
+            }
+            else if (slot1 is IRamCard && ((IRamCard)slot1).MemoryBankReadRAM_ROM && ((IRamCard)slot1).MemoryBankWriteRAM_NoWrite)
+            {
+                slot1.Write(address, value, this);
+            }
+            else if (slot2 is IRamCard && ((IRamCard)slot2).MemoryBankReadRAM_ROM && ((IRamCard)slot2).MemoryBankWriteRAM_NoWrite)
+            {
+                slot2.Write(address, value, this);
+            }
+            else if (slot3 is IRamCard && ((IRamCard)slot3).MemoryBankReadRAM_ROM && ((IRamCard)slot3).MemoryBankWriteRAM_NoWrite)
+            {
+                slot3.Write(address, value, this);
+            }
+            else if (slot4 is IRamCard && ((IRamCard)slot4).MemoryBankReadRAM_ROM && ((IRamCard)slot4).MemoryBankWriteRAM_NoWrite)
+            {
+                slot4.Write(address, value, this);
+            }
         }
         else if (address >= 0xc800) // Slots reserved ROM 
         {

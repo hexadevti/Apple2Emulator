@@ -79,5 +79,19 @@ public static class Tools
         }
         return ret;
     }
+
+    public static byte[] EmptyMemory(ushort size, byte? content = null)
+    {
+        byte[] ret = new byte[size];
+
+        Random rnd = new Random();
+        byte[] b = new byte[0xbfff];
+        rnd.NextBytes(b);
+        for (ushort i = 0; i < size; i++)
+        {
+            ret[i] = content != null ? content.Value : b[i];
+        }
+        return ret;
+    }
     
 }
