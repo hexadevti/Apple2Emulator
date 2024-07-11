@@ -36,3 +36,10 @@ Próximos recursos:
 - 65c02 (Apple //e)
 - Hard Drive
 - Double-High Resolution
+
+Compatibilidade:
+
+criado em dotnet core 8.0 (net8.0)
+compativel com:
+- dotnet core 7.0
+- dotnet core 6.0
