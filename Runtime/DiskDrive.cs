@@ -411,31 +411,34 @@ namespace Runtime
 
         public void TrackRawData(int track, bool update = false)
         {
-            if (diskRawData[track] == null || update)
+            if (!string.IsNullOrEmpty(this.diskPath))
             {
-                List<byte> selectedSector = new List<byte>();
-
-                foreach (byte isec in new byte[] { 0xa, 0xb, 0xc, 0xd, 0xe, 0xf, 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9 }) // DOS
+                if (diskRawData[track] == null || update)
                 {
-                    List<byte> b = new List<byte>();
-                    selectedSector.AddRange(new List<byte>() { 0xff, 0xff, 0xff });
-                    selectedSector.AddRange(new List<byte>() { 0xd5, 0xaa, 0x96 }); // Prologue address
-                    var volume = GetVolume();
-                    b = this.EncodeByte(volume).ToList();
-                    selectedSector.AddRange(b); // Volume
-                    b = this.EncodeByte((byte)track).ToList();
-                    selectedSector.AddRange(b); // Track
-                    b = this.EncodeByte(isec).ToList();
-                    selectedSector.AddRange(b); // Sector
-                    b = this.Checksum(volume, (byte)track, isec).ToList();
-                    selectedSector.AddRange(b); // Checksum
-                    selectedSector.AddRange(new List<byte>() { 0xde, 0xaa, 0xeb }); // Epilogue address
-                    selectedSector.AddRange(new List<byte>() { 0xd5, 0xaa, 0xad }); // Prologue data
-                    b = this.Encode6_2(track, this.translateDos33Track[isec]).ToList();
-                    selectedSector.AddRange(b); // Data field + checksum
-                    selectedSector.AddRange(new List<byte>() { 0xde, 0xaa, 0xeb }); // Epilogue
+                    List<byte> selectedSector = new List<byte>();
+
+                    foreach (byte isec in new byte[] { 0xa, 0xb, 0xc, 0xd, 0xe, 0xf, 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9 }) // DOS
+                    {
+                        List<byte> b = new List<byte>();
+                        selectedSector.AddRange(new List<byte>() { 0xff, 0xff, 0xff });
+                        selectedSector.AddRange(new List<byte>() { 0xd5, 0xaa, 0x96 }); // Prologue address
+                        var volume = GetVolume();
+                        b = this.EncodeByte(volume).ToList();
+                        selectedSector.AddRange(b); // Volume
+                        b = this.EncodeByte((byte)track).ToList();
+                        selectedSector.AddRange(b); // Track
+                        b = this.EncodeByte(isec).ToList();
+                        selectedSector.AddRange(b); // Sector
+                        b = this.Checksum(volume, (byte)track, isec).ToList();
+                        selectedSector.AddRange(b); // Checksum
+                        selectedSector.AddRange(new List<byte>() { 0xde, 0xaa, 0xeb }); // Epilogue address
+                        selectedSector.AddRange(new List<byte>() { 0xd5, 0xaa, 0xad }); // Prologue data
+                        b = this.Encode6_2(track, this.translateDos33Track[isec]).ToList();
+                        selectedSector.AddRange(b); // Data field + checksum
+                        selectedSector.AddRange(new List<byte>() { 0xde, 0xaa, 0xeb }); // Epilogue
+                    }
+                    diskRawData[track] = selectedSector.ToArray();
                 }
-                diskRawData[track] = selectedSector.ToArray();
             }
         }
 

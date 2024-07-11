@@ -30,12 +30,12 @@ namespace Runtime.Cards
         }
         public byte[] CC00ROM { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        public DiskIICard(int slotNumber, byte[] c000ROM, DiskDrive drive1, DiskDrive drive2)
+        public DiskIICard(int slotNumber, byte[] c000ROM, string disk1, string disk2)
         {
             _slotNumber = slotNumber;
             _c000ROM = c000ROM;
-            this.drive1 = drive1;
-            this.drive2 = drive2;
+            this.drive1 = new DiskDrive(disk1, this);
+            this.drive2 = new DiskDrive(disk2, this);
         }
 
         public void Write(ushort address, byte b, MainBoard mainBoard)
@@ -140,12 +140,17 @@ namespace Runtime.Cards
                     if (mainBoard.softswitches.Drive1_2)
                     {
                         drive1.TrackRawData(drive1.track);
-                        return drive1.diskRawData[drive1.track][pointer++];
+                        if (drive1.diskRawData[drive2.track] != null)
+                            return drive1.diskRawData[drive1.track][pointer++];
+                        else
+                            return 0;
                     }
                     else
                     {
                         drive2.TrackRawData(drive2.track);
-                        return drive2.diskRawData[drive2.track][pointer++];
+                        if (drive2.diskRawData[drive2.track] != null)
+                            return drive2.diskRawData[drive2.track][pointer++];
+                        else return 0;
                     }
                 }
             }

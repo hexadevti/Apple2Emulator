@@ -30,11 +30,11 @@ namespace Runtime
 
         public void WarmStart()
         {
-
+            Thread.Sleep(100);
             mainBoard.ClearBaseRAM();
             Thread.Sleep(100);
             Reset();
-            Thread.Sleep(100);
+            Thread.Sleep(200);
         }
         public void Reset()
         {

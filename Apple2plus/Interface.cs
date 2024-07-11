@@ -11,6 +11,8 @@ using System.IO;
 using System.Threading.Tasks;
 using System;
 using System.Threading;
+using Runtime.Abstractions;
+using System.CodeDom;
 
 namespace Apple2
 {
@@ -39,10 +41,7 @@ namespace Apple2
             if (assemblyPath != null)
                 assemblyPath += "/";
 
-            openFileDialog1.FileName = assemblyPath + "disks/ProDOS 1.2.dsk";
-            string[] parts = openFileDialog1.FileName.Split('\\');
-            disk1.Text = parts[parts.Length - 1];
-            openFileDialog2.FileName = "";
+            
             this.Shown += Form1_Shown;
             mainBoard = new MainBoard(state);
             mainBoard.adjust1Mhz = true;
@@ -58,6 +57,8 @@ namespace Apple2
             mainBoard.LoadROM(0xe000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftE000.bin"));
             mainBoard.LoadROM(0xd800, File.ReadAllBytes(assemblyPath + "roms/ApplesoftD800.bin"));
             mainBoard.LoadROM(0xd000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftD000.bin"));
+            LoadContext();
+            LoadCardsCombos();
             InitSlots();
             mainBoard.LoadChars(File.ReadAllBytes(assemblyPath + "roms/CharROM.bin"));
             this.FormClosing += FormCloseEvent;
@@ -67,23 +68,145 @@ namespace Apple2
             StartSpeaker();
             cpu.WarmStart();
             LoadThreads();
+            
+
+        }
+
+        private void LoadContext()
+        {
+            string Disk1Path = Apple2plus.Properties.Settings.Default.Disk1Path;
+            if (!string.IsNullOrEmpty(Disk1Path))
+            {
+                openFileDialog1.FileName = Disk1Path;
+                string[] parts1 = openFileDialog1.FileName.Split('\\');
+                disk1.Text = parts1[parts1.Length - 1];
+            }
+            else
+            {
+                openFileDialog1.FileName = "";
+                disk1.Text = "";
+            }
+            string Disk2Path = Apple2plus.Properties.Settings.Default.Disk2Path;
+            if (!string.IsNullOrEmpty(Disk2Path))
+            {
+                openFileDialog2.FileName = Disk2Path;
+                string[] parts2 = openFileDialog1.FileName.Split('\\');
+                disk2.Text = parts2[parts2.Length - 1];
+            }
+            else
+            {
+                openFileDialog2.FileName = "";
+                disk2.Text = "";
+            }
+        }
+        private void LoadCardsCombos()
+        {
+            List<KeyValuePair<string,string>> cards0 = new List<KeyValuePair<string, string>>() {
+                new KeyValuePair<string, string>("LanguageCard","Language Card"),
+                new KeyValuePair<string, string>("RamCard","Saturn 128k RAM Card"),
+                new KeyValuePair<string, string>("EmptySlot","Empty")
+            };
+            List<KeyValuePair<string,string>> cards1 = new List<KeyValuePair<string, string>>() {
+                new KeyValuePair<string, string>("EmptySlot","Empty"),
+                new KeyValuePair<string, string>("RamCard","Saturn 128k RAM Card")
+            };
+            List<KeyValuePair<string,string>> cards2 = new List<KeyValuePair<string, string>>() {
+                new KeyValuePair<string, string>("EmptySlot","Empty"),
+                new KeyValuePair<string, string>("RamCard","Saturn 128k RAM Card")
+            };
+            List<KeyValuePair<string,string>> cards3 = new List<KeyValuePair<string, string>>() {
+                new KeyValuePair<string, string>("Cols80Card","Videx 80 Column Card"),
+                new KeyValuePair<string, string>("RamCard","Saturn 128k RAM Card")
+            };
+            List<KeyValuePair<string,string>> cards4 = new List<KeyValuePair<string, string>>() {
+                new KeyValuePair<string, string>("EmptySlot","Empty"),
+                new KeyValuePair<string, string>("RamCard","Saturn 128k RAM Card")
+            };
+            List<KeyValuePair<string,string>> cards5 = new List<KeyValuePair<string, string>>() {
+                new KeyValuePair<string, string>("EmptySlot","Empty"),
+                new KeyValuePair<string, string>("DiskIICard","Disk II Card"),
+                new KeyValuePair<string, string>("RamCard","Saturn 128k RAM Card")
+            };
+            List<KeyValuePair<string,string>> cards6 = new List<KeyValuePair<string, string>>() {
+                new KeyValuePair<string, string>("DiskIICard","Disk II Card"),
+                new KeyValuePair<string, string>("RamCard","Saturn 128k RAM Card"),
+                new KeyValuePair<string, string>("EmptySlot","Empty")
+            };
+            List<KeyValuePair<string,string>> cards7 = new List<KeyValuePair<string, string>>() {
+                new KeyValuePair<string, string>("EmptySlot","Empty"),
+                new KeyValuePair<string, string>("RamCard","Saturn 128k RAM Card")
+            };
+            cbSlot0.DataSource = cards0;
+            cbSlot0.DisplayMember = "Value";
+            cbSlot0.ValueMember = "Key";
+            cbSlot0.SelectedIndex = 0;
+            
+            cbSlot1.DataSource = cards1;
+            cbSlot1.DisplayMember = "Value";
+            cbSlot1.ValueMember = "Key";
+            cbSlot1.SelectedIndex = 0;
+            
+            cbSlot2.DataSource = cards2;
+            cbSlot2.DisplayMember = "Value";
+            cbSlot2.ValueMember = "Key";
+            cbSlot2.SelectedIndex = 0;
+
+            cbSlot3.DataSource = cards3;
+            cbSlot3.DisplayMember = "Value";
+            cbSlot3.ValueMember = "Key";
+            cbSlot3.SelectedIndex = 0;
+
+            cbSlot4.DataSource = cards4;
+            cbSlot4.DisplayMember = "Value";
+            cbSlot4.ValueMember = "Key";
+            cbSlot4.SelectedIndex = 0;
+
+            cbSlot5.DataSource = cards5;
+            cbSlot5.DisplayMember = "Value";
+            cbSlot5.ValueMember = "Key";
+            cbSlot5.SelectedIndex = 0;
+
+            cbSlot6.DataSource = cards6;
+            cbSlot6.DisplayMember = "Value";
+            cbSlot6.ValueMember = "Key";
+            cbSlot6.SelectedIndex = 0;
+
+            cbSlot7.DataSource = cards7;
+            cbSlot7.DisplayMember = "Value";
+            cbSlot7.ValueMember = "Key";
+            cbSlot7.SelectedIndex = 0;
+
+
 
         }
 
         private void InitSlots()
         {
-            mainBoard.slot0 = new LanguageCard();
-            mainBoard.slot1 = new RamCard(1, 8);
-            mainBoard.slot2 = new EmptySlot();
-            mainBoard.slot3 = new Cols80Card(3, Tools.LoadROM(File.ReadAllBytes(assemblyPath + "roms/Videx Videoterm ROM 2.4.bin"), 0x300),
+            mainBoard.slot0 = (ICard)GetInstance(cbSlot0.SelectedValue.ToString(), 0);
+            mainBoard.slot1 = (ICard)GetInstance(cbSlot1.SelectedValue.ToString(), 1);
+            mainBoard.slot2 = (ICard)GetInstance(cbSlot2.SelectedValue.ToString(), 2);
+            mainBoard.slot3 = (ICard)GetInstance(cbSlot3.SelectedValue.ToString(), 3);
+            mainBoard.slot4 = (ICard)GetInstance(cbSlot4.SelectedValue.ToString(), 4);
+            mainBoard.slot5 = (ICard)GetInstance(cbSlot5.SelectedValue.ToString(), 5);
+            mainBoard.slot6 = (ICard)GetInstance(cbSlot6.SelectedValue.ToString(), 6);
+            mainBoard.slot7 = (ICard)GetInstance(cbSlot7.SelectedValue.ToString(), 7);
+        }
+
+        public object? GetInstance(string type, int slot) 
+        {
+            if (type == "LanguageCard")
+                return new LanguageCard();
+            else if (type == "RamCard")
+                return new RamCard(slot, 8);
+            else if (type == "Cols80Card")
+                return new Cols80Card(3, Tools.LoadROM(File.ReadAllBytes(assemblyPath + "roms/Videx Videoterm ROM 2.4.bin"), 0x300),
                                             Tools.LoadExtendedSlotsROM(0xc800, File.ReadAllBytes(assemblyPath + "roms/Videx Videoterm ROM 2.4.bin")),
                                             Tools.Load80Chars(File.ReadAllBytes(assemblyPath + "roms/Videx Videoterm Character ROM Normal.bin")));
-            mainBoard.slot4 = new EmptySlot();
-            mainBoard.slot5 = new EmptySlot();
-            mainBoard.slot6 = new DiskIICard(6, File.ReadAllBytes(assemblyPath + "roms/diskinterface.bin"),
-                                            new DiskDrive(openFileDialog1.FileName, (DiskIICard)mainBoard.slot6),
-                                            new DiskDrive(openFileDialog2.FileName, (DiskIICard)mainBoard.slot6));
-            mainBoard.slot7 = new EmptySlot();
+            else if (type == "DiskIICard")
+                return new DiskIICard(slot, File.ReadAllBytes(assemblyPath + "roms/diskinterface.bin"), openFileDialog1.FileName, openFileDialog2.FileName);
+            else
+                return new EmptySlot();
+            
         }
 
         private void tbSpeed_ValueChanged(object? sender, EventArgs e)
@@ -106,12 +229,25 @@ namespace Apple2
                 {
                     mainBoard.audioJumpInterval = ReadTrackBar(tbSpeed);
                     SetLabel(lblClockSpeed, (1000 / mainBoard.clockSpeed).ToString("0.00") + " Mhz");
-                    SetLabel(D1T, "T: " + ((DiskIICard)mainBoard.slot6).drive1.track.ToString());
-                    SetLabel(D1S, "S: " + (((DiskIICard)mainBoard.slot6).drive1.sector > 16 ? "?" : ((DiskIICard)mainBoard.slot6).drive1.sector.ToString()));
-                    SetCheckbox(D1O, ((DiskIICard)mainBoard.slot6).drive1.on);
-                    SetLabel(D2T, "T: " + ((DiskIICard)mainBoard.slot6).drive2.track.ToString());
-                    SetLabel(D2S, "S: " + (((DiskIICard)mainBoard.slot6).drive2.sector > 16 ? "?" : ((DiskIICard)mainBoard.slot6).drive2.sector.ToString()));
-                    SetCheckbox(D2O, ((DiskIICard)mainBoard.slot6).drive2.on);
+                    DiskIICard actualDiskCard = null;
+                    if (mainBoard.slot5.GetType() == typeof(DiskIICard))
+                    {
+                        actualDiskCard = (DiskIICard)mainBoard.slot5;
+                    } 
+                    else if (mainBoard.slot6.GetType() == typeof(DiskIICard))
+                    {
+                        actualDiskCard = (DiskIICard)mainBoard.slot6;
+                    }
+
+                    if (actualDiskCard != null)
+                    {
+                        SetLabel(D1T, "T: " + actualDiskCard.drive1.track.ToString());
+                        SetLabel(D1S, "S: " + (actualDiskCard.drive1.sector > 16 ? "?" : actualDiskCard.drive1.sector.ToString()));
+                        SetCheckbox(D1O, actualDiskCard.drive1.on);
+                        SetLabel(D2T, "T: " + actualDiskCard.drive2.track.ToString());
+                        SetLabel(D2S, "S: " + (actualDiskCard.drive2.sector > 16 ? "?" : actualDiskCard.drive2.sector.ToString()));
+                        SetCheckbox(D2O, actualDiskCard.drive2.on);
+                    }
                     string text = "";
                     for (int i = 0; i < mainBoard.screenLog.Count; i++)
                     {
@@ -161,11 +297,13 @@ namespace Apple2
 
         private void button_dsk1_Click(object sender, EventArgs e)
         {
+            
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 string[] parts = openFileDialog1.FileName.Split('\\');
                 disk1.Text = parts[parts.Length - 1];
-                ((DiskIICard)mainBoard.slot6).drive1 = new DiskDrive(openFileDialog1.FileName, (DiskIICard)mainBoard.slot6);
+                Apple2plus.Properties.Settings.Default["Disk1Path"] = openFileDialog1.FileName;
+                Apple2plus.Properties.Settings.Default.Save();
                 richTextBox1.Focus();
             }
         }
@@ -175,7 +313,8 @@ namespace Apple2
             {
                 string[] parts = openFileDialog2.FileName.Split('\\');
                 disk2.Text = parts[parts.Length - 1];
-                ((DiskIICard)mainBoard.slot6).drive2 = new DiskDrive(openFileDialog2.FileName, (DiskIICard)mainBoard.slot6);
+                Apple2plus.Properties.Settings.Default["Disk2Path"] = openFileDialog2.FileName;
+                Apple2plus.Properties.Settings.Default.Save();
                 richTextBox1.Focus();
             }
         }
