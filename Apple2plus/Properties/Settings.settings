@@ -8,5 +8,35 @@
     <Setting Name="Disk2Path" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="Slot0Card" Type="System.String" Scope="User">
+      <Value Profile="(Default)">LanguageCard</Value>
+    </Setting>
+    <Setting Name="Slot1Card" Type="System.String" Scope="User">
+      <Value Profile="(Default)">EmptySlot</Value>
+    </Setting>
+    <Setting Name="Slot2Card" Type="System.String" Scope="User">
+      <Value Profile="(Default)">EmptySlot</Value>
+    </Setting>
+    <Setting Name="Slot3Card" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Cols80Card</Value>
+    </Setting>
+    <Setting Name="Slot4Card" Type="System.String" Scope="User">
+      <Value Profile="(Default)">EmptySlot</Value>
+    </Setting>
+    <Setting Name="Slot5Card" Type="System.String" Scope="User">
+      <Value Profile="(Default)">EmptySlot</Value>
+    </Setting>
+    <Setting Name="Slot6Card" Type="System.String" Scope="User">
+      <Value Profile="(Default)">DiskIICard</Value>
+    </Setting>
+    <Setting Name="Slot7Card" Type="System.String" Scope="User">
+      <Value Profile="(Default)">EmptySlot</Value>
+    </Setting>
+    <Setting Name="Color" Type="System.String" Scope="User">
+      <Value Profile="(Default)">true</Value>
+    </Setting>
+    <Setting Name="Speed1Mhz" Type="System.String" Scope="User">
+      <Value Profile="(Default)">true</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

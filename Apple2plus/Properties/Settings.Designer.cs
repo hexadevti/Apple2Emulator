@@ -46,5 +46,125 @@ namespace Apple2plus.Properties {
                 this["Disk2Path"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("LanguageCard")]
+        public string Slot0Card {
+            get {
+                return ((string)(this["Slot0Card"]));
+            }
+            set {
+                this["Slot0Card"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("EmptySlot")]
+        public string Slot1Card {
+            get {
+                return ((string)(this["Slot1Card"]));
+            }
+            set {
+                this["Slot1Card"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("EmptySlot")]
+        public string Slot2Card {
+            get {
+                return ((string)(this["Slot2Card"]));
+            }
+            set {
+                this["Slot2Card"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Cols80Card")]
+        public string Slot3Card {
+            get {
+                return ((string)(this["Slot3Card"]));
+            }
+            set {
+                this["Slot3Card"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("EmptySlot")]
+        public string Slot4Card {
+            get {
+                return ((string)(this["Slot4Card"]));
+            }
+            set {
+                this["Slot4Card"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("EmptySlot")]
+        public string Slot5Card {
+            get {
+                return ((string)(this["Slot5Card"]));
+            }
+            set {
+                this["Slot5Card"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("DiskIICard")]
+        public string Slot6Card {
+            get {
+                return ((string)(this["Slot6Card"]));
+            }
+            set {
+                this["Slot6Card"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("EmptySlot")]
+        public string Slot7Card {
+            get {
+                return ((string)(this["Slot7Card"]));
+            }
+            set {
+                this["Slot7Card"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("true")]
+        public string Color {
+            get {
+                return ((string)(this["Color"]));
+            }
+            set {
+                this["Color"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("true")]
+        public string Speed1Mhz {
+            get {
+                return ((string)(this["Speed1Mhz"]));
+            }
+            set {
+                this["Speed1Mhz"] = value;
+            }
+        }
     }
 }

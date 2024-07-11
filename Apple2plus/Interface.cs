@@ -41,7 +41,6 @@ namespace Apple2
             if (assemblyPath != null)
                 assemblyPath += "/";
 
-            
             this.Shown += Form1_Shown;
             mainBoard = new MainBoard(state);
             mainBoard.adjust1Mhz = true;
@@ -57,19 +56,25 @@ namespace Apple2
             mainBoard.LoadROM(0xe000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftE000.bin"));
             mainBoard.LoadROM(0xd800, File.ReadAllBytes(assemblyPath + "roms/ApplesoftD800.bin"));
             mainBoard.LoadROM(0xd000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftD000.bin"));
-            LoadContext();
             LoadCardsCombos();
+            LoadContext();
             InitSlots();
             mainBoard.LoadChars(File.ReadAllBytes(assemblyPath + "roms/CharROM.bin"));
             this.FormClosing += FormCloseEvent;
             tbSpeed.Enabled = false;
             tbSpeed.ValueChanged += tbSpeed_ValueChanged;
+            disk1.TextChanged+= disk_TextChanged;
             running = true;
             StartSpeaker();
             cpu.WarmStart();
             LoadThreads();
             
 
+        }
+
+        private void disk_TextChanged(object? sender, EventArgs e)
+        {
+            
         }
 
         private void LoadContext()
@@ -90,7 +95,7 @@ namespace Apple2
             if (!string.IsNullOrEmpty(Disk2Path))
             {
                 openFileDialog2.FileName = Disk2Path;
-                string[] parts2 = openFileDialog1.FileName.Split('\\');
+                string[] parts2 = openFileDialog2.FileName.Split('\\');
                 disk2.Text = parts2[parts2.Length - 1];
             }
             else
@@ -98,6 +103,19 @@ namespace Apple2
                 openFileDialog2.FileName = "";
                 disk2.Text = "";
             }
+
+            cbSlot0.SelectedValue = Apple2plus.Properties.Settings.Default.Slot0Card;
+            cbSlot1.SelectedValue = Apple2plus.Properties.Settings.Default.Slot1Card;
+            cbSlot2.SelectedValue = Apple2plus.Properties.Settings.Default.Slot2Card;
+            cbSlot3.SelectedValue = Apple2plus.Properties.Settings.Default.Slot3Card;
+            cbSlot4.SelectedValue = Apple2plus.Properties.Settings.Default.Slot4Card;
+            cbSlot5.SelectedValue = Apple2plus.Properties.Settings.Default.Slot5Card;
+            cbSlot6.SelectedValue = Apple2plus.Properties.Settings.Default.Slot6Card;
+            cbSlot7.SelectedValue = Apple2plus.Properties.Settings.Default.Slot7Card;
+
+
+            
+            
         }
         private void LoadCardsCombos()
         {
@@ -116,7 +134,8 @@ namespace Apple2
             };
             List<KeyValuePair<string,string>> cards3 = new List<KeyValuePair<string, string>>() {
                 new KeyValuePair<string, string>("Cols80Card","Videx 80 Column Card"),
-                new KeyValuePair<string, string>("RamCard","Saturn 128k RAM Card")
+                new KeyValuePair<string, string>("RamCard","Saturn 128,k RAM Card"),
+                new KeyValuePair<string, string>("EmptySlot","Empty")
             };
             List<KeyValuePair<string,string>> cards4 = new List<KeyValuePair<string, string>>() {
                 new KeyValuePair<string, string>("EmptySlot","Empty"),
@@ -139,44 +158,50 @@ namespace Apple2
             cbSlot0.DataSource = cards0;
             cbSlot0.DisplayMember = "Value";
             cbSlot0.ValueMember = "Key";
-            cbSlot0.SelectedIndex = 0;
+            cbSlot0.SelectedValueChanged += cbSlot_SelectedValueChanged;
             
             cbSlot1.DataSource = cards1;
             cbSlot1.DisplayMember = "Value";
             cbSlot1.ValueMember = "Key";
-            cbSlot1.SelectedIndex = 0;
+            cbSlot1.SelectedValueChanged += cbSlot_SelectedValueChanged;
             
             cbSlot2.DataSource = cards2;
             cbSlot2.DisplayMember = "Value";
             cbSlot2.ValueMember = "Key";
-            cbSlot2.SelectedIndex = 0;
+            cbSlot2.SelectedValueChanged += cbSlot_SelectedValueChanged;
 
             cbSlot3.DataSource = cards3;
             cbSlot3.DisplayMember = "Value";
             cbSlot3.ValueMember = "Key";
-            cbSlot3.SelectedIndex = 0;
+            cbSlot3.SelectedValueChanged += cbSlot_SelectedValueChanged;
 
             cbSlot4.DataSource = cards4;
             cbSlot4.DisplayMember = "Value";
             cbSlot4.ValueMember = "Key";
-            cbSlot4.SelectedIndex = 0;
+            cbSlot4.SelectedValueChanged += cbSlot_SelectedValueChanged;
 
             cbSlot5.DataSource = cards5;
             cbSlot5.DisplayMember = "Value";
             cbSlot5.ValueMember = "Key";
-            cbSlot5.SelectedIndex = 0;
+            cbSlot5.SelectedValueChanged += cbSlot_SelectedValueChanged;
 
             cbSlot6.DataSource = cards6;
             cbSlot6.DisplayMember = "Value";
             cbSlot6.ValueMember = "Key";
-            cbSlot6.SelectedIndex = 0;
+            cbSlot6.SelectedValueChanged += cbSlot_SelectedValueChanged;
 
             cbSlot7.DataSource = cards7;
             cbSlot7.DisplayMember = "Value";
             cbSlot7.ValueMember = "Key";
-            cbSlot7.SelectedIndex = 0;
+            cbSlot7.SelectedValueChanged += cbSlot_SelectedValueChanged;
 
+        }
 
+        private void cbSlot_SelectedValueChanged(object? sender, EventArgs e)
+        {
+            string settings = ((ComboBox)sender).Name.Replace("cb", "") + "Card";
+            Apple2plus.Properties.Settings.Default[settings] = ((ComboBox)sender).SelectedValue;
+            Apple2plus.Properties.Settings.Default.Save();
 
         }
 
@@ -270,7 +295,10 @@ namespace Apple2
                             if (mainBoard.softswitches.Cols40_80)
                                 pictureBox1.Image = Video.Generate(mainBoard, pixelSize);
                             else
-                                pictureBox1.Image = ((Cols80Card)mainBoard.slot3).Generate(mainBoard, pixelSize);
+                            {
+                                if (mainBoard.slot3.GetType() == typeof(Cols80Card))
+                                    pictureBox1.Image = ((Cols80Card)mainBoard.slot3).Generate(mainBoard, pixelSize);
+                            }
                         }
                         catch { }
                     }
