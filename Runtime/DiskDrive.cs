@@ -15,9 +15,9 @@ namespace Runtime
     public class DiskDrive
     {
 
-        private DiskIICard card { get; set; }
+        private DiskIICard _card { get; set; }
 
-        private string diskPath { get; set; }
+        private string _diskPath { get; set; }
 
         public byte[] diskImage { get; set; }
 
@@ -92,10 +92,10 @@ namespace Runtime
         public DiskDrive(string dskPath, DiskIICard card)
         {
             track = 0;
-            diskPath = dskPath;
-            this.card = card;
+            _diskPath = dskPath;
+            this._card = card;
 
-            if (!string.IsNullOrEmpty(diskPath))
+            if (!string.IsNullOrEmpty(_diskPath))
                 this.diskImage = File.ReadAllBytes(dskPath);
             else
                 this.diskImage = new byte[143360];
@@ -114,7 +114,7 @@ namespace Runtime
 
         public void SaveImage()
         {
-            File.WriteAllBytes(diskPath, diskImage);
+            File.WriteAllBytes(_diskPath, diskImage);
         }
 
         public bool IdentifyDos_Prodos()
@@ -411,7 +411,7 @@ namespace Runtime
 
         public void TrackRawData(int track, bool update = false)
         {
-            if (!string.IsNullOrEmpty(this.diskPath))
+            if (!string.IsNullOrEmpty(_diskPath))
             {
                 if (diskRawData[track] == null || update)
                 {

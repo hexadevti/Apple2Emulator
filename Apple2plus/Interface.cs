@@ -21,7 +21,7 @@ namespace Apple2
         public MainBoard? mainBoard { get; set; }
         public CPU? cpu { get; set; }
         Runtime.State state = new Runtime.State();
-        bool running = true;
+
         string? assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         List<Task> threads = new List<Task>();
         int pixelSize = 2;
@@ -58,14 +58,14 @@ namespace Apple2
             mainBoard.LoadROM(0xd000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftD000.bin"));
             LoadCardsCombos();
             LoadContext();
-            InitSlots();
             mainBoard.LoadChars(File.ReadAllBytes(assemblyPath + "roms/CharROM.bin"));
             this.FormClosing += FormCloseEvent;
             tbSpeed.Enabled = false;
             tbSpeed.ValueChanged += tbSpeed_ValueChanged;
             disk1.TextChanged+= disk_TextChanged;
-            running = true;
+
             StartSpeaker();
+            InitSlots();
             cpu.WarmStart();
             LoadThreads();
             
@@ -242,7 +242,7 @@ namespace Apple2
 
         private void FormCloseEvent(object? sender, FormClosingEventArgs e)
         {
-            running = false;
+            cpu.cpuState = CpuState.Stopped;
         }
 
 
@@ -250,7 +250,7 @@ namespace Apple2
         {
             threads.Add(Task.Run(() =>
             {
-                while (running)
+                while (cpu.cpuState != CpuState.Stopped)
                 {
                     mainBoard.audioJumpInterval = ReadTrackBar(tbSpeed);
                     SetLabel(lblClockSpeed, (1000 / mainBoard.clockSpeed).ToString("0.00") + " Mhz");
@@ -286,7 +286,7 @@ namespace Apple2
 
             threads.Add(Task.Run(() =>
             {
-                while (running)
+                while (cpu.cpuState != CpuState.Stopped)
                 {
                     lock (mainBoard.displayLock)
                     {
@@ -306,7 +306,7 @@ namespace Apple2
                 }
             }));
 
-            threads.Add(Task.Run(() => cpu.DelayedRun(running)));
+            threads.Add(Task.Run(() => cpu.DelayedRun()));
         }
 
         private void StartSpeaker()
@@ -332,6 +332,7 @@ namespace Apple2
                 disk1.Text = parts[parts.Length - 1];
                 Apple2plus.Properties.Settings.Default["Disk1Path"] = openFileDialog1.FileName;
                 Apple2plus.Properties.Settings.Default.Save();
+                UpdateDisks();
                 richTextBox1.Focus();
             }
         }
@@ -343,7 +344,27 @@ namespace Apple2
                 disk2.Text = parts[parts.Length - 1];
                 Apple2plus.Properties.Settings.Default["Disk2Path"] = openFileDialog2.FileName;
                 Apple2plus.Properties.Settings.Default.Save();
+                UpdateDisks();
                 richTextBox1.Focus();
+            }
+        }
+
+        private void UpdateDisks()
+        {
+            ICard actualDiskCard = null;
+            if (mainBoard.slot5.GetType() == typeof(DiskIICard))
+            {
+                actualDiskCard = (DiskIICard)mainBoard.slot5;
+            } 
+            else if (mainBoard.slot6.GetType() == typeof(DiskIICard))
+            {
+                actualDiskCard = (DiskIICard)mainBoard.slot6;
+            }
+
+            if (actualDiskCard != null)
+            {
+                ((DiskIICard)actualDiskCard).drive1 = new DiskDrive(openFileDialog1.FileName, (DiskIICard)actualDiskCard);
+                ((DiskIICard)actualDiskCard).drive2 = new DiskDrive(openFileDialog2.FileName, (DiskIICard)actualDiskCard);
             }
         }
 

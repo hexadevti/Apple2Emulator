@@ -18,26 +18,32 @@ namespace Runtime
     {
         public State state { get; set; }
         public MainBoard mainBoard { get; set; }
+
+        public CpuState cpuState { get; set; }
         public ushort lastPC = 0;
         public DateTime last1mhz = DateTime.MinValue;
+
+
 
         public CPU(State state, MainBoard mainBoard)
         {
             this.mainBoard = mainBoard;
             this.state = state;
             last1mhz = DateTime.Now;
+            cpuState = CpuState.Running;
         }
 
         public void WarmStart()
         {
-            Thread.Sleep(100);
+            cpuState = CpuState.Paused;
             mainBoard.ClearBaseRAM();
-            Thread.Sleep(100);
             Reset();
-            Thread.Sleep(200);
+            cpuState = CpuState.Running;
+            
         }
         public void Reset()
         {
+            state = new State();
             lastPC = 0;
             state.PC = mainBoard.ReadAddressLLHH(0xfffc) ?? 0;
         }
@@ -74,10 +80,10 @@ namespace Runtime
         
         }
 
-        public void Run(bool running)
+        public void Run()
         {
             Stopwatch sw3 = Stopwatch.StartNew();
-            while (running)
+            while (cpuState != CpuState.Stopped)
             {
                 RunCycle();
                 if (mainBoard.cpuCycles >= 1000000)
@@ -90,29 +96,30 @@ namespace Runtime
             }
         }
 
-        public void DelayedRun(bool running)
+        public void DelayedRun()
         {
             DateTime countTime = DateTime.Now;
             int soundCycles = 0;
             Stopwatch sw3 = Stopwatch.StartNew();
-
             int k = 0;
             byte[] bytes = new byte[mainBoard.audioBuffer];
-
-            Thread.Sleep(100);
-
-            double elapsedCycleTime = 600;
-            double adjcycle = 100;
+            double adjcycle = 10;
             Stopwatch sw;
             sw = Stopwatch.StartNew();
             bool switchJumpInterval = false;
             bool n = false;
             int cpuCycles = 0;
             int cyclesPerMilliseconds = 19500;
+            int adjCoef = 100;
             int cyclesPerMillisecondsAdj = cyclesPerMilliseconds;
 
-            while (running)
+            while (cpuState != CpuState.Stopped)
             {
+                if (cpuState == CpuState.Paused)
+                {
+                    Thread.Sleep(50);
+                    continue;
+                }
 
                 if (mainBoard.adjust1Mhz)
                 {
@@ -149,12 +156,15 @@ namespace Runtime
 
                                 if (mainBoard.clickBuffer.Count() > 2)
                                 {
-                                    cyclesPerMilliseconds -= (mainBoard.clickBuffer.Count() - 2) * 10;
+                                    cyclesPerMilliseconds -= (mainBoard.clickBuffer.Count() - 2) * adjCoef;
                                 }
                                 else if (mainBoard.clickBuffer.Count() < 2)
                                 {
-                                    cyclesPerMilliseconds += (2 - mainBoard.clickBuffer.Count()) * 10;
+                                    cyclesPerMilliseconds += (2 - mainBoard.clickBuffer.Count()) * adjCoef;
                                 }
+
+                                if (adjCoef > 10)
+                                    adjCoef--;
 
                                 countTime = DateTime.Now;
                             }
@@ -248,8 +258,14 @@ namespace Runtime
                     sw3 = Stopwatch.StartNew();
                 }
 
+                
             }
         }
     }
 
+    public enum CpuState{
+        Running,
+        Paused,
+        Stopped
+    }
 }

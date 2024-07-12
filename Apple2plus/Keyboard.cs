@@ -40,7 +40,6 @@ namespace Apple2
                 {
                     case Keys.F12:
                         e.Handled = true;
-                        Thread.Sleep(100);
                         cpu.WarmStart();
                         break;
                 }
