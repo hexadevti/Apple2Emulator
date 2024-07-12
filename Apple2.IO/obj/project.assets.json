@@ -608,11 +608,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Users\\Luciano\\repos\\Apple2Emulator\\Apple2.IO\\Apple2.IO.csproj",
+      "projectUniqueName": "C:\\Users\\Luciano\\repos\\Apple2Emulator\\Apple2.IO\\Apple2.IO.csproj",
       "projectName": "Apple2.IO",
-      "projectPath": "c:\\Users\\Luciano\\repos\\Apple2Emulator\\Apple2.IO\\Apple2.IO.csproj",
+      "projectPath": "C:\\Users\\Luciano\\repos\\Apple2Emulator\\Apple2.IO\\Apple2.IO.csproj",
       "packagesPath": "C:\\Users\\Luciano\\.nuget\\packages\\",
-      "outputPath": "c:\\Users\\Luciano\\repos\\Apple2Emulator\\Apple2.IO\\obj\\",
+      "outputPath": "C:\\Users\\Luciano\\repos\\Apple2Emulator\\Apple2.IO\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Luciano\\AppData\\Roaming\\NuGet\\NuGet.Config"

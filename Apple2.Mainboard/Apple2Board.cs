@@ -7,12 +7,12 @@ namespace Apple2.Mainboard
     public class Apple2Board
     {
         public object displayLock = new object();
-        public Dictionary<byte, bool[,]> charSet;
+        public Dictionary<byte, bool[,]> charSet = new Dictionary<byte, bool[,]>();
         public bool adjust1Mhz = true;
         public double clockSpeed = 0;
         public byte[] baseRAM = new byte[0xc000];
         public byte[] ROM = new byte[0x4000];
-        public byte KeyPressed { get; set; }
+        public byte KeyPressedBuffer { get; set; }
         public Softswitches softswitches = new Softswitches();
         public Queue<byte[]> clickBuffer = new Queue<byte[]>(100);
         public int cpuCycles { get; set; }
@@ -25,18 +25,12 @@ namespace Apple2.Mainboard
         public ICard slot5;
         public ICard slot6;
         public ICard slot7;
-        CpuSoftswitches cpuSoftswitches = new CpuSoftswitches();
-
+        SoftswitchesControl cpuSoftswitches = new SoftswitchesControl();
         public Queue<string> screenLog = new Queue<string>();
         public Queue<bool> cycleWait = new Queue<bool>();
         public int audioJumpInterval = 25;
-
         public bool videoColor = true;
-
         public int audioBuffer { get; set; }
-
-        public int SlotRamEnable = 0;
-        
         public void ClearBaseRAM()
         {
             Random rnd = new Random();
@@ -119,7 +113,6 @@ namespace Apple2.Mainboard
                 charSet.Add(item, charboolItem);
             }
         }
-
         public void LoadROM(ushort startAddress, byte[] rom)
         {
             for (int i = 0; i < rom.Length; i++)
@@ -127,8 +120,6 @@ namespace Apple2.Mainboard
                 ROM[startAddress - 0xd000 + i] = rom[i];
             }
         }
-
-
 
         public byte ReadByte(ushort address)
         {
@@ -224,8 +215,6 @@ namespace Apple2.Mainboard
             }
             return ret;
         }
-
-
         public void WriteByte(ushort address, byte value)
         {
             if (address < 0xc000)

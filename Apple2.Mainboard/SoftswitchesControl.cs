@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,7 +11,7 @@ using System.Text;
 
 namespace Apple2.Mainboard
 {
-    public class CpuSoftswitches
+    public class SoftswitchesControl
     {
         public void Write(ushort address, byte b, Apple2Board mainBoard)
         {
@@ -30,9 +30,9 @@ namespace Apple2.Mainboard
                 mainBoard.softswitches.SoundClick = !mainBoard.softswitches.SoundClick;
             }
             else if (address == 0xc000)
-                return mainBoard.KeyPressed;
+                return mainBoard.KeyPressedBuffer;
             else if (address == 0xc010)
-                mainBoard.KeyPressed = mainBoard.KeyPressed < 0x80 ? mainBoard.KeyPressed : (byte)(mainBoard.KeyPressed ^ 0b10000000);
+                mainBoard.KeyPressedBuffer = mainBoard.KeyPressedBuffer < 0x80 ? mainBoard.KeyPressedBuffer : (byte)(mainBoard.KeyPressedBuffer ^ 0b10000000);
             // else if (address == 0xc00c)
             //     mainBoard.softswitches.Cols40_80 = true; // Apple IIc IIe
             // else if (address == 0xc00d)

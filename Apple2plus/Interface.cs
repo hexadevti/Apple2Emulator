@@ -1,15 +1,11 @@
 using System.Reflection;
 using NAudio.Wave;
-using System.Diagnostics;
-using System.Windows.Forms.VisualStyles;
-using System.ComponentModel;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System;
 using System.Threading;
-using System.CodeDom;
 using Apple2.Mainboard;
 using Apple2.IO;
 using Apple2.CPU;

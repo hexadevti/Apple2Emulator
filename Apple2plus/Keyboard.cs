@@ -29,7 +29,7 @@ namespace Apple2
             if (e.KeyChar < 32 || e.KeyChar >= 127)
                 return;
 
-            mainBoard.KeyPressed = (byte)(Encoding.ASCII.GetBytes(new[] { e.KeyChar.ToString().ToUpper()[0] })[0] | 0b10000000);
+            mainBoard.KeyPressedBuffer = (byte)(Encoding.ASCII.GetBytes(new[] { e.KeyChar.ToString().ToUpper()[0] })[0] | 0b10000000);
             e.Handled = true;
         }
 
@@ -60,7 +60,7 @@ namespace Apple2
                         return;
                     default:
                         if (e.KeyValue > 0x40 && e.KeyValue < 0x60)
-                            mainBoard.KeyPressed = (byte)(e.KeyValue + 0x40);
+                            mainBoard.KeyPressedBuffer = (byte)(e.KeyValue + 0x40);
                         break;
                 }
             }
@@ -69,26 +69,26 @@ namespace Apple2
                 switch (e.KeyCode)
                 {
                     case Keys.Left:
-                        mainBoard.KeyPressed = 0x88;
+                        mainBoard.KeyPressedBuffer = 0x88;
                         break;
                     case Keys.Back:
-                        mainBoard.KeyPressed = 0x88;
+                        mainBoard.KeyPressedBuffer = 0x88;
                         break;
                     case Keys.Right:
-                        mainBoard.KeyPressed = 0x95;
+                        mainBoard.KeyPressedBuffer = 0x95;
                         break;
                     case Keys.Up:
-                        mainBoard.KeyPressed = 0x8b;
+                        mainBoard.KeyPressedBuffer = 0x8b;
                         break;
                     case Keys.Down:
-                        mainBoard.KeyPressed = 0x8a;
+                        mainBoard.KeyPressedBuffer = 0x8a;
                         break;
                     case Keys.Escape:
-                        mainBoard.KeyPressed = 0x9b;
+                        mainBoard.KeyPressedBuffer = 0x9b;
                         e.SuppressKeyPress = true;
                         break;
                     case Keys.Enter:
-                        mainBoard.KeyPressed = 0x8d;
+                        mainBoard.KeyPressedBuffer = 0x8d;
                         e.SuppressKeyPress = true;
                         break;
                 }
@@ -111,11 +111,11 @@ namespace Apple2
                     {
                         if (item == '\n')
                         {
-                            mainBoard.KeyPressed = 0x8d;
+                            mainBoard.KeyPressedBuffer = 0x8d;
                             Thread.Sleep(100);
                         }
                         else
-                            mainBoard.KeyPressed = (byte)(Encoding.ASCII.GetBytes(new[] { item.ToString().ToUpper()[0] })[0] | 0b10000000);
+                            mainBoard.KeyPressedBuffer = (byte)(Encoding.ASCII.GetBytes(new[] { item.ToString().ToUpper()[0] })[0] | 0b10000000);
                         Thread.Sleep(1);
                     }
                 });

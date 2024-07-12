@@ -1,5 +1,9 @@
-Runtime/bin/*
-Runtime/obj/*
+Apple2.CPU/bin/*
+Apple2.CPU/obj/*
+Apple2.IO/bin/*
+Apple2.IO/obj/*
+Apple2.Mainboard/bin/*
+Apple2.Mainboard/obj/*
 Apple2plus/bin/*
 Apple2plus/obj/*
 .vs/6502/*
