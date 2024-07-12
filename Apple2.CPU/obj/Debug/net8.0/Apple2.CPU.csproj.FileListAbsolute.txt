@@ -1,0 +1,16 @@
+c:\Users\Luciano\repos\Apple2Emulator\Apple2.CPU\bin\Debug\net8.0\Apple2.CPU.deps.json
+c:\Users\Luciano\repos\Apple2Emulator\Apple2.CPU\bin\Debug\net8.0\Apple2.CPU.dll
+c:\Users\Luciano\repos\Apple2Emulator\Apple2.CPU\bin\Debug\net8.0\Apple2.CPU.pdb
+c:\Users\Luciano\repos\Apple2Emulator\Apple2.CPU\bin\Debug\net8.0\Apple2.Mainboard.dll
+c:\Users\Luciano\repos\Apple2Emulator\Apple2.CPU\bin\Debug\net8.0\Apple2.Mainboard.pdb
+c:\Users\Luciano\repos\Apple2Emulator\Apple2.CPU\obj\Debug\net8.0\Apple2.CPU.csproj.AssemblyReference.cache
+c:\Users\Luciano\repos\Apple2Emulator\Apple2.CPU\obj\Debug\net8.0\Apple2.CPU.GeneratedMSBuildEditorConfig.editorconfig
+c:\Users\Luciano\repos\Apple2Emulator\Apple2.CPU\obj\Debug\net8.0\Apple2.CPU.AssemblyInfoInputs.cache
+c:\Users\Luciano\repos\Apple2Emulator\Apple2.CPU\obj\Debug\net8.0\Apple2.CPU.AssemblyInfo.cs
+c:\Users\Luciano\repos\Apple2Emulator\Apple2.CPU\obj\Debug\net8.0\Apple2.CPU.csproj.CoreCompileInputs.cache
+c:\Users\Luciano\repos\Apple2Emulator\Apple2.CPU\obj\Debug\net8.0\Apple2.CPU.sourcelink.json
+c:\Users\Luciano\repos\Apple2Emulator\Apple2.CPU\obj\Debug\net8.0\Apple2.CPU.csproj.Up2Date
+c:\Users\Luciano\repos\Apple2Emulator\Apple2.CPU\obj\Debug\net8.0\Apple2.CPU.dll
+c:\Users\Luciano\repos\Apple2Emulator\Apple2.CPU\obj\Debug\net8.0\refint\Apple2.CPU.dll
+c:\Users\Luciano\repos\Apple2Emulator\Apple2.CPU\obj\Debug\net8.0\Apple2.CPU.pdb
+c:\Users\Luciano\repos\Apple2Emulator\Apple2.CPU\obj\Debug\net8.0\ref\Apple2.CPU.dll

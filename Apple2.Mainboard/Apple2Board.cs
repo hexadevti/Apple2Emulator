@@ -1,31 +1,19 @@
-using Runtime.Abstractions;
-using Runtime.Cards;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Net;
-using System.Runtime.ExceptionServices;
-using System.Threading.Channels;
+using Apple2.Mainboard.Abstractions;
 
-namespace Runtime
+namespace Apple2.Mainboard
 {
-    public class MainBoard
+    public class Apple2Board
     {
         public object displayLock = new object();
-
-        //private readonly IList<IOverLay> overlays;
         public Dictionary<byte, bool[,]> charSet;
-
         public bool adjust1Mhz = true;
         public double clockSpeed = 0;
         public byte[] baseRAM = new byte[0xc000];
-
         public byte[] ROM = new byte[0x4000];
         public byte KeyPressed { get; set; }
         public Softswitches softswitches = new Softswitches();
-
-        public State state { get; set; }
         public Queue<byte[]> clickBuffer = new Queue<byte[]>(100);
         public int cpuCycles { get; set; }
 
@@ -48,14 +36,7 @@ namespace Runtime
         public int audioBuffer { get; set; }
 
         public int SlotRamEnable = 0;
-
-
-        public MainBoard(State state)
-        {
-            //overlays = new List<IOverLay>();
-            this.state = state;
-        }
-
+        
         public void ClearBaseRAM()
         {
             Random rnd = new Random();
@@ -164,23 +145,23 @@ namespace Runtime
             {
                 if (slot0 is IRamCard && ((IRamCard)slot0).MemoryBankReadRAM_ROM)
                 {
-                    ret = slot0.Read(address, this, state);
+                    ret = slot0.Read(address, this);
                 }
                 else if (slot1 is IRamCard && ((IRamCard)slot1).MemoryBankReadRAM_ROM)
                 {
-                    ret = slot1.Read(address, this, state);
+                    ret = slot1.Read(address, this);
                 }
                 else if (slot2 is IRamCard && ((IRamCard)slot2).MemoryBankReadRAM_ROM)
                 {
-                    ret = slot2.Read(address, this, state);
+                    ret = slot2.Read(address, this);
                 }
                 else if (slot3 is IRamCard && ((IRamCard)slot3).MemoryBankReadRAM_ROM)
                 {
-                    ret = slot3.Read(address, this, state);
+                    ret = slot3.Read(address, this);
                 }
                 else if (slot4 is IRamCard && ((IRamCard)slot4).MemoryBankReadRAM_ROM)
                 {
-                    ret = slot4.Read(address, this, state);
+                    ret = slot4.Read(address, this);
                 }
                 else
                 {
@@ -192,7 +173,7 @@ namespace Runtime
             {
 
                 //TODO: Put condition to redirect to correct slot
-                ret = slot3.Read(address, this, state);
+                ret = slot3.Read(address, this);
             }
             else if (address >= 0xc700)
             {
@@ -225,21 +206,21 @@ namespace Runtime
             else if (address >= 0xc080)
             {
                 if (address >= 0xc0f0) // Slot 7
-                    ret = slot7.Read(address, this, state);
+                    ret = slot7.Read(address, this);
                 else if (address >= 0xc0e0) // Slot 6
-                    ret = slot6.Read(address, this, state);
+                    ret = slot6.Read(address, this);
                 else if (address >= 0xc0d0) // Slot 5
-                    ret = slot5.Read(address, this, state);
+                    ret = slot5.Read(address, this);
                 else if (address >= 0xc0c0) // Slot 4
-                    ret = slot4.Read(address, this, state);
+                    ret = slot4.Read(address, this);
                 else if (address >= 0xc0b0) // Slot 3
-                    ret = slot3.Read(address, this, state);
+                    ret = slot3.Read(address, this);
                 else if (address >= 0xc0a0) // Slot 2
-                    ret = slot2.Read(address, this, state);
+                    ret = slot2.Read(address, this);
                 else if (address >= 0xc090) // Slot 1
-                    ret = slot1.Read(address, this, state);
+                    ret = slot1.Read(address, this);
                 else if (address >= 0xc080) // Slot 0
-                    ret = slot0.Read(address, this, state);
+                    ret = slot0.Read(address, this);
             }
             return ret;
         }

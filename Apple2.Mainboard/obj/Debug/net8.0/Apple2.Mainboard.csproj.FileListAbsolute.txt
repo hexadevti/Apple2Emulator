@@ -1,0 +1,12 @@
+C:\Users\Luciano\repos\Apple2Emulator\Apple2.Mainboard\bin\Debug\net8.0\Apple2.Mainboard.deps.json
+c:\Users\Luciano\repos\Apple2Emulator\Apple2.Mainboard\bin\Debug\net8.0\Apple2.Mainboard.dll
+c:\Users\Luciano\repos\Apple2Emulator\Apple2.Mainboard\bin\Debug\net8.0\Apple2.Mainboard.pdb
+c:\Users\Luciano\repos\Apple2Emulator\Apple2.Mainboard\obj\Debug\net8.0\Apple2.Mainboard.GeneratedMSBuildEditorConfig.editorconfig
+c:\Users\Luciano\repos\Apple2Emulator\Apple2.Mainboard\obj\Debug\net8.0\Apple2.Mainboard.AssemblyInfoInputs.cache
+c:\Users\Luciano\repos\Apple2Emulator\Apple2.Mainboard\obj\Debug\net8.0\Apple2.Mainboard.AssemblyInfo.cs
+c:\Users\Luciano\repos\Apple2Emulator\Apple2.Mainboard\obj\Debug\net8.0\Apple2.Mainboard.csproj.CoreCompileInputs.cache
+c:\Users\Luciano\repos\Apple2Emulator\Apple2.Mainboard\obj\Debug\net8.0\Apple2.Mainboard.sourcelink.json
+c:\Users\Luciano\repos\Apple2Emulator\Apple2.Mainboard\obj\Debug\net8.0\Apple2.Mainboard.dll
+c:\Users\Luciano\repos\Apple2Emulator\Apple2.Mainboard\obj\Debug\net8.0\refint\Apple2.Mainboard.dll
+c:\Users\Luciano\repos\Apple2Emulator\Apple2.Mainboard\obj\Debug\net8.0\Apple2.Mainboard.pdb
+C:\Users\Luciano\repos\Apple2Emulator\Apple2.Mainboard\obj\Debug\net8.0\ref\Apple2.Mainboard.dll

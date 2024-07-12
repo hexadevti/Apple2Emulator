@@ -1,19 +1,20 @@
-using Runtime;
+
+using Apple2.Mainboard;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 
-namespace Apple2
+namespace Apple2.IO
 {
     public class Speaker : WaveStream
     {
-        private MainBoard _mainBoard;
+        private Apple2Board _mainBoard;
         private WaveFormat _waveFormat;
 
         public double frequency { get; set; }
         public byte sample;
         byte actualSample = 0;
 
-        public Speaker(MainBoard mainBoard, WaveFormat waveFormat)
+        public Speaker(Apple2Board mainBoard, WaveFormat waveFormat)
         {
             _mainBoard = mainBoard;
             _waveFormat = waveFormat;

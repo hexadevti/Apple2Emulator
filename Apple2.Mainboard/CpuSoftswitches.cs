@@ -7,23 +7,23 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Collections;
 using System.Text;
-using Runtime.Abstractions;
 
-namespace Runtime
+
+namespace Apple2.Mainboard
 {
     public class CpuSoftswitches
     {
-        public void Write(ushort address, byte b, MainBoard mainBoard)
+        public void Write(ushort address, byte b, Apple2Board mainBoard)
         {
             ProcessSwitch(address, b, mainBoard);
         }
 
-        public byte Read(ushort address, MainBoard mainBoard)
+        public byte Read(ushort address, Apple2Board mainBoard)
         {
             return ProcessSwitch(address, 0x00, mainBoard);
         }
 
-        private byte ProcessSwitch(ushort address, byte b, MainBoard mainBoard)
+        private byte ProcessSwitch(ushort address, byte b, Apple2Board mainBoard)
         {
             if (address == 0xc030)
             {
@@ -33,6 +33,10 @@ namespace Runtime
                 return mainBoard.KeyPressed;
             else if (address == 0xc010)
                 mainBoard.KeyPressed = mainBoard.KeyPressed < 0x80 ? mainBoard.KeyPressed : (byte)(mainBoard.KeyPressed ^ 0b10000000);
+            // else if (address == 0xc00c)
+            //     mainBoard.softswitches.Cols40_80 = true; // Apple IIc IIe
+            // else if (address == 0xc00d)
+            //     mainBoard.softswitches.Cols40_80 = false; // Apple IIc IIe
             else if (address == 0xc050)
                 mainBoard.softswitches.Graphics_Text = true;
             else if (address == 0xc051)
