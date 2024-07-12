@@ -103,9 +103,7 @@ namespace Runtime
             Stopwatch sw3 = Stopwatch.StartNew();
             int k = 0;
             byte[] bytes = new byte[mainBoard.audioBuffer];
-            double adjcycle = 10;
-            Stopwatch sw;
-            sw = Stopwatch.StartNew();
+            double adjcycle = 50;
             bool switchJumpInterval = false;
             bool n = false;
             int cpuCycles = 0;
@@ -124,8 +122,6 @@ namespace Runtime
                 if (mainBoard.adjust1Mhz)
                 {
                     cpuCycles++;
-                    // if (sw.Elapsed.TotalNanoseconds >= elapsedCycleTime)
-                    // {
                     if (!mainBoard.cycleWait.TryDequeue(out n))
                     {
 
@@ -181,8 +177,6 @@ namespace Runtime
                         Thread.Sleep(1);
                         cpuCycles = 0;
                     }
-                    // sw = Stopwatch.StartNew();
-                    // }
                 }
                 else
                 {

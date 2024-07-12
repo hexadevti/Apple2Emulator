@@ -25,7 +25,11 @@ namespace Runtime
 
         private byte ProcessSwitch(ushort address, byte b, MainBoard mainBoard, State? state)
         {
-            if (address == 0xc000)
+            if (address == 0xc030)
+            {
+                mainBoard.softswitches.SoundClick = !mainBoard.softswitches.SoundClick;
+            }
+            else if (address == 0xc000)
                 return mainBoard.KeyPressed;
             else if (address == 0xc010)
                 mainBoard.KeyPressed = mainBoard.KeyPressed < 0x80 ? mainBoard.KeyPressed : (byte)(mainBoard.KeyPressed ^ 0b10000000);
@@ -33,10 +37,6 @@ namespace Runtime
             //     mainBoard.softswitches.Cols40_80 = true; // Apple IIc IIe
             // else if (address == 0xc00d)
             //     mainBoard.softswitches.Cols40_80 = false; // Apple IIc IIe
-            else if (address == 0xc030)
-            {
-                mainBoard.softswitches.SoundClick = !mainBoard.softswitches.SoundClick;
-            }
             else if (address == 0xc050)
                 mainBoard.softswitches.Graphics_Text = true;
             else if (address == 0xc051)

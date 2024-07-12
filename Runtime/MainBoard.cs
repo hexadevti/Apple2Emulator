@@ -156,6 +156,10 @@ namespace Runtime
             {
                 ret = baseRAM[address];
             }
+            else if (address >= 0xc000 && address <= 0xc079)
+            {
+                ret = cpuSoftswitches.Read(address, this, state);
+            }
             else if (address >= 0xd000)
             {
                 if (slot0 is IRamCard && ((IRamCard)slot0).MemoryBankReadRAM_ROM)
@@ -237,11 +241,6 @@ namespace Runtime
                 else if (address >= 0xc080) // Slot 0
                     ret = slot0.Read(address, this, state);
             }
-            else if (address >= 0xc000)
-            {
-                ret = cpuSoftswitches.Read(address, this, state);
-            }
-
             return ret;
         }
 
@@ -251,6 +250,10 @@ namespace Runtime
             if (address < 0xc000)
             {
                 baseRAM[address] = value;
+            }
+            else if (address >= 0xc000 && address <0xc079)
+            {
+                cpuSoftswitches.Write(address, value, this);
             }
             else if (address >= 0xd000)
             {
@@ -299,10 +302,7 @@ namespace Runtime
                 else if (address >= 0xc080) // Slot 0
                     slot0.Write(address, value, this);
             }
-            else if (address >= 0xc000)
-            {
-                cpuSoftswitches.Write(address, value, this);
-            }
+            
 
         }
 
