@@ -5,19 +5,20 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Runtime;
+using Apple2.CPU;
+using Apple2.Mainboard;
 
 namespace Apple2
 {
     public class Keyboard
     {
-        public Runtime.MainBoard mainBoard { get; set; }
+        public Apple2Board mainBoard { get; set; }
 
-        private CPU cpu { get; set; }
+        private Processor cpu { get; set; }
 
         private List<char> buffer = new List<char>();
 
-        public Keyboard(MainBoard mainBoard, CPU cpu)
+        public Keyboard(Apple2Board mainBoard, Processor cpu)
         {
             this.mainBoard = mainBoard;
             this.cpu = cpu;

@@ -1,26 +1,28 @@
-using Runtime;
 using System.Reflection;
 using NAudio.Wave;
 using System.Diagnostics;
 using System.Windows.Forms.VisualStyles;
 using System.ComponentModel;
-using Runtime.Cards;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System;
 using System.Threading;
-using Runtime.Abstractions;
 using System.CodeDom;
+using Apple2.Mainboard;
+using Apple2.IO;
+using Apple2.CPU;
+using Apple2.Mainboard.Abstractions;
+using Apple2.Mainboard.Cards;
 
 namespace Apple2
 {
     public partial class Interface : Form
     {
-        public MainBoard? mainBoard { get; set; }
-        public CPU? cpu { get; set; }
-        Runtime.State state = new Runtime.State();
+        public Apple2Board mainBoard { get; set; }
+        public Processor cpu { get; set; }
+        State state = new State();
 
         string? assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         List<Task> threads = new List<Task>();
@@ -42,10 +44,10 @@ namespace Apple2
                 assemblyPath += "/";
 
             this.Shown += Form1_Shown;
-            mainBoard = new MainBoard(state);
+            mainBoard = new Apple2Board();
             mainBoard.adjust1Mhz = true;
             btnClockAdjust.Text = "Fast";
-            cpu = new CPU(state, mainBoard);
+            cpu = new Processor(state, mainBoard);
             Keyboard keyboard = new Keyboard(mainBoard, cpu);
             richTextBox1.KeyDown += keyboard.OnKeyDown;
             richTextBox1.KeyPress += keyboard.OnKeyPress;
@@ -228,7 +230,7 @@ namespace Apple2
                                             Tools.LoadExtendedSlotsROM(0xc800, File.ReadAllBytes(assemblyPath + "roms/Videx Videoterm ROM 2.4.bin")),
                                             Tools.Load80Chars(File.ReadAllBytes(assemblyPath + "roms/Videx Videoterm Character ROM Normal.bin")));
             else if (type == "DiskIICard")
-                return new DiskIICard(slot, File.ReadAllBytes(assemblyPath + "roms/diskinterface.bin"), openFileDialog1.FileName, openFileDialog2.FileName);
+                return new DiskIICard(slot, File.ReadAllBytes(assemblyPath + "roms/DiskIICardRom.bin"), openFileDialog1.FileName, openFileDialog2.FileName);
             else
                 return new EmptySlot();
             

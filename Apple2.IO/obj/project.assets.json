@@ -627,8 +627,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "c:\\Users\\Luciano\\repos\\Apple2Emulator\\Apple2.CPU\\Apple2.CPU.csproj": {
-              "projectPath": "c:\\Users\\Luciano\\repos\\Apple2Emulator\\Apple2.CPU\\Apple2.CPU.csproj"
+            "C:\\Users\\Luciano\\repos\\Apple2Emulator\\Apple2.CPU\\Apple2.CPU.csproj": {
+              "projectPath": "C:\\Users\\Luciano\\repos\\Apple2Emulator\\Apple2.CPU\\Apple2.CPU.csproj"
             },
             "C:\\Users\\Luciano\\repos\\Apple2Emulator\\Apple2.Mainboard\\Apple2.Mainboard.csproj": {
               "projectPath": "C:\\Users\\Luciano\\repos\\Apple2Emulator\\Apple2.Mainboard\\Apple2.Mainboard.csproj"

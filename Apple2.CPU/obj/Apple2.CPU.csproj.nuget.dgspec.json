@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Users\\Luciano\\repos\\Apple2Emulator\\Apple2.CPU\\Apple2.CPU.csproj": {}
+    "C:\\Users\\Luciano\\repos\\Apple2Emulator\\Apple2.CPU\\Apple2.CPU.csproj": {}
   },
   "projects": {
-    "c:\\Users\\Luciano\\repos\\Apple2Emulator\\Apple2.CPU\\Apple2.CPU.csproj": {
+    "C:\\Users\\Luciano\\repos\\Apple2Emulator\\Apple2.CPU\\Apple2.CPU.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\Luciano\\repos\\Apple2Emulator\\Apple2.CPU\\Apple2.CPU.csproj",
+        "projectUniqueName": "C:\\Users\\Luciano\\repos\\Apple2Emulator\\Apple2.CPU\\Apple2.CPU.csproj",
         "projectName": "Apple2.CPU",
-        "projectPath": "c:\\Users\\Luciano\\repos\\Apple2Emulator\\Apple2.CPU\\Apple2.CPU.csproj",
+        "projectPath": "C:\\Users\\Luciano\\repos\\Apple2Emulator\\Apple2.CPU\\Apple2.CPU.csproj",
         "packagesPath": "C:\\Users\\Luciano\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\Luciano\\repos\\Apple2Emulator\\Apple2.CPU\\obj\\",
+        "outputPath": "C:\\Users\\Luciano\\repos\\Apple2Emulator\\Apple2.CPU\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Luciano\\AppData\\Roaming\\NuGet\\NuGet.Config"

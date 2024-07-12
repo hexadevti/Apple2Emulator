@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Apple2.CPU")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d8ab9e3c34611967e1ebb916b130973664886727")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b77b487809f78f284f790bf07316e638ab9cd591")]
 [assembly: System.Reflection.AssemblyProductAttribute("Apple2.CPU")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Apple2.CPU")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
