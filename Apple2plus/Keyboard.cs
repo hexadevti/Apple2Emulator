@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Apple2.CPU;
 using Apple2.Mainboard;
 using Apple2.Mainboard.Interfaces;
 
