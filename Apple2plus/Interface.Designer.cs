@@ -260,10 +260,10 @@ namespace Apple2
             richTextBox2.BackColor = Color.Black;
             richTextBox2.Font = new Font("Consolas", 8F);
             richTextBox2.ForeColor = Color.White;
-            richTextBox2.Location = new Point(918, 0);
+            richTextBox2.Location = new Point(899, 0);
             richTextBox2.Margin = new Padding(2);
             richTextBox2.Name = "richTextBox2";
-            richTextBox2.Size = new Size(466, 287);
+            richTextBox2.Size = new Size(429, 287);
             richTextBox2.TabIndex = 15;
             richTextBox2.Text = "";
             // 
@@ -316,9 +316,9 @@ namespace Apple2
             groupBox3.Controls.Add(label1);
             groupBox3.Controls.Add(cbSlot0);
             groupBox3.Controls.Add(lbl0);
-            groupBox3.Location = new Point(918, 304);
+            groupBox3.Location = new Point(902, 289);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(380, 264);
+            groupBox3.Size = new Size(309, 264);
             groupBox3.TabIndex = 20;
             groupBox3.TabStop = false;
             groupBox3.Text = "Slots";
@@ -328,7 +328,7 @@ namespace Apple2
             cbSlot7.FormattingEnabled = true;
             cbSlot7.Location = new Point(50, 228);
             cbSlot7.Name = "cbSlot7";
-            cbSlot7.Size = new Size(315, 23);
+            cbSlot7.Size = new Size(240, 23);
             cbSlot7.TabIndex = 34;
             // 
             // label7
@@ -345,7 +345,7 @@ namespace Apple2
             cbSlot6.FormattingEnabled = true;
             cbSlot6.Location = new Point(50, 198);
             cbSlot6.Name = "cbSlot6";
-            cbSlot6.Size = new Size(315, 23);
+            cbSlot6.Size = new Size(240, 23);
             cbSlot6.TabIndex = 32;
             // 
             // label6
@@ -362,7 +362,7 @@ namespace Apple2
             cbSlot5.FormattingEnabled = true;
             cbSlot5.Location = new Point(50, 169);
             cbSlot5.Name = "cbSlot5";
-            cbSlot5.Size = new Size(315, 23);
+            cbSlot5.Size = new Size(240, 23);
             cbSlot5.TabIndex = 30;
             // 
             // label5
@@ -379,7 +379,7 @@ namespace Apple2
             cbSlot4.FormattingEnabled = true;
             cbSlot4.Location = new Point(50, 140);
             cbSlot4.Name = "cbSlot4";
-            cbSlot4.Size = new Size(315, 23);
+            cbSlot4.Size = new Size(240, 23);
             cbSlot4.TabIndex = 28;
             // 
             // label4
@@ -396,7 +396,7 @@ namespace Apple2
             cbSlot3.FormattingEnabled = true;
             cbSlot3.Location = new Point(50, 111);
             cbSlot3.Name = "cbSlot3";
-            cbSlot3.Size = new Size(315, 23);
+            cbSlot3.Size = new Size(240, 23);
             cbSlot3.TabIndex = 26;
             // 
             // label3
@@ -413,7 +413,7 @@ namespace Apple2
             cbSlot2.FormattingEnabled = true;
             cbSlot2.Location = new Point(50, 82);
             cbSlot2.Name = "cbSlot2";
-            cbSlot2.Size = new Size(315, 23);
+            cbSlot2.Size = new Size(240, 23);
             cbSlot2.TabIndex = 24;
             // 
             // label2
@@ -430,7 +430,7 @@ namespace Apple2
             cbSlot1.FormattingEnabled = true;
             cbSlot1.Location = new Point(50, 53);
             cbSlot1.Name = "cbSlot1";
-            cbSlot1.Size = new Size(315, 23);
+            cbSlot1.Size = new Size(240, 23);
             cbSlot1.TabIndex = 22;
             // 
             // label1
@@ -447,14 +447,14 @@ namespace Apple2
             cbSlot0.FormattingEnabled = true;
             cbSlot0.Location = new Point(50, 24);
             cbSlot0.Name = "cbSlot0";
-            cbSlot0.Size = new Size(315, 23);
+            cbSlot0.Size = new Size(240, 23);
             cbSlot0.TabIndex = 20;
             // 
             // Interface
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1428, 721);
+            ClientSize = new Size(1332, 721);
             Controls.Add(groupBox3);
             Controls.Add(ckbColor);
             Controls.Add(groupBox1);

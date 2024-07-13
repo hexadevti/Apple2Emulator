@@ -18,24 +18,18 @@ namespace Apple2
 {
     public partial class Interface : Form
     {
-        public Apple2Board mainBoard { get; set; }
-        public IProcessor cpu { get; set; }
-        State state = new State();
+        const int pixelSize = 2;
+        private Apple2Board mainBoard { get; set; }
+        private IProcessor cpu { get; set; }
+        private State state = new State();
 
-        string? assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-        List<Task> threads = new List<Task>();
-        int pixelSize = 2;
+        private string? assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        private List<Task> threads = new List<Task>();
         private DirectSoundOut soundOutput = new DirectSoundOut();
-
         public Speaker speaker;
-
-        public System.Windows.Forms.MethodInvoker inv;
-
-        public WaveFormat waveFormat;
-
-        public List<ComboBox> cbSlots = new List<ComboBox>();
-
-        public List<List<KeyValuePair<string, string>>> cbDatasource = new List<List<KeyValuePair<string, string>>>();
+        private WaveFormat waveFormat;
+        private List<ComboBox> cbSlots = new List<ComboBox>();
+        private List<List<KeyValuePair<string, string>>> cbDatasource = new List<List<KeyValuePair<string, string>>>();
 
         public Interface()
         {
@@ -65,19 +59,10 @@ namespace Apple2
             this.FormClosing += FormCloseEvent;
             tbSpeed.Enabled = false;
             tbSpeed.ValueChanged += tbSpeed_ValueChanged;
-            disk1.TextChanged += disk_TextChanged;
-
             StartSpeaker();
             InitSlots();
             cpu.WarmStart();
             LoadThreads();
-
-
-        }
-
-        private void disk_TextChanged(object? sender, EventArgs e)
-        {
-
         }
 
         private void LoadContext()
