@@ -139,8 +139,8 @@ namespace Apple2.CPU.Mos6502
                             TimeSpan delta2 = DateTime.Now - countTime;
                             if (delta2.TotalMilliseconds >= adjcycle)
                             {
-                                mainBoard.screenLog.Enqueue(" Queue buffer: " + mainBoard.clickBuffer.Count()
-                                 + " cyclesPerMilliseconds = " + cyclesPerMilliseconds);
+                                // mainBoard.screenLog.Enqueue(" Queue buffer: " + mainBoard.clickBuffer.Count()
+                                //  + " cyclesPerMilliseconds = " + cyclesPerMilliseconds);
 
                                 if (mainBoard.clickBuffer.Count() > 2)
                                 {

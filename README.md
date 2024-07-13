@@ -1,4 +1,6 @@
-# Apple ][+ 
+# Apple ][sharp - dotnet C# Apple ][+ emulator
+
+*For Windows only
 
 This is an Apple II+ emulator with the 6502 processor. Made for pure fun, several challenges and concepts learned with this project. Based on the project https://github.com/AndiPexton/6502, which features an Apple I emulator. I updated the project and fixed some errors in some Opcodes.
 
