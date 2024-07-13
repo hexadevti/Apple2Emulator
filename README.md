@@ -1,4 +1,4 @@
-# 6502
+# Apple ][+ 
 
 Este é um emulador de Apple II+ juntamente com o processador 6502. Feito por pura diversão, varios desafios e conceitos aprendidos com esse projeto. Baseado no projeto https://github.com/AndiPexton/6502, o qual traz um emulador de Apple I. Atualizei o projeto e corrigi alguns erros de alguns Opcodes.
 
