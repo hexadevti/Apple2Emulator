@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Apple2.Mainboard.Abstractions;
+using Apple2.Mainboard.Interfaces;
 
 namespace Apple2.Mainboard
 {
@@ -16,16 +16,7 @@ namespace Apple2.Mainboard
         public Softswitches softswitches = new Softswitches();
         public Queue<byte[]> clickBuffer = new Queue<byte[]>(100);
         public int cpuCycles { get; set; }
-
-        public ICard slot0;
-        public ICard slot1;
-        public ICard slot2;
-        public ICard slot3;
-        public ICard slot4;
-        public ICard slot5;
-        public ICard slot6;
-        public ICard slot7;
-        SoftswitchesControl cpuSoftswitches = new SoftswitchesControl();
+        public ICard[] slots = new ICard[8];
         public Queue<string> screenLog = new Queue<string>();
         public Queue<bool> cycleWait = new Queue<bool>();
         public int audioJumpInterval = 25;
@@ -130,31 +121,20 @@ namespace Apple2.Mainboard
             }
             else if (address >= 0xc000 && address <= 0xc079)
             {
-                ret = cpuSoftswitches.Read(address, this);
+                ret = softswitches.Read(address, this);
             }
             else if (address >= 0xd000)
             {
-                if (slot0 is IRamCard && ((IRamCard)slot0).MemoryBankReadRAM_ROM)
+                bool read = false;
+                for (int i = 0; i < 5; i++)
                 {
-                    ret = slot0.Read(address, this);
+                    if (slots[i] is IRamCard && ((IRamCard)slots[i]).MemoryBankReadRAM_ROM)
+                    {
+                        ret = slots[0].Read(address, this);
+                        read = true;
+                    }
                 }
-                else if (slot1 is IRamCard && ((IRamCard)slot1).MemoryBankReadRAM_ROM)
-                {
-                    ret = slot1.Read(address, this);
-                }
-                else if (slot2 is IRamCard && ((IRamCard)slot2).MemoryBankReadRAM_ROM)
-                {
-                    ret = slot2.Read(address, this);
-                }
-                else if (slot3 is IRamCard && ((IRamCard)slot3).MemoryBankReadRAM_ROM)
-                {
-                    ret = slot3.Read(address, this);
-                }
-                else if (slot4 is IRamCard && ((IRamCard)slot4).MemoryBankReadRAM_ROM)
-                {
-                    ret = slot4.Read(address, this);
-                }
-                else
+                if (!read)
                 {
                     ret = ROM[address - 0xd000];
                 }
@@ -162,56 +142,27 @@ namespace Apple2.Mainboard
             }
             else if (address >= 0xc800) // Extended ROM Area
             {
-
                 //TODO: Put condition to redirect to correct slot
-                ret = slot3.Read(address, this);
-            }
-            else if (address >= 0xc700)
-            {
-                ret = slot7.C000ROM[address - 0xc700];
-            }
-            else if (address >= 0xc600)
-            {
-                ret = slot6.C000ROM[address - 0xc600];
-            }
-            else if (address >= 0xc500)
-            {
-                ret = slot5.C000ROM[address - 0xc500];
-            }
-            else if (address >= 0xc400)
-            {
-                ret = slot4.C000ROM[address - 0xc400];
-            }
-            else if (address >= 0xc300)
-            {
-                ret = slot3.C000ROM[address - 0xc300];
-            }
-            else if (address >= 0xc200)
-            {
-                ret = slot2.C000ROM[address - 0xc200];
+                ret = slots[3].Read(address, this);
             }
             else if (address >= 0xc100)
             {
-                ret = slot1.C000ROM[address - 0xc100];
+                for (int i = 1; i<8;i++)
+                {
+                    if (address >= 0xc000 + (0x100 * i) && address < 0xc000 + (0x100 * (i+1)))
+                    {
+                        ret = slots[i].C000ROM[address - (0xc000 + (0x100 * i))];
+                    }
+                }
             }
             else if (address >= 0xc080)
             {
-                if (address >= 0xc0f0) // Slot 7
-                    ret = slot7.Read(address, this);
-                else if (address >= 0xc0e0) // Slot 6
-                    ret = slot6.Read(address, this);
-                else if (address >= 0xc0d0) // Slot 5
-                    ret = slot5.Read(address, this);
-                else if (address >= 0xc0c0) // Slot 4
-                    ret = slot4.Read(address, this);
-                else if (address >= 0xc0b0) // Slot 3
-                    ret = slot3.Read(address, this);
-                else if (address >= 0xc0a0) // Slot 2
-                    ret = slot2.Read(address, this);
-                else if (address >= 0xc090) // Slot 1
-                    ret = slot1.Read(address, this);
-                else if (address >= 0xc080) // Slot 0
-                    ret = slot0.Read(address, this);
+                for (int i = 0; i < 8; i++)
+                {
+                    if (address >= 0xc080 + (0x10 * i) && address < 0xc080 + (0x10 * (i+1))) 
+                        ret = slots[i].Read(address, this);    
+                }
+                
             }
             return ret;
         }
@@ -223,54 +174,30 @@ namespace Apple2.Mainboard
             }
             else if (address >= 0xc000 && address <0xc079)
             {
-                cpuSoftswitches.Write(address, value, this);
+                softswitches.Write(address, value, this);
             }
             else if (address >= 0xd000)
             {
-                if (slot0 is IRamCard && ((IRamCard)slot0).MemoryBankReadRAM_ROM && ((IRamCard)slot0).MemoryBankWriteRAM_NoWrite)
+                for (int i = 0; i < 5; i++)
                 {
-                    slot0.Write(address, value, this);
-                }
-                else if (slot1 is IRamCard && ((IRamCard)slot1).MemoryBankReadRAM_ROM && ((IRamCard)slot1).MemoryBankWriteRAM_NoWrite)
-                {
-                    slot1.Write(address, value, this);
-                }
-                else if (slot2 is IRamCard && ((IRamCard)slot2).MemoryBankReadRAM_ROM && ((IRamCard)slot2).MemoryBankWriteRAM_NoWrite)
-                {
-                    slot2.Write(address, value, this);
-                }
-                else if (slot3 is IRamCard && ((IRamCard)slot3).MemoryBankReadRAM_ROM && ((IRamCard)slot3).MemoryBankWriteRAM_NoWrite)
-                {
-                    slot3.Write(address, value, this);
-                }
-                else if (slot4 is IRamCard && ((IRamCard)slot4).MemoryBankReadRAM_ROM && ((IRamCard)slot4).MemoryBankWriteRAM_NoWrite)
-                {
-                    slot4.Write(address, value, this);
+                    if (slots[i] is IRamCard && ((IRamCard)slots[i]).MemoryBankReadRAM_ROM && ((IRamCard)slots[i]).MemoryBankWriteRAM_NoWrite)
+                    {
+                        slots[i].Write(address, value, this);
+                    }
                 }
             }
             else if (address >= 0xc800) // Slots reserved ROM 
             {
                 //TODO: Condition to select right slot
-                slot3.Write(address, value, this); //cols80RAM[address - 0xcc00 + softswitches.cols80PageSelect * 0x200] = value;
+                slots[3].Write(address, value, this); //cols80RAM[address - 0xcc00 + softswitches.cols80PageSelect * 0x200] = value;
             }
             else if (address >= 0xc080) // Slots SoftSwitches
             {
-                if (address >= 0xc0f0) // Slot 7
-                    slot7.Write(address, value, this);
-                else if (address >= 0xc0e0) // Slot 6
-                    slot6.Write(address, value, this);
-                else if (address >= 0xc0d0) // Slot 5
-                    slot5.Write(address, value, this);
-                else if (address >= 0xc0c0) // Slot 4
-                    slot6.Write(address, value, this);
-                else if (address >= 0xc0b0) // Slot 3
-                    slot3.Write(address, value, this);
-                else if (address >= 0xc0a0) // Slot 2
-                    slot2.Write(address, value, this);
-                else if (address >= 0xc090) // Slot 1
-                    slot1.Write(address, value, this);
-                else if (address >= 0xc080) // Slot 0
-                    slot0.Write(address, value, this);
+                for (int i = 0; i < 8; i++)
+                {
+                    if (address >= 0xc080 + (0x10 * i) && address < 0xc080 + (0x10 * (i+1))) 
+                        slots[i].Write(address, value, this);
+                }
             }
             
 

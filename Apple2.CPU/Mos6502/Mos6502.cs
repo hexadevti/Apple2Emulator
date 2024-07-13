@@ -3,21 +3,21 @@ using System.Linq;
 using System.Threading;
 using System.Diagnostics;
 using Apple2.Mainboard;
+using Apple2.Mainboard.Interfaces;
+using Apple2.Mainboard.Enums;
+using Apple2.CPU.Mos6502;
 
-namespace Apple2.CPU
+namespace Apple2.CPU.Mos6502
 {
-    public class Processor
+    public class Mos6502 : IProcessor
     {
         public State state { get; set; }
         public Apple2Board mainBoard { get; set; }
-
         public CpuState cpuState { get; set; }
         public ushort lastPC = 0;
         public DateTime last1mhz = DateTime.MinValue;
 
-
-
-        public Processor(State state, Apple2Board mainBoard)
+        public Mos6502(State state, Apple2Board mainBoard)
         {
             this.mainBoard = mainBoard;
             this.state = state;
@@ -40,7 +40,7 @@ namespace Apple2.CPU
             state.PC = mainBoard.ReadAddressLLHH(0xfffc) ?? 0;
         }
 
-        public void IncPC()
+        public void IncrementPC()
         {
             state.PC++;
         }
@@ -72,7 +72,7 @@ namespace Apple2.CPU
         
         }
 
-        public void Run()
+        public void RunFast()
         {
             Stopwatch sw3 = Stopwatch.StartNew();
             while (cpuState != CpuState.Stopped)
@@ -88,7 +88,7 @@ namespace Apple2.CPU
             }
         }
 
-        public void DelayedRun()
+        public void Run()
         {
             DateTime countTime = DateTime.Now;
             int soundCycles = 0;
@@ -249,9 +249,5 @@ namespace Apple2.CPU
         }
     }
 
-    public enum CpuState{
-        Running,
-        Paused,
-        Stopped
-    }
+    
 }

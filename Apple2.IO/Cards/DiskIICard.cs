@@ -6,7 +6,7 @@ using System.Net;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
-using Apple2.Mainboard.Abstractions;
+using Apple2.Mainboard.Interfaces;
 
 namespace Apple2.Mainboard.Cards
 {

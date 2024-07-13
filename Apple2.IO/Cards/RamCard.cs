@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Text;
-using Apple2.Mainboard.Abstractions;
+using Apple2.Mainboard.Interfaces;
 
 namespace Apple2.Mainboard.Cards
 {

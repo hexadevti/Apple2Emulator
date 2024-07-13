@@ -9,15 +9,17 @@ using System.Threading;
 using Apple2.Mainboard;
 using Apple2.IO;
 using Apple2.CPU;
-using Apple2.Mainboard.Abstractions;
+using Apple2.Mainboard.Interfaces;
 using Apple2.Mainboard.Cards;
+using Apple2.Mainboard.Enums;
+using Apple2.CPU.Mos6502;
 
 namespace Apple2
 {
     public partial class Interface : Form
     {
         public Apple2Board mainBoard { get; set; }
-        public Processor cpu { get; set; }
+        public IProcessor cpu { get; set; }
         State state = new State();
 
         string? assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -31,6 +33,10 @@ namespace Apple2
 
         public WaveFormat waveFormat;
 
+        public List<ComboBox> cbSlots = new List<ComboBox>();
+
+        public List<List<KeyValuePair<string, string>>> cbDatasource = new List<List<KeyValuePair<string, string>>>();
+
         public Interface()
         {
             InitializeComponent();
@@ -43,10 +49,9 @@ namespace Apple2
             mainBoard = new Apple2Board();
             mainBoard.adjust1Mhz = true;
             btnClockAdjust.Text = "Fast";
-            cpu = new Processor(state, mainBoard);
+            cpu = new Mos6502(state, mainBoard);
             Keyboard keyboard = new Keyboard(mainBoard, cpu);
             richTextBox1.KeyDown += keyboard.OnKeyDown;
-            richTextBox1.KeyPress += keyboard.OnKeyPress;
             richTextBox1.TextChanged += keyboard.Keyb_TextChanged;
             mainBoard.LoadROM(0xf800, File.ReadAllBytes(assemblyPath + "roms/ApplesoftF800.bin"));
             mainBoard.LoadROM(0xf000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftF000.bin"));
@@ -60,19 +65,19 @@ namespace Apple2
             this.FormClosing += FormCloseEvent;
             tbSpeed.Enabled = false;
             tbSpeed.ValueChanged += tbSpeed_ValueChanged;
-            disk1.TextChanged+= disk_TextChanged;
+            disk1.TextChanged += disk_TextChanged;
 
             StartSpeaker();
             InitSlots();
             cpu.WarmStart();
             LoadThreads();
-            
+
 
         }
 
         private void disk_TextChanged(object? sender, EventArgs e)
         {
-            
+
         }
 
         private void LoadContext()
@@ -102,96 +107,61 @@ namespace Apple2
                 disk2.Text = "";
             }
 
-            cbSlot0.SelectedValue = Apple2plus.Properties.Settings.Default.Slot0Card;
-            cbSlot1.SelectedValue = Apple2plus.Properties.Settings.Default.Slot1Card;
-            cbSlot2.SelectedValue = Apple2plus.Properties.Settings.Default.Slot2Card;
-            cbSlot3.SelectedValue = Apple2plus.Properties.Settings.Default.Slot3Card;
-            cbSlot4.SelectedValue = Apple2plus.Properties.Settings.Default.Slot4Card;
-            cbSlot5.SelectedValue = Apple2plus.Properties.Settings.Default.Slot5Card;
-            cbSlot6.SelectedValue = Apple2plus.Properties.Settings.Default.Slot6Card;
-            cbSlot7.SelectedValue = Apple2plus.Properties.Settings.Default.Slot7Card;
 
-
-            
-            
+            for (int i = 0; i < 8; i++)
+            {
+                cbSlots[i].SelectedValue = Apple2plus.Properties.Settings.Default["Slot" + i + "Card"];
+            }
         }
         private void LoadCardsCombos()
         {
-            List<KeyValuePair<string,string>> cards0 = new List<KeyValuePair<string, string>>() {
-                new KeyValuePair<string, string>("LanguageCard","Language Card"),
-                new KeyValuePair<string, string>("RamCard","Saturn 128k RAM Card"),
-                new KeyValuePair<string, string>("EmptySlot","Empty")
+            cbSlots = new List<ComboBox>() { cbSlot0, cbSlot1, cbSlot2, cbSlot3, cbSlot4, cbSlot5, cbSlot6, cbSlot7 };
+            cbDatasource = new List<List<KeyValuePair<string, string>>>() {
+                new List<KeyValuePair<string, string>>() {
+                    new KeyValuePair<string, string>("LanguageCard","Language Card"),
+                    new KeyValuePair<string, string>("RamCard","Saturn 128k RAM Card"),
+                    new KeyValuePair<string, string>("EmptySlot","Empty")
+                },
+                new List<KeyValuePair<string, string>>() {
+                    new KeyValuePair<string, string>("EmptySlot","Empty"),
+                    new KeyValuePair<string, string>("RamCard","Saturn 128k RAM Card")
+                },
+                new List<KeyValuePair<string, string>>() {
+                    new KeyValuePair<string, string>("EmptySlot","Empty"),
+                    new KeyValuePair<string, string>("RamCard","Saturn 128k RAM Card")
+                },
+                new List<KeyValuePair<string, string>>() {
+                    new KeyValuePair<string, string>("Cols80Card","Videx 80 Column Card"),
+                    new KeyValuePair<string, string>("RamCard","Saturn 128,k RAM Card"),
+                    new KeyValuePair<string, string>("EmptySlot","Empty")
+                },
+                new List<KeyValuePair<string, string>>() {
+                    new KeyValuePair<string, string>("EmptySlot","Empty"),
+                    new KeyValuePair<string, string>("RamCard","Saturn 128k RAM Card")
+                },
+                new List<KeyValuePair<string, string>>() {
+                    new KeyValuePair<string, string>("EmptySlot","Empty"),
+                    new KeyValuePair<string, string>("DiskIICard","Disk II Card"),
+                    new KeyValuePair<string, string>("RamCard","Saturn 128k RAM Card")
+                },
+                new List<KeyValuePair<string, string>>() {
+                    new KeyValuePair<string, string>("DiskIICard","Disk II Card"),
+                    new KeyValuePair<string, string>("RamCard","Saturn 128k RAM Card"),
+                    new KeyValuePair<string, string>("EmptySlot","Empty")
+                },
+                new List<KeyValuePair<string, string>>() {
+                    new KeyValuePair<string, string>("EmptySlot","Empty"),
+                    new KeyValuePair<string, string>("RamCard","Saturn 128k RAM Card")
+                }
             };
-            List<KeyValuePair<string,string>> cards1 = new List<KeyValuePair<string, string>>() {
-                new KeyValuePair<string, string>("EmptySlot","Empty"),
-                new KeyValuePair<string, string>("RamCard","Saturn 128k RAM Card")
-            };
-            List<KeyValuePair<string,string>> cards2 = new List<KeyValuePair<string, string>>() {
-                new KeyValuePair<string, string>("EmptySlot","Empty"),
-                new KeyValuePair<string, string>("RamCard","Saturn 128k RAM Card")
-            };
-            List<KeyValuePair<string,string>> cards3 = new List<KeyValuePair<string, string>>() {
-                new KeyValuePair<string, string>("Cols80Card","Videx 80 Column Card"),
-                new KeyValuePair<string, string>("RamCard","Saturn 128,k RAM Card"),
-                new KeyValuePair<string, string>("EmptySlot","Empty")
-            };
-            List<KeyValuePair<string,string>> cards4 = new List<KeyValuePair<string, string>>() {
-                new KeyValuePair<string, string>("EmptySlot","Empty"),
-                new KeyValuePair<string, string>("RamCard","Saturn 128k RAM Card")
-            };
-            List<KeyValuePair<string,string>> cards5 = new List<KeyValuePair<string, string>>() {
-                new KeyValuePair<string, string>("EmptySlot","Empty"),
-                new KeyValuePair<string, string>("DiskIICard","Disk II Card"),
-                new KeyValuePair<string, string>("RamCard","Saturn 128k RAM Card")
-            };
-            List<KeyValuePair<string,string>> cards6 = new List<KeyValuePair<string, string>>() {
-                new KeyValuePair<string, string>("DiskIICard","Disk II Card"),
-                new KeyValuePair<string, string>("RamCard","Saturn 128k RAM Card"),
-                new KeyValuePair<string, string>("EmptySlot","Empty")
-            };
-            List<KeyValuePair<string,string>> cards7 = new List<KeyValuePair<string, string>>() {
-                new KeyValuePair<string, string>("EmptySlot","Empty"),
-                new KeyValuePair<string, string>("RamCard","Saturn 128k RAM Card")
-            };
-            cbSlot0.DataSource = cards0;
-            cbSlot0.DisplayMember = "Value";
-            cbSlot0.ValueMember = "Key";
-            cbSlot0.SelectedValueChanged += cbSlot_SelectedValueChanged;
-            
-            cbSlot1.DataSource = cards1;
-            cbSlot1.DisplayMember = "Value";
-            cbSlot1.ValueMember = "Key";
-            cbSlot1.SelectedValueChanged += cbSlot_SelectedValueChanged;
-            
-            cbSlot2.DataSource = cards2;
-            cbSlot2.DisplayMember = "Value";
-            cbSlot2.ValueMember = "Key";
-            cbSlot2.SelectedValueChanged += cbSlot_SelectedValueChanged;
 
-            cbSlot3.DataSource = cards3;
-            cbSlot3.DisplayMember = "Value";
-            cbSlot3.ValueMember = "Key";
-            cbSlot3.SelectedValueChanged += cbSlot_SelectedValueChanged;
-
-            cbSlot4.DataSource = cards4;
-            cbSlot4.DisplayMember = "Value";
-            cbSlot4.ValueMember = "Key";
-            cbSlot4.SelectedValueChanged += cbSlot_SelectedValueChanged;
-
-            cbSlot5.DataSource = cards5;
-            cbSlot5.DisplayMember = "Value";
-            cbSlot5.ValueMember = "Key";
-            cbSlot5.SelectedValueChanged += cbSlot_SelectedValueChanged;
-
-            cbSlot6.DataSource = cards6;
-            cbSlot6.DisplayMember = "Value";
-            cbSlot6.ValueMember = "Key";
-            cbSlot6.SelectedValueChanged += cbSlot_SelectedValueChanged;
-
-            cbSlot7.DataSource = cards7;
-            cbSlot7.DisplayMember = "Value";
-            cbSlot7.ValueMember = "Key";
-            cbSlot7.SelectedValueChanged += cbSlot_SelectedValueChanged;
+            for (int i = 0; i < 8; i++)
+            {
+                cbSlots[i].DataSource = cbDatasource[i];
+                cbSlots[i].DisplayMember = "Value";
+                cbSlots[i].ValueMember = "Key";
+                cbSlots[i].SelectedValueChanged += cbSlot_SelectedValueChanged;
+            }
 
         }
 
@@ -205,17 +175,14 @@ namespace Apple2
 
         private void InitSlots()
         {
-            mainBoard.slot0 = (ICard)GetInstance(cbSlot0.SelectedValue.ToString(), 0);
-            mainBoard.slot1 = (ICard)GetInstance(cbSlot1.SelectedValue.ToString(), 1);
-            mainBoard.slot2 = (ICard)GetInstance(cbSlot2.SelectedValue.ToString(), 2);
-            mainBoard.slot3 = (ICard)GetInstance(cbSlot3.SelectedValue.ToString(), 3);
-            mainBoard.slot4 = (ICard)GetInstance(cbSlot4.SelectedValue.ToString(), 4);
-            mainBoard.slot5 = (ICard)GetInstance(cbSlot5.SelectedValue.ToString(), 5);
-            mainBoard.slot6 = (ICard)GetInstance(cbSlot6.SelectedValue.ToString(), 6);
-            mainBoard.slot7 = (ICard)GetInstance(cbSlot7.SelectedValue.ToString(), 7);
+            for (int i = 0; i < 8; i++)
+            {
+                mainBoard.slots[i] = (ICard)GetInstance(cbSlots[i].SelectedValue.ToString(), i);
+
+            }
         }
 
-        public object? GetInstance(string type, int slot) 
+        public object? GetInstance(string type, int slot)
         {
             if (type == "LanguageCard")
                 return new LanguageCard();
@@ -229,7 +196,7 @@ namespace Apple2
                 return new DiskIICard(slot, File.ReadAllBytes(assemblyPath + "roms/DiskIICardRom.bin"), openFileDialog1.FileName, openFileDialog2.FileName);
             else
                 return new EmptySlot();
-            
+
         }
 
         private void tbSpeed_ValueChanged(object? sender, EventArgs e)
@@ -253,13 +220,13 @@ namespace Apple2
                     mainBoard.audioJumpInterval = ReadTrackBar(tbSpeed);
                     SetLabel(lblClockSpeed, (1000 / mainBoard.clockSpeed).ToString("0.00") + " Mhz");
                     DiskIICard actualDiskCard = null;
-                    if (mainBoard.slot5.GetType() == typeof(DiskIICard))
+                    if (mainBoard.slots[5].GetType() == typeof(DiskIICard))
                     {
-                        actualDiskCard = (DiskIICard)mainBoard.slot5;
-                    } 
-                    else if (mainBoard.slot6.GetType() == typeof(DiskIICard))
+                        actualDiskCard = (DiskIICard)mainBoard.slots[5];
+                    }
+                    else if (mainBoard.slots[6].GetType() == typeof(DiskIICard))
                     {
-                        actualDiskCard = (DiskIICard)mainBoard.slot6;
+                        actualDiskCard = (DiskIICard)mainBoard.slots[6];
                     }
 
                     if (actualDiskCard != null)
@@ -294,8 +261,8 @@ namespace Apple2
                                 pictureBox1.Image = Video.Generate(mainBoard, pixelSize);
                             else
                             {
-                                if (mainBoard.slot3.GetType() == typeof(Cols80Card))
-                                    pictureBox1.Image = ((Cols80Card)mainBoard.slot3).Generate(mainBoard, pixelSize);
+                                if (mainBoard.slots[3].GetType() == typeof(Cols80Card))
+                                    pictureBox1.Image = ((Cols80Card)mainBoard.slots[3]).Generate(mainBoard, pixelSize);
                             }
                         }
                         catch { }
@@ -304,7 +271,7 @@ namespace Apple2
                 }
             }));
 
-            threads.Add(Task.Run(() => cpu.DelayedRun()));
+            threads.Add(Task.Run(() => cpu.Run()));
         }
 
         private void StartSpeaker()
@@ -323,7 +290,7 @@ namespace Apple2
 
         private void button_dsk1_Click(object sender, EventArgs e)
         {
-            
+
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 string[] parts = openFileDialog1.FileName.Split('\\');
@@ -350,13 +317,13 @@ namespace Apple2
         private void UpdateDisks()
         {
             ICard actualDiskCard = null;
-            if (mainBoard.slot5.GetType() == typeof(DiskIICard))
+            if (mainBoard.slots[5].GetType() == typeof(DiskIICard))
             {
-                actualDiskCard = (DiskIICard)mainBoard.slot5;
-            } 
-            else if (mainBoard.slot6.GetType() == typeof(DiskIICard))
+                actualDiskCard = (DiskIICard)mainBoard.slots[5];
+            }
+            else if (mainBoard.slots[6].GetType() == typeof(DiskIICard))
             {
-                actualDiskCard = (DiskIICard)mainBoard.slot6;
+                actualDiskCard = (DiskIICard)mainBoard.slots[6];
             }
 
             if (actualDiskCard != null)

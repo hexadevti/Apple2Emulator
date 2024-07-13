@@ -2,7 +2,7 @@ using System.Net;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
-using Apple2.Mainboard.Abstractions;
+using Apple2.Mainboard.Interfaces;
 using System.Drawing.Imaging;
 using System.Drawing;
 

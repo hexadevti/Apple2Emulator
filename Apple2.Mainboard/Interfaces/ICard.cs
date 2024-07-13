@@ -1,6 +1,6 @@
 using Apple2.Mainboard;
 
-namespace Apple2.Mainboard.Abstractions
+namespace Apple2.Mainboard.Interfaces
 {
 
     public interface ICard

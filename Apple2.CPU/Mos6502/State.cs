@@ -1,4 +1,4 @@
-﻿namespace Apple2.CPU
+namespace Apple2.CPU
 {
     public class State
     {
@@ -31,6 +31,4 @@
             S = 0;
         }
     }
-
-
 }

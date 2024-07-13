@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Apple2.CPU;
 using Apple2.Mainboard;
+using Apple2.Mainboard.Interfaces;
 
 namespace Apple2
 {
@@ -14,23 +15,14 @@ namespace Apple2
     {
         public Apple2Board mainBoard { get; set; }
 
-        private Processor cpu { get; set; }
+        private IProcessor cpu { get; set; }
 
         private List<char> buffer = new List<char>();
 
-        public Keyboard(Apple2Board mainBoard, Processor cpu)
+        public Keyboard(Apple2Board mainBoard, IProcessor cpu)
         {
             this.mainBoard = mainBoard;
             this.cpu = cpu;
-        }
-
-        public void OnKeyPress(object? sender, KeyPressEventArgs e)
-        {
-            if (e.KeyChar < 32 || e.KeyChar >= 127)
-                return;
-
-            mainBoard.KeyPressedBuffer = (byte)(Encoding.ASCII.GetBytes(new[] { e.KeyChar.ToString().ToUpper()[0] })[0] | 0b10000000);
-            e.Handled = true;
         }
 
         public void OnKeyDown(object? sender, KeyEventArgs e)
@@ -115,7 +107,7 @@ namespace Apple2
                             Thread.Sleep(100);
                         }
                         else
-                            mainBoard.KeyPressedBuffer = (byte)(Encoding.ASCII.GetBytes(new[] { item.ToString().ToUpper()[0] })[0] | 0b10000000);
+                            mainBoard.KeyPressedBuffer = (byte)(Encoding.ASCII.GetBytes(new[] { item })[0] | 0b10000000);
                         Thread.Sleep(1);
                     }
                 });
