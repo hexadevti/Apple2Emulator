@@ -1,4 +1,4 @@
-# Apple ][sharp - dotnet C# Apple ][+ emulator
+# Apple ][# - dotnet C# Apple ][+ emulator
 
 *For Windows only
 
