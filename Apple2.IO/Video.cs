@@ -12,8 +12,7 @@ namespace Apple2
         public static Bitmap Generate(Apple2Board mainBoard, int pixelSize)
         {
             int byteid = 0;
-            var cursorH = mainBoard.baseRAM[0x24];
-            var cursorV = mainBoard.baseRAM[0x25];
+            
             ushort graphicsPage = 0x2000;
             ushort textPage = 0x400;
             byte[] bmp = new byte[280 * pixelSize * 192 * pixelSize];
@@ -148,14 +147,8 @@ namespace Apple2
                             var chr = mainBoard.baseRAM[(ushort)(textPage + (b * 0x28) + (l * 0x80) + c)];
                             if (chr >= 0x40 && chr < 0x80)
                                 chr = Math.Floor((float)(DateTime.Now.Millisecond / 500)) % 2 == 0 ? (byte)(chr + 0x40) : chr;
-                            if (posV == cursorV && posH == cursorH)
-                            {
-                                //if (chr == 0x60)
-                                //    chr = 0xa0;
+                            if (posV == mainBoard.baseRAM[0x25] && posH == mainBoard.baseRAM[0x24])
                                 chr = Math.Floor((float)(DateTime.Now.Millisecond / 500)) % 2 == 0 ? (byte)(chr + 0x40) : chr;
-
-                            }
-
                             linha[c] = chr;
                         }
 

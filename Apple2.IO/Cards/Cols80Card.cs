@@ -94,8 +94,6 @@ namespace Apple2.Mainboard.Cards
         public Bitmap Generate(Apple2Board mainBoard, int pixelSize)
         {
             int byteid = 0;
-            var cursorH = mainBoard.baseRAM[0x57b];
-            var cursorV = mainBoard.baseRAM[0x5fb];
             byte[] bmp = new byte[640 * pixelSize * 216 * pixelSize * 2];
             int posH = 0;
             byte[] linha = new byte[0x50];
@@ -108,7 +106,7 @@ namespace Apple2.Mainboard.Cards
                 {
                     posH = c;
                     var chr = cols80RAM[(ushort)((c + (posV * 0x50) + mainBoard.baseRAM[0x6fb] * 0x10) % 0x800)];
-                    if (posV == cursorV && posH == cursorH)
+                    if (posV == mainBoard.baseRAM[0x5fb] && posH == mainBoard.baseRAM[0x57b])
                     {
                         chr = Math.Floor((float)(DateTime.Now.Millisecond / 500)) % 2 == 0 ? (byte)(chr + 0x80) : (byte)(chr);
                     }
