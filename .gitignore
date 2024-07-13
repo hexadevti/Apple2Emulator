@@ -6,8 +6,4 @@ Apple2.Mainboard/bin/*
 Apple2.Mainboard/obj/*
 Apple2plus/bin/*
 Apple2plus/obj/*
-.vs/6502/*
-.vs/6502/DesignTimeBuild/*
-.vs/6502/v17/*
-.vs/ProjectEvaluation/*
-.vs/6502/*
+.vs/*
