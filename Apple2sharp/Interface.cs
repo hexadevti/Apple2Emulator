@@ -67,7 +67,7 @@ namespace Apple2
 
         private void LoadContext()
         {
-            string Disk1Path = Apple2plus.Properties.Settings.Default.Disk1Path;
+            string Disk1Path = Apple2sharp.Properties.Settings.Default.Disk1Path;
             if (!string.IsNullOrEmpty(Disk1Path))
             {
                 openFileDialog1.FileName = Disk1Path;
@@ -79,7 +79,7 @@ namespace Apple2
                 openFileDialog1.FileName = "";
                 disk1.Text = "";
             }
-            string Disk2Path = Apple2plus.Properties.Settings.Default.Disk2Path;
+            string Disk2Path = Apple2sharp.Properties.Settings.Default.Disk2Path;
             if (!string.IsNullOrEmpty(Disk2Path))
             {
                 openFileDialog2.FileName = Disk2Path;
@@ -94,7 +94,7 @@ namespace Apple2
 
 
             for (int i = 0; i < 8; i++)
-                cbSlots[i].SelectedValue = Apple2plus.Properties.Settings.Default["Slot" + i + "Card"];
+                cbSlots[i].SelectedValue = Apple2sharp.Properties.Settings.Default["Slot" + i + "Card"];
         }
         private void LoadCardsCombos()
         {
@@ -151,8 +151,8 @@ namespace Apple2
         private void cbSlot_SelectedValueChanged(object? sender, EventArgs e)
         {
             string settings = ((ComboBox)sender).Name.Replace("cb", "") + "Card";
-            Apple2plus.Properties.Settings.Default[settings] = ((ComboBox)sender).SelectedValue;
-            Apple2plus.Properties.Settings.Default.Save();
+            Apple2sharp.Properties.Settings.Default[settings] = ((ComboBox)sender).SelectedValue;
+            Apple2sharp.Properties.Settings.Default.Save();
 
         }
 
@@ -271,8 +271,8 @@ namespace Apple2
             {
                 string[] parts = openFileDialog1.FileName.Split('\\');
                 disk1.Text = parts[parts.Length - 1];
-                Apple2plus.Properties.Settings.Default["Disk1Path"] = openFileDialog1.FileName;
-                Apple2plus.Properties.Settings.Default.Save();
+                Apple2sharp.Properties.Settings.Default["Disk1Path"] = openFileDialog1.FileName;
+                Apple2sharp.Properties.Settings.Default.Save();
                 UpdateDisks();
                 richTextBox1.Focus();
             }
@@ -283,8 +283,8 @@ namespace Apple2
             {
                 string[] parts = openFileDialog2.FileName.Split('\\');
                 disk2.Text = parts[parts.Length - 1];
-                Apple2plus.Properties.Settings.Default["Disk2Path"] = openFileDialog2.FileName;
-                Apple2plus.Properties.Settings.Default.Save();
+                Apple2sharp.Properties.Settings.Default["Disk2Path"] = openFileDialog2.FileName;
+                Apple2sharp.Properties.Settings.Default.Save();
                 UpdateDisks();
                 richTextBox1.Focus();
             }

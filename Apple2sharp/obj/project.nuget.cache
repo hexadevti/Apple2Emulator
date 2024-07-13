@@ -2,7 +2,7 @@
   "version": 2,
   "dgSpecHash": "81NlTe6v4Yf6rMkkXntNLWplUE55alyYml8yJZqx1nW2psSIfWh+GQ74Ya4Pn7sSk/Vdy9Xrfj/gS81gJq31pQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\luciano\\repos\\Apple2sharp\\Apple2plus\\Apple2plus.csproj",
+  "projectFilePath": "C:\\Users\\luciano\\repos\\Apple2sharp\\Apple2sharp\\Apple2sharp.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\luciano\\.nuget\\packages\\microsoft.netcore.platforms\\3.1.0\\microsoft.netcore.platforms.3.1.0.nupkg.sha512",
     "C:\\Users\\luciano\\.nuget\\packages\\microsoft.win32.registry\\4.7.0\\microsoft.win32.registry.4.7.0.nupkg.sha512",

@@ -1,7 +1,7 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\luciano\\repos\\Apple2sharp\\Apple2plus\\Apple2plus.csproj": {}
+    "C:\\Users\\luciano\\repos\\Apple2sharp\\Apple2sharp\\Apple2sharp.csproj": {}
   },
   "projects": {
     "C:\\Users\\luciano\\repos\\Apple2sharp\\Apple2.CPU\\Apple2.CPU.csproj": {
@@ -220,14 +220,14 @@
         }
       }
     },
-    "C:\\Users\\luciano\\repos\\Apple2sharp\\Apple2plus\\Apple2plus.csproj": {
+    "C:\\Users\\luciano\\repos\\Apple2sharp\\Apple2sharp\\Apple2sharp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\luciano\\repos\\Apple2sharp\\Apple2plus\\Apple2plus.csproj",
-        "projectName": "Apple2plus",
-        "projectPath": "C:\\Users\\luciano\\repos\\Apple2sharp\\Apple2plus\\Apple2plus.csproj",
+        "projectUniqueName": "C:\\Users\\luciano\\repos\\Apple2sharp\\Apple2sharp\\Apple2sharp.csproj",
+        "projectName": "Apple2sharp",
+        "projectPath": "C:\\Users\\luciano\\repos\\Apple2sharp\\Apple2sharp\\Apple2sharp.csproj",
         "packagesPath": "C:\\Users\\luciano\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\luciano\\repos\\Apple2sharp\\Apple2plus\\obj\\",
+        "outputPath": "C:\\Users\\luciano\\repos\\Apple2sharp\\Apple2sharp\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
