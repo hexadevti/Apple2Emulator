@@ -12,7 +12,9 @@ This emulator brings some features such as:
 - Language card (16kb expansion)
 - Saturn 128kb RAM card
 - 80 Columns Card
-- Disk II Card DOS/Prodos compatible
+- Disk II Card DOS/Prodos compatible .dsk, .po, .do image files*
+
+*.dsk files examples at \disks folder
 
 Some points of necessary improvements, such as: greater sound stability and reduction of machine consumption due to clock control. (C# has some Thread.Sleep limitations, minimum of 1ms, with little precision).
 

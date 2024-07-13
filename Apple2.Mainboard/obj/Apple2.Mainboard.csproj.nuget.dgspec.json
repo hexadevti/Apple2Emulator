@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\luciano\\repos\\Apple2Emulator\\Apple2.Mainboard\\Apple2.Mainboard.csproj": {}
+    "C:\\Users\\luciano\\repos\\Apple2sharp\\Apple2.Mainboard\\Apple2.Mainboard.csproj": {}
   },
   "projects": {
-    "C:\\Users\\luciano\\repos\\Apple2Emulator\\Apple2.Mainboard\\Apple2.Mainboard.csproj": {
+    "C:\\Users\\luciano\\repos\\Apple2sharp\\Apple2.Mainboard\\Apple2.Mainboard.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\luciano\\repos\\Apple2Emulator\\Apple2.Mainboard\\Apple2.Mainboard.csproj",
+        "projectUniqueName": "C:\\Users\\luciano\\repos\\Apple2sharp\\Apple2.Mainboard\\Apple2.Mainboard.csproj",
         "projectName": "Apple2.Mainboard",
-        "projectPath": "C:\\Users\\luciano\\repos\\Apple2Emulator\\Apple2.Mainboard\\Apple2.Mainboard.csproj",
+        "projectPath": "C:\\Users\\luciano\\repos\\Apple2sharp\\Apple2.Mainboard\\Apple2.Mainboard.csproj",
         "packagesPath": "C:\\Users\\luciano\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\luciano\\repos\\Apple2Emulator\\Apple2.Mainboard\\obj\\",
+        "outputPath": "C:\\Users\\luciano\\repos\\Apple2sharp\\Apple2.Mainboard\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

@@ -33,11 +33,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\luciano\\repos\\Apple2Emulator\\Apple2.CPU\\Apple2.CPU.csproj",
+      "projectUniqueName": "C:\\Users\\luciano\\repos\\Apple2sharp\\Apple2.CPU\\Apple2.CPU.csproj",
       "projectName": "Apple2.CPU",
-      "projectPath": "C:\\Users\\luciano\\repos\\Apple2Emulator\\Apple2.CPU\\Apple2.CPU.csproj",
+      "projectPath": "C:\\Users\\luciano\\repos\\Apple2sharp\\Apple2.CPU\\Apple2.CPU.csproj",
       "packagesPath": "C:\\Users\\luciano\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\luciano\\repos\\Apple2Emulator\\Apple2.CPU\\obj\\",
+      "outputPath": "C:\\Users\\luciano\\repos\\Apple2sharp\\Apple2.CPU\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -59,8 +59,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\Users\\luciano\\repos\\Apple2Emulator\\Apple2.Mainboard\\Apple2.Mainboard.csproj": {
-              "projectPath": "C:\\Users\\luciano\\repos\\Apple2Emulator\\Apple2.Mainboard\\Apple2.Mainboard.csproj"
+            "C:\\Users\\luciano\\repos\\Apple2sharp\\Apple2.Mainboard\\Apple2.Mainboard.csproj": {
+              "projectPath": "C:\\Users\\luciano\\repos\\Apple2sharp\\Apple2.Mainboard\\Apple2.Mainboard.csproj"
             }
           }
         }
