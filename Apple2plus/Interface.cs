@@ -94,9 +94,7 @@ namespace Apple2
 
 
             for (int i = 0; i < 8; i++)
-            {
                 cbSlots[i].SelectedValue = Apple2plus.Properties.Settings.Default["Slot" + i + "Card"];
-            }
         }
         private void LoadCardsCombos()
         {
@@ -161,10 +159,7 @@ namespace Apple2
         private void InitSlots()
         {
             for (int i = 0; i < 8; i++)
-            {
                 mainBoard.slots[i] = (ICard)GetInstance(cbSlots[i].SelectedValue.ToString(), i);
-
-            }
         }
 
         public object? GetInstance(string type, int slot)
@@ -206,13 +201,9 @@ namespace Apple2
                     SetLabel(lblClockSpeed, (1000 / mainBoard.clockSpeed).ToString("0.00") + " Mhz");
                     DiskIICard actualDiskCard = null;
                     if (mainBoard.slots[5].GetType() == typeof(DiskIICard))
-                    {
                         actualDiskCard = (DiskIICard)mainBoard.slots[5];
-                    }
                     else if (mainBoard.slots[6].GetType() == typeof(DiskIICard))
-                    {
                         actualDiskCard = (DiskIICard)mainBoard.slots[6];
-                    }
 
                     if (actualDiskCard != null)
                     {
@@ -303,13 +294,9 @@ namespace Apple2
         {
             ICard actualDiskCard = null;
             if (mainBoard.slots[5].GetType() == typeof(DiskIICard))
-            {
                 actualDiskCard = (DiskIICard)mainBoard.slots[5];
-            }
             else if (mainBoard.slots[6].GetType() == typeof(DiskIICard))
-            {
                 actualDiskCard = (DiskIICard)mainBoard.slots[6];
-            }
 
             if (actualDiskCard != null)
             {
@@ -362,23 +349,15 @@ namespace Apple2
                 control.Invoke(safeWrite);
             }
             else
-            {
                 control.Text = text;
-            }
-
         }
 
         public static int ReadTrackBar(TrackBar control)
         {
             if (control.InvokeRequired)
-            {
                 return (int)control.Invoke(new Func<int>(() => ReadTrackBar(control)));
-            }
             else
-            {
                 return control.Value;
-            }
-
         }
 
         public void SetCheckbox(CheckBox control, bool check)
@@ -389,10 +368,7 @@ namespace Apple2
                 control.Invoke(safeWrite);
             }
             else
-            {
                 control.Checked = check;
-            }
-
         }
 
         public void SetRichTextBox(RichTextBox control, string text)
@@ -415,7 +391,5 @@ namespace Apple2
             if (mainBoard != null)
                 mainBoard.videoColor = ckbColor.Checked;
         }
-
-
     }
 }
