@@ -78,6 +78,7 @@ namespace Apple2
                             {
                                 for (int ps1 = 0; ps1 < pixelSize; ps1++)
                                 {
+                                    
                                     bool[] blocklineAnt = new bool[] { false, false, false, false, false, false, false, false };
                                     for (ushort c = 0; c < 0x28; c++)
                                     {
@@ -111,7 +112,10 @@ namespace Apple2
                                             {
                                                 for (int ps2 = 0; ps2 < pixelSize; ps2++)
                                                 {
-                                                    bmp[byteid] = (byte)pixels[id];
+                                                    if (mainBoard.scanLines && pixelSize > 2 && ps1 == pixelSize-1)
+                                                        bmp[byteid] = 0;
+                                                    else
+                                                        bmp[byteid] = (byte)pixels[id];
                                                     byteid++;
                                                 }
                                             }
@@ -123,10 +127,15 @@ namespace Apple2
                                             {
                                                 for (int ps2 = 0; ps2 < pixelSize; ps2++)
                                                 {
-                                                    if (blockline[i])
-                                                        bmp[byteid] = 0xff;
+                                                    if (mainBoard.scanLines && pixelSize > 2 && ps1 == pixelSize-1)
+                                                        bmp[byteid] = 0;
                                                     else
-                                                        bmp[byteid] = 0x00;
+                                                    {
+                                                        if (blockline[i])
+                                                            bmp[byteid] = 0xff;
+                                                        else
+                                                            bmp[byteid] = 0x00;
+                                                    }
                                                     byteid++;
                                                 }
                                             }
@@ -165,10 +174,15 @@ namespace Apple2
                                         {
                                             if (objout != null)
                                             {
-                                                if ((bool)objout)
-                                                    bmp[byteid] = 0xff;
-                                                else
-                                                    bmp[byteid] = 0x0;
+                                                   if (mainBoard.scanLines && pixelSize > 2 && ps1 == pixelSize-1)
+                                                        bmp[byteid] = 0;
+                                                    else
+                                                    {
+                                                        if ((bool)objout)
+                                                            bmp[byteid] = 0xff;
+                                                        else
+                                                            bmp[byteid] = 0x0;
+                                                    }
                                             }
                                             else
                                                 bmp[byteid] = 0x0;

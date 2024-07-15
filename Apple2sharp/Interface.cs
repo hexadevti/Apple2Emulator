@@ -13,12 +13,13 @@ using Apple2.Mainboard.Interfaces;
 using Apple2.Mainboard.Cards;
 using Apple2.Mainboard.Enums;
 using Apple2.CPU.Mos6502;
+using System.Drawing;
 
 namespace Apple2
 {
     public partial class Interface : Form
     {
-        const int pixelSize = 2;
+        const int pixelSize = 3;
         private Apple2Board mainBoard { get; set; }
         private IProcessor cpu { get; set; }
         private State state = new State();
@@ -42,7 +43,8 @@ namespace Apple2
             this.Shown += Form1_Shown;
             mainBoard = new Apple2Board();
             mainBoard.adjust1Mhz = true;
-            btnClockAdjust.Text = "Fast";
+            D1OFF.Visible = true;
+            D2OFF.Visible = true;
             cpu = new Mos6502(state, mainBoard);
             Keyboard keyboard = new Keyboard(mainBoard, cpu);
             richTextBox1.KeyDown += keyboard.OnKeyDown;
@@ -64,6 +66,7 @@ namespace Apple2
             cpu.WarmStart();
             LoadThreads();
         }
+
 
         private void LoadContext()
         {
@@ -98,38 +101,38 @@ namespace Apple2
         }
         private void LoadCardsCombos()
         {
-            cbSlots = new List<ComboBox>() { cbSlot0, cbSlot1, cbSlot2, cbSlot3, cbSlot4, cbSlot5, cbSlot6, cbSlot7 };
+            cbSlots = new List<ComboBox>() { cbslot0, cbslot1, cbslot2, cbslot3, cbslot4, cbslot5, cbslot6, cbslot7 };
             cbDatasource = new List<List<KeyValuePair<string, string>>>() {
                 new List<KeyValuePair<string, string>>() {
                     new KeyValuePair<string, string>("LanguageCard","Language Card"),
-                    new KeyValuePair<string, string>("RamCard","Saturn 128k RAM Card"),
+                    new KeyValuePair<string, string>("RamCard","Saturn 128k RAM"),
                     new KeyValuePair<string, string>("EmptySlot","Empty")
                 },
                 new List<KeyValuePair<string, string>>() {
                     new KeyValuePair<string, string>("EmptySlot","Empty"),
-                    new KeyValuePair<string, string>("RamCard","Saturn 128k RAM Card")
+                    new KeyValuePair<string, string>("RamCard","Saturn 128k RAM")
                 },
                 new List<KeyValuePair<string, string>>() {
                     new KeyValuePair<string, string>("EmptySlot","Empty"),
-                    new KeyValuePair<string, string>("RamCard","Saturn 128k RAM Card")
+                    new KeyValuePair<string, string>("RamCard","Saturn 128k RAM")
                 },
                 new List<KeyValuePair<string, string>>() {
-                    new KeyValuePair<string, string>("Cols80Card","Videx 80 Column Card"),
-                    new KeyValuePair<string, string>("RamCard","Saturn 128,k RAM Card"),
+                    new KeyValuePair<string, string>("Cols80Card","Videx 80 Column"),
+                    new KeyValuePair<string, string>("RamCard","Saturn 128,k RAM"),
                     new KeyValuePair<string, string>("EmptySlot","Empty")
                 },
                 new List<KeyValuePair<string, string>>() {
                     new KeyValuePair<string, string>("EmptySlot","Empty"),
-                    new KeyValuePair<string, string>("RamCard","Saturn 128k RAM Card")
+                    new KeyValuePair<string, string>("RamCard","Saturn 128k RAM")
                 },
                 new List<KeyValuePair<string, string>>() {
                     new KeyValuePair<string, string>("EmptySlot","Empty"),
                     new KeyValuePair<string, string>("DiskIICard","Disk II Card"),
-                    new KeyValuePair<string, string>("RamCard","Saturn 128k RAM Card")
+                    new KeyValuePair<string, string>("RamCard","Saturn 128k RAM")
                 },
                 new List<KeyValuePair<string, string>>() {
                     new KeyValuePair<string, string>("DiskIICard","Disk II Card"),
-                    new KeyValuePair<string, string>("RamCard","Saturn 128k RAM Card"),
+                    new KeyValuePair<string, string>("RamCard","Saturn 128k RAM"),
                     new KeyValuePair<string, string>("EmptySlot","Empty")
                 },
                 new List<KeyValuePair<string, string>>() {
@@ -209,11 +212,17 @@ namespace Apple2
                     {
                         SetLabel(D1T, "T: " + actualDiskCard.drive1.track.ToString());
                         SetLabel(D1S, "S: " + (actualDiskCard.drive1.sector > 16 ? "?" : actualDiskCard.drive1.sector.ToString()));
-                        SetCheckbox(D1O, actualDiskCard.drive1.on);
+                        SetDriveLight(D1ON, actualDiskCard.drive1.on);
                         SetLabel(D2T, "T: " + actualDiskCard.drive2.track.ToString());
                         SetLabel(D2S, "S: " + (actualDiskCard.drive2.sector > 16 ? "?" : actualDiskCard.drive2.sector.ToString()));
-                        SetCheckbox(D2O, actualDiskCard.drive2.on);
+                        SetDriveLight(D2ON, actualDiskCard.drive2.on);
                     }
+
+                    SetButtonActive(btnColor, mainBoard.videoColor, Color.Salmon);
+                    SetButtonActive(btnTurbo, !mainBoard.adjust1Mhz, Color.Salmon);
+                    SetButtonActive(btn1Mhz, mainBoard.adjust1Mhz, Color.Salmon);
+                    SetButtonActive(btnScanLines, mainBoard.scanLines, Color.Salmon);
+
                     string text = "";
                     for (int i = 0; i < mainBoard.screenLog.Count; i++)
                     {
@@ -243,6 +252,7 @@ namespace Apple2
                         }
                         catch { }
                     }
+                    
                     Thread.Sleep(50);
                 }
             }));
@@ -262,32 +272,6 @@ namespace Apple2
         private void Form1_Shown(object? sender, EventArgs e)
         {
             richTextBox1.Focus();
-        }
-
-        private void button_dsk1_Click(object sender, EventArgs e)
-        {
-
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                string[] parts = openFileDialog1.FileName.Split('\\');
-                disk1.Text = parts[parts.Length - 1];
-                Apple2sharp.Properties.Settings.Default["Disk1Path"] = openFileDialog1.FileName;
-                Apple2sharp.Properties.Settings.Default.Save();
-                UpdateDisks();
-                richTextBox1.Focus();
-            }
-        }
-        private void button_dsk2_Click(object sender, EventArgs e)
-        {
-            if (openFileDialog2.ShowDialog() == DialogResult.OK)
-            {
-                string[] parts = openFileDialog2.FileName.Split('\\');
-                disk2.Text = parts[parts.Length - 1];
-                Apple2sharp.Properties.Settings.Default["Disk2Path"] = openFileDialog2.FileName;
-                Apple2sharp.Properties.Settings.Default.Save();
-                UpdateDisks();
-                richTextBox1.Focus();
-            }
         }
 
         private void UpdateDisks()
@@ -319,25 +303,10 @@ namespace Apple2
 
         private void btnClockAdjust_Click(object sender, EventArgs e)
         {
-            if (mainBoard != null)
-            {
-                mainBoard.adjust1Mhz = !mainBoard.adjust1Mhz;
-                if (mainBoard.adjust1Mhz)
-                {
-                    mainBoard.clickBuffer.Clear();
-                    tbSpeed.Value = 1;
-                    tbSpeed.Enabled = false;
-                    btnClockAdjust.Text = "Fast";
-                }
-                else
-                {
-
-                    mainBoard.clickBuffer.Clear();
-                    tbSpeed.Value = 10;
-                    tbSpeed.Enabled = true;
-                    btnClockAdjust.Text = "1Mhz";
-                }
-            }
+            mainBoard.adjust1Mhz = true;
+            mainBoard.clickBuffer.Clear();
+            tbSpeed.Value = 1;
+            tbSpeed.Enabled = false;
             richTextBox1.Focus();
         }
 
@@ -352,6 +321,22 @@ namespace Apple2
                 control.Text = text;
         }
 
+        public void SetButtonActive(Button control, bool active, Color color)
+        {
+            if (D1T.InvokeRequired)
+            {
+                Action safeWrite = delegate { SetButtonActive(control, active, color); };
+                control.Invoke(safeWrite);
+            }
+            else
+            {
+                if (active)
+                    control.BackColor = color;
+                else 
+                    control.BackColor = Color.White;
+            }
+        }
+
         public static int ReadTrackBar(TrackBar control)
         {
             if (control.InvokeRequired)
@@ -360,15 +345,15 @@ namespace Apple2
                 return control.Value;
         }
 
-        public void SetCheckbox(CheckBox control, bool check)
+        public void SetDriveLight(PictureBox control, bool check)
         {
             if (D1T.InvokeRequired)
             {
-                Action safeWrite = delegate { SetCheckbox(control, check); };
+                Action safeWrite = delegate { SetDriveLight(control, check); };
                 control.Invoke(safeWrite);
             }
             else
-                control.Checked = check;
+                control.Visible = check;
         }
 
         public void SetRichTextBox(RichTextBox control, string text)
@@ -386,10 +371,53 @@ namespace Apple2
 
         }
 
-        private void ckbColor_Click(object sender, EventArgs e)
+        private void disk1_TextChanged(object sender, EventArgs e)
         {
-            if (mainBoard != null)
-                mainBoard.videoColor = ckbColor.Checked;
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                string[] parts = openFileDialog1.FileName.Split('\\');
+                disk1.Text = parts[parts.Length - 1];
+                Apple2sharp.Properties.Settings.Default["Disk1Path"] = openFileDialog1.FileName;
+                Apple2sharp.Properties.Settings.Default.Save();
+                UpdateDisks();
+                richTextBox1.Focus();
+            }
         }
+
+        private void disk2_TextChanged(object sender, EventArgs e)
+        {
+            if (openFileDialog2.ShowDialog() == DialogResult.OK)
+            {
+                string[] parts = openFileDialog2.FileName.Split('\\');
+                disk2.Text = parts[parts.Length - 1];
+                Apple2sharp.Properties.Settings.Default["Disk2Path"] = openFileDialog2.FileName;
+                Apple2sharp.Properties.Settings.Default.Save();
+                UpdateDisks();
+                richTextBox1.Focus();
+            }
+        }
+
+        private void btnColor_Click(object sender, EventArgs e)
+        {
+            mainBoard.videoColor = !mainBoard.videoColor;
+            richTextBox1.Focus();
+        }
+
+        private void btnScanLines_Click(object sender, EventArgs e)
+        {
+            mainBoard.scanLines = !mainBoard.scanLines;
+            richTextBox1.Focus();
+        }
+
+        private void btnTurbo_Click(object sender, EventArgs e)
+        {
+            mainBoard.adjust1Mhz = false;
+            mainBoard.clickBuffer.Clear();
+            tbSpeed.Value = 10;
+            tbSpeed.Enabled = true;
+            richTextBox1.Focus();
+        }
+
+
     }
 }

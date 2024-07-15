@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using Apple2.Mainboard.Interfaces;
 
 namespace Apple2.Mainboard
@@ -21,6 +22,7 @@ namespace Apple2.Mainboard
         public Queue<bool> cycleWait = new Queue<bool>();
         public int audioJumpInterval = 25;
         public bool videoColor = true;
+        public bool scanLines = true;
         public int audioBuffer { get; set; }
         public void ClearBaseRAM()
         {
@@ -112,6 +114,7 @@ namespace Apple2.Mainboard
             }
         }
 
+
         public byte ReadByte(ushort address)
         {
             byte ret = 0;
@@ -130,8 +133,9 @@ namespace Apple2.Mainboard
                 {
                     if (slots[i] is IRamCard && ((IRamCard)slots[i]).MemoryBankReadRAM_ROM)
                     {
-                        ret = slots[0].Read(address, this);
+                        ret = slots[i].Read(address, this);
                         read = true;
+                        break;
                     }
                 }
                 if (!read)
@@ -162,10 +166,11 @@ namespace Apple2.Mainboard
                     if (address >= 0xc080 + (0x10 * i) && address < 0xc080 + (0x10 * (i+1))) 
                         ret = slots[i].Read(address, this);    
                 }
-                
+
             }
             return ret;
         }
+
         public void WriteByte(ushort address, byte value)
         {
             if (address < 0xc000)
@@ -180,7 +185,7 @@ namespace Apple2.Mainboard
             {
                 for (int i = 0; i < 5; i++)
                 {
-                    if (slots[i] is IRamCard && ((IRamCard)slots[i]).MemoryBankReadRAM_ROM && ((IRamCard)slots[i]).MemoryBankWriteRAM_NoWrite)
+                    if (slots[i] is IRamCard && ((IRamCard)slots[i]).MemoryBankWriteRAM_NoWrite)
                     {
                         slots[i].Write(address, value, this);
                     }
@@ -199,7 +204,7 @@ namespace Apple2.Mainboard
                         slots[i].Write(address, value, this);
                 }
             }
-            
+
 
         }
 

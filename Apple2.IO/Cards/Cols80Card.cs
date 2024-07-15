@@ -135,10 +135,15 @@ namespace Apple2.Mainboard.Cards
                                 {
                                     if (objout != null)
                                     {
-                                        if ((bool)objout)
-                                            bmp[byteid] = (byte)(invert ? 0x00 : 0xff);
+                                        if (pixelSize > 2 && ps1 == pixelSize-1)
+                                                    bmp[byteid] = 0;
                                         else
-                                            bmp[byteid] = (byte)(invert ? 0xff : 0x00);
+                                        {
+                                            if ((bool)objout)
+                                                bmp[byteid] = (byte)(invert ? 0x00 : 0xff);
+                                            else
+                                                bmp[byteid] = (byte)(invert ? 0xff : 0x00);
+                                        }
                                     }
                                     else
                                         bmp[byteid] = 0x0;

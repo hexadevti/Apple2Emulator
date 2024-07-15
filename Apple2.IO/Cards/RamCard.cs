@@ -72,8 +72,8 @@ namespace Apple2.Mainboard.Cards
         {
             if (address >= 0xd000)
             {
-                if (MemoryBankReadRAM_ROM)
-                {
+                // if (MemoryBankReadRAM_ROM)
+                // {
                     if (address >= 0xd000 && address < 0xe000)
                     {
                         if (MemoryBankBankSelect1_2)
@@ -83,7 +83,7 @@ namespace Apple2.Mainboard.Cards
                     }
                     else
                         _memoryBankSwitchedRAM1[_selectedBank, address - 0xe000] = b;
-                }
+                //}
             }
             ProcessSwitch(address, b, mainBoard);
         }

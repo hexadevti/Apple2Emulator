@@ -48,13 +48,13 @@ namespace Apple2.CPU.Mos6502
         public void RunCycle()
         {
             byte instruction = mainBoard.ReadByte(state.PC);
-            //lastPC = state.PC;
+            lastPC = state.PC;
             OpCodePart? opCodePart = OpCodes.GetOpCode(instruction);
             // Break point with lastPC
-            // if (lastPC == 0xc876)
-            // {
-            //     Thread.Sleep(1);
-            // }
+            if (lastPC == 0xe000)
+            {
+                Thread.Sleep(1);
+            }
             ushort? refAddress = OpCodes.ProcessAddressing(opCodePart, state, mainBoard, this);
             OpCodes.Process(opCodePart, state, mainBoard, refAddress);
             EnqueueCycles(opCodePart);
@@ -126,6 +126,7 @@ namespace Apple2.CPU.Mos6502
                             if (k < mainBoard.audioBuffer)
                             {
                                 bytes[k] = (byte)(mainBoard.softswitches.SoundClick ? 0x80 : 0x00);
+                                k++;
                             }
                             else
                             {
@@ -134,7 +135,6 @@ namespace Apple2.CPU.Mos6502
                                 bytes = new byte[mainBoard.audioBuffer];
                             }
 
-                            k++;
 
                             TimeSpan delta2 = DateTime.Now - countTime;
                             if (delta2.TotalMilliseconds >= adjcycle)
