@@ -23,6 +23,7 @@ namespace Apple2.Mainboard
         public int audioJumpInterval = 25;
         public bool videoColor = true;
         public bool scanLines = true;
+        public bool Idealized = false;
         public int audioBuffer { get; set; }
         public void ClearBaseRAM()
         {

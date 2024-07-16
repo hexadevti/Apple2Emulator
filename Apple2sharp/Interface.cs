@@ -14,12 +14,13 @@ using Apple2.Mainboard.Cards;
 using Apple2.Mainboard.Enums;
 using Apple2.CPU.Mos6502;
 using System.Drawing;
+using System.Net.NetworkInformation;
 
 namespace Apple2
 {
     public partial class Interface : Form
     {
-        const int pixelSize = 3;
+        const int pixelSize = 4;
         private Apple2Board mainBoard { get; set; }
         private IProcessor cpu { get; set; }
         private State state = new State();
@@ -35,7 +36,7 @@ namespace Apple2
         public Interface()
         {
             InitializeComponent();
-            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
 
             if (assemblyPath != null)
                 assemblyPath += "/";
@@ -218,10 +219,12 @@ namespace Apple2
                         SetDriveLight(D2ON, actualDiskCard.drive2.on);
                     }
 
-                    SetButtonActive(btnColor, mainBoard.videoColor, Color.Salmon);
-                    SetButtonActive(btnTurbo, !mainBoard.adjust1Mhz, Color.Salmon);
-                    SetButtonActive(btn1Mhz, mainBoard.adjust1Mhz, Color.Salmon);
-                    SetButtonActive(btnScanLines, mainBoard.scanLines, Color.Salmon);
+                    SetButtonActive(btnColor, mainBoard.videoColor, Color.SteelBlue);
+                    SetButtonActive(btnTurbo, !mainBoard.adjust1Mhz, Color.SteelBlue);
+                    SetButtonActive(btn1Mhz, mainBoard.adjust1Mhz, Color.SteelBlue);
+                    SetButtonActive(btnScanLines, mainBoard.scanLines, Color.SteelBlue);
+                    SetButtonActive(btnPaused, cpu.cpuState == CpuState.Paused, Color.SteelBlue);
+                    SetButtonActive(btnIdealized, mainBoard.Idealized, Color.SteelBlue);
 
                     string text = "";
                     for (int i = 0; i < mainBoard.screenLog.Count; i++)
@@ -240,19 +243,19 @@ namespace Apple2
                 {
                     lock (mainBoard.displayLock)
                     {
-                        try
+                        // try
+                        // {
+                        if (mainBoard.softswitches.Cols40_80)
+                            pictureBox1.Image = Video.Generate(mainBoard, pixelSize);
+                        else
                         {
-                            if (mainBoard.softswitches.Cols40_80)
-                                pictureBox1.Image = Video.Generate(mainBoard, pixelSize);
-                            else
-                            {
-                                if (mainBoard.slots[3].GetType() == typeof(Cols80Card))
-                                    pictureBox1.Image = ((Cols80Card)mainBoard.slots[3]).Generate(mainBoard, pixelSize);
-                            }
+                            if (mainBoard.slots[3].GetType() == typeof(Cols80Card))
+                                pictureBox1.Image = ((Cols80Card)mainBoard.slots[3]).Generate(mainBoard, pixelSize);
                         }
-                        catch { }
+                        // }
+                        // catch { }
                     }
-                    
+
                     Thread.Sleep(50);
                 }
             }));
@@ -332,7 +335,7 @@ namespace Apple2
             {
                 if (active)
                     control.BackColor = color;
-                else 
+                else
                     control.BackColor = Color.White;
             }
         }
@@ -375,12 +378,20 @@ namespace Apple2
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                string[] parts = openFileDialog1.FileName.Split('\\');
-                disk1.Text = parts[parts.Length - 1];
-                Apple2sharp.Properties.Settings.Default["Disk1Path"] = openFileDialog1.FileName;
-                Apple2sharp.Properties.Settings.Default.Save();
-                UpdateDisks();
-                richTextBox1.Focus();
+                if (!IsFileInUseGeneric(openFileDialog1.FileName))
+                {
+                    string[] parts = openFileDialog1.FileName.Split('\\');
+                    disk1.Text = parts[parts.Length - 1];
+                    Apple2sharp.Properties.Settings.Default["Disk1Path"] = openFileDialog1.FileName;
+                    Apple2sharp.Properties.Settings.Default.Save();
+                    UpdateDisks();
+                    richTextBox1.Focus();
+                }
+                else
+                {
+                    openFileDialog1.FileName = "";
+                    disk1_TextChanged(sender, e);
+                }
             }
         }
 
@@ -388,13 +399,36 @@ namespace Apple2
         {
             if (openFileDialog2.ShowDialog() == DialogResult.OK)
             {
-                string[] parts = openFileDialog2.FileName.Split('\\');
-                disk2.Text = parts[parts.Length - 1];
-                Apple2sharp.Properties.Settings.Default["Disk2Path"] = openFileDialog2.FileName;
-                Apple2sharp.Properties.Settings.Default.Save();
-                UpdateDisks();
-                richTextBox1.Focus();
+                if (!IsFileInUseGeneric(openFileDialog2.FileName))
+                {
+                    string[] parts = openFileDialog2.FileName.Split('\\');
+                    disk2.Text = parts[parts.Length - 1];
+                    Apple2sharp.Properties.Settings.Default["Disk2Path"] = openFileDialog2.FileName;
+                    Apple2sharp.Properties.Settings.Default.Save();
+                    UpdateDisks();
+                    richTextBox1.Focus();
+                }
+                else
+                {
+                    openFileDialog2.FileName = "";
+                    disk2_TextChanged(sender, e);
+                }
+                    
             }
+        }
+        public static bool IsFileInUseGeneric(string file)
+        {
+            FileInfo fi = new FileInfo(file);
+            try
+            {
+                using var stream = fi.Open(FileMode.Open, FileAccess.Read, FileShare.None);
+            }
+            catch (IOException)
+            {
+                System.Windows.Forms.MessageBox.Show("Selected File in use by other application. Try another file.");
+                return true;
+            }
+            return false;
         }
 
         private void btnColor_Click(object sender, EventArgs e)
@@ -417,7 +451,20 @@ namespace Apple2
             tbSpeed.Enabled = true;
             richTextBox1.Focus();
         }
+        
+        private void btnPaused_Click(object sender, EventArgs e)
+        {
+            if (cpu.cpuState == CpuState.Paused) 
+                cpu.cpuState = CpuState.Running;
+            else if (cpu.cpuState == CpuState.Running)
+                cpu.cpuState = CpuState.Paused;
+            richTextBox1.Focus();
+        }
 
-
+        private void btnIdealized_Click(object sender, EventArgs e)
+        {
+            mainBoard.Idealized = !mainBoard.Idealized;
+            richTextBox1.Focus();
+        }
     }
 }

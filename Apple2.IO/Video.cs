@@ -78,7 +78,7 @@ namespace Apple2
                             {
                                 for (int ps1 = 0; ps1 < pixelSize; ps1++)
                                 {
-                                    
+                                    int[] line = new int[0x28 * 7];
                                     bool[] blocklineAnt = new bool[] { false, false, false, false, false, false, false, false };
                                     for (ushort c = 0; c < 0x28; c++)
                                     {
@@ -96,6 +96,7 @@ namespace Apple2
                                                 pixels[4] = (blockline[0] ? 4 : 0) + (blockline[3] ? 2 : 0) + (blockline[4] ? 1 : 0);
                                                 pixels[5] = (blockline[0] ? 4 : 0) + (blockline[3] ? 2 : 0) + (blockline[2] ? 1 : 0);
                                                 pixels[6] = (blockline[0] ? 4 : 0) + (blockline[1] ? 2 : 0) + (blockline[2] ? 1 : 0);
+                                                
                                             }
                                             else //Even
                                             {
@@ -107,6 +108,7 @@ namespace Apple2
                                                 pixels[5] = (blockline[0] ? 4 : 0) + (blockline[2] ? 2 : 0) + (blockline[3] ? 1 : 0);
                                                 pixels[6] = (blockline[0] ? 4 : 0) + (blockline[2] ? 2 : 0) + (blockline[1] ? 1 : 0);
                                             }
+                                            
 
                                             for (int id = 0; id < 7; id++)
                                             {
@@ -118,6 +120,7 @@ namespace Apple2
                                                         bmp[byteid] = (byte)pixels[id];
                                                     byteid++;
                                                 }
+                                                
                                             }
                                             blocklineAnt = blockline;
                                         }
@@ -141,9 +144,50 @@ namespace Apple2
                                             }
                                         }
                                     }
+                                    
+                                    if (mainBoard.Idealized)
+                                    {
+                                        int lineSize = 0x28 * 7 * pixelSize;
+                                        int pixelSize2 = pixelSize / 2;
+                                        for (int i = 0; i < lineSize; i = i + pixelSize2)
+                                        {
+                                            if (i >= pixelSize && i < lineSize - pixelSize)
+                                            {
+                                                int actualPosition = byteid - lineSize + i;
+                                                int actualPosition2 = byteid - lineSize + i + 1;
+                                                int lastPosition = actualPosition - pixelSize;
+                                                int lastPosition2 = actualPosition - pixelSize2 + 1;
+                                                int nextPosition = actualPosition + pixelSize;
+                                                int nextPosition2 = actualPosition + pixelSize + 1;
+                                                int finalPixel = -1;
+                                                int finalPixel2 = -1;
+                                                if (bmp[actualPosition] == 1 || bmp[actualPosition] == 2 || bmp[actualPosition] == 5 || bmp[actualPosition] == 6)
+                                                {
+                                                    if ((bmp[lastPosition] == 0 || bmp[lastPosition] == 4) && (bmp[nextPosition] == 3 || bmp[nextPosition] == 7))
+                                                    {
+                                                        finalPixel = 0;
+                                                        finalPixel2 = 7;
+                                                    }
+                                                    else if ((bmp[lastPosition] == 3 || bmp[lastPosition] == 7) && (bmp[nextPosition] == 0 || bmp[nextPosition] == 4))
+                                                    {
+                                                        finalPixel = 7;
+                                                        finalPixel2 = 0;
+                                                    }
+                                                } 
+                                                
 
+                                                if (finalPixel != -1)
+                                                    for (int ps2 = 0; ps2 < pixelSize2; ps2++)
+                                                    {
+                                                        bmp[actualPosition + ps2] = (byte)finalPixel;
+                                                        bmp[actualPosition + ps2 + pixelSize2] = (byte)finalPixel2;
+                                                    }
+
+
+                                            }
+                                        }
+                                    }
                                 }
-
                             }
                         }
                     }
