@@ -35,8 +35,17 @@
     <Setting Name="Color" Type="System.String" Scope="User">
       <Value Profile="(Default)">true</Value>
     </Setting>
-    <Setting Name="Speed1Mhz" Type="System.String" Scope="User">
+    <Setting Name="Adjust1mhz" Type="System.String" Scope="User">
       <Value Profile="(Default)">true</Value>
+    </Setting>
+    <Setting Name="ScanLines" Type="System.String" Scope="User">
+      <Value Profile="(Default)">true</Value>
+    </Setting>
+    <Setting Name="Idealized" Type="System.String" Scope="User">
+      <Value Profile="(Default)">true</Value>
+    </Setting>
+    <Setting Name="Joystick" Type="System.String" Scope="User">
+      <Value Profile="(Default)">false</Value>
     </Setting>
   </Settings>
 </SettingsFile>

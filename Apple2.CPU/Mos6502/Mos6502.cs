@@ -187,35 +187,33 @@ namespace Apple2.CPU.Mos6502
                         joystickCycles3++;
                     }
 
-                    if (joystickCycles0 >= 1790) // for 1Mhz 0 -> 10, 127 (center) -> 1790, 255 -> 3580
+                    if (joystickCycles0 >= mainBoard.timerpdl0) // 1Mhz 0 -> 10, 127 (center) -> 1790, 255 -> 3580
                     {
                         joystickCycles0 = 0;
                         mainBoard.softswitches.Cg0 = false;
                         mainBoard.softswitches.CgReset0 = false;
                     }
 
-                    if (joystickCycles1 >= 3500) // for 1Mhz 0 -> 10, 127 (center) -> 1790, 255 -> 3580
+                    if (joystickCycles1 >= mainBoard.timerpdl1) // for 1Mhz 0 -> 10, 127 (center) -> 1790, 255 -> 3580
                     {
                         joystickCycles1 = 0;
                         mainBoard.softswitches.Cg1 = false;
                         mainBoard.softswitches.CgReset1 = false;
                     }
 
-                    if (joystickCycles2 >= 500) // for 1Mhz 0 -> 10, 127 (center) -> 1790, 255 -> 3580
+                    if (joystickCycles2 >= mainBoard.timerpdl2) // for 1Mhz 0 -> 10, 127 (center) -> 1790, 255 -> 3580
                     {
                         joystickCycles2 = 0;
                         mainBoard.softswitches.Cg2 = false;
                         mainBoard.softswitches.CgReset2 = false;
                     }
 
-                    if (joystickCycles3 >= 1790) // for 1Mhz 0 -> 10, 127 (center) -> 1790, 255 -> 3580
+                    if (joystickCycles3 >= mainBoard.timerpdl3) // for 1Mhz 0 -> 10, 127 (center) -> 1790, 255 -> 3580
                     {
                         joystickCycles3 = 0;
                         mainBoard.softswitches.Cg3 = false;
                         mainBoard.softswitches.CgReset3 = false;
                     }
-
-
 
                     if (cpuCycles >= cyclesPerMilliseconds)
                     {

@@ -201,7 +201,7 @@ namespace Apple2
                 }
             }
 
-            if (mainBoard.Idealized)
+            if (mainBoard.idealized)
             {
 
                 for (int l = 0; l < 192 * pixelSize; l++)

@@ -72,7 +72,7 @@ namespace Apple2
             btnScanLines = new Button();
             btnPaused = new Button();
             btnIdealized = new Button();
-            joybtn0 = new Button();
+            btnJoystick = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)tbSpeed).BeginInit();
             drivePanel1.SuspendLayout();
@@ -532,18 +532,17 @@ namespace Apple2
             btnIdealized.UseVisualStyleBackColor = false;
             btnIdealized.Click += btnIdealized_Click;
             // 
-            // joybtn0
+            // btnJoystick
             // 
-            joybtn0.BackColor = SystemColors.ControlText;
-            joybtn0.ForeColor = SystemColors.ControlLightLight;
-            joybtn0.Location = new Point(1333, 387);
-            joybtn0.Name = "joybtn0";
-            joybtn0.Size = new Size(95, 50);
-            joybtn0.TabIndex = 51;
-            joybtn0.Text = "joybtn";
-            joybtn0.UseVisualStyleBackColor = false;
-            joybtn0.MouseDown += joybtn0_MouseDown;
-            joybtn0.MouseUp += joybtn0_MouseUp;
+            btnJoystick.BackColor = SystemColors.ControlText;
+            btnJoystick.ForeColor = SystemColors.ControlLightLight;
+            btnJoystick.Location = new Point(1286, 353);
+            btnJoystick.Name = "btnJoystick";
+            btnJoystick.Size = new Size(200, 50);
+            btnJoystick.TabIndex = 51;
+            btnJoystick.Text = "Joystick";
+            btnJoystick.UseVisualStyleBackColor = false;
+            btnJoystick.Click += btnJoystick_Click;
             // 
             // Interface
             // 
@@ -552,7 +551,7 @@ namespace Apple2
             BackgroundImage = (Image)resources.GetObject("$this.BackgroundImage");
             BackgroundImageLayout = ImageLayout.Stretch;
             ClientSize = new Size(1924, 1228);
-            Controls.Add(joybtn0);
+            Controls.Add(btnJoystick);
             Controls.Add(btnIdealized);
             Controls.Add(btnPaused);
             Controls.Add(btnScanLines);
@@ -633,6 +632,6 @@ namespace Apple2
         private Button btnScanLines;
         private Button btnPaused;
         private Button btnIdealized;
-        private Button joybtn0;
+        private Button btnJoystick;
     }
 }

@@ -49,6 +49,7 @@ namespace Apple2
             cpu = new Mos6502(state, mainBoard);
             Keyboard keyboard = new Keyboard(mainBoard, cpu);
             richTextBox1.KeyDown += keyboard.OnKeyDown;
+            richTextBox1.KeyUp += keyboard.OnKeyUp;
             richTextBox1.TextChanged += keyboard.Keyb_TextChanged;
             mainBoard.LoadROM(0xf800, File.ReadAllBytes(assemblyPath + "roms/ApplesoftF800.bin"));
             mainBoard.LoadROM(0xf000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftF000.bin"));
@@ -67,6 +68,7 @@ namespace Apple2
             cpu.WarmStart();
             LoadThreads();
         }
+
 
 
         private void LoadContext()
@@ -95,10 +97,21 @@ namespace Apple2
                 openFileDialog2.FileName = "";
                 disk2.Text = "";
             }
-
-
             for (int i = 0; i < 8; i++)
                 cbSlots[i].SelectedValue = Apple2sharp.Properties.Settings.Default["Slot" + i + "Card"];
+
+            mainBoard.videoColor = Convert.ToBoolean(Apple2sharp.Properties.Settings.Default["Color"]);
+            mainBoard.adjust1Mhz = Convert.ToBoolean(Apple2sharp.Properties.Settings.Default["Adjust1mhz"]);
+            mainBoard.scanLines = Convert.ToBoolean(Apple2sharp.Properties.Settings.Default["ScanLines"]);
+            mainBoard.idealized = Convert.ToBoolean(Apple2sharp.Properties.Settings.Default["Idealized"]);
+            mainBoard.joystick = Convert.ToBoolean(Apple2sharp.Properties.Settings.Default["Joystick"]);
+            if (mainBoard.joystick)
+            {
+                mainBoard.timerpdl0 = 1790;
+                mainBoard.timerpdl1 = 1790;
+                mainBoard.timerpdl2 = 1790;
+                mainBoard.timerpdl3 = 1790;
+            }
         }
         private void LoadCardsCombos()
         {
@@ -224,7 +237,8 @@ namespace Apple2
                     SetButtonActive(btn1Mhz, mainBoard.adjust1Mhz, Color.SteelBlue);
                     SetButtonActive(btnScanLines, mainBoard.scanLines, Color.SteelBlue);
                     SetButtonActive(btnPaused, cpu.cpuState == CpuState.Paused, Color.SteelBlue);
-                    SetButtonActive(btnIdealized, mainBoard.Idealized, Color.SteelBlue);
+                    SetButtonActive(btnIdealized, mainBoard.idealized, Color.SteelBlue);
+                    SetButtonActive(btnJoystick, mainBoard.joystick, Color.SteelBlue);
 
                     string text = "";
                     for (int i = 0; i < mainBoard.screenLog.Count; i++)
@@ -243,17 +257,17 @@ namespace Apple2
                 {
                     lock (mainBoard.displayLock)
                     {
-                        // try
-                        // {
-                        if (mainBoard.softswitches.Cols40_80)
-                            pictureBox1.Image = Video.Generate(mainBoard, pixelSize);
-                        else
+                        try
                         {
-                            if (mainBoard.slots[3].GetType() == typeof(Cols80Card))
-                                pictureBox1.Image = ((Cols80Card)mainBoard.slots[3]).Generate(mainBoard, pixelSize);
+                            if (mainBoard.softswitches.Cols40_80)
+                                pictureBox1.Image = Video.Generate(mainBoard, pixelSize);
+                            else
+                            {
+                                if (mainBoard.slots[3].GetType() == typeof(Cols80Card))
+                                    pictureBox1.Image = ((Cols80Card)mainBoard.slots[3]).Generate(mainBoard, pixelSize);
+                            }
                         }
-                        // }
-                        // catch { }
+                        catch { }
                     }
 
                     Thread.Sleep(50);
@@ -440,12 +454,16 @@ namespace Apple2
         private void btnColor_Click(object sender, EventArgs e)
         {
             mainBoard.videoColor = !mainBoard.videoColor;
+            Apple2sharp.Properties.Settings.Default["Color"] = mainBoard.videoColor.ToString();
+            Apple2sharp.Properties.Settings.Default.Save();
             richTextBox1.Focus();
         }
 
         private void btnScanLines_Click(object sender, EventArgs e)
         {
             mainBoard.scanLines = !mainBoard.scanLines;
+            Apple2sharp.Properties.Settings.Default["ScanLines"] = mainBoard.scanLines.ToString();
+            Apple2sharp.Properties.Settings.Default.Save();
             richTextBox1.Focus();
         }
 
@@ -455,6 +473,8 @@ namespace Apple2
             mainBoard.clickBuffer.Clear();
             tbSpeed.Value = 10;
             tbSpeed.Enabled = true;
+            Apple2sharp.Properties.Settings.Default["Adjust1mhz"] = mainBoard.adjust1Mhz.ToString();
+            Apple2sharp.Properties.Settings.Default.Save();
             richTextBox1.Focus();
         }
 
@@ -469,19 +489,31 @@ namespace Apple2
 
         private void btnIdealized_Click(object sender, EventArgs e)
         {
-            mainBoard.Idealized = !mainBoard.Idealized;
+            mainBoard.idealized = !mainBoard.idealized;
+            Apple2sharp.Properties.Settings.Default["Idealized"] = mainBoard.idealized.ToString();
+            Apple2sharp.Properties.Settings.Default.Save();
             richTextBox1.Focus();
         }
 
-        private void joybtn0_MouseDown(object sender, MouseEventArgs e)
+        private void btnJoystick_Click(object sender, EventArgs e)
         {
-            mainBoard.softswitches.Pb0 = true;
-            richTextBox1.Focus();
-        }
-
-        private void joybtn0_MouseUp(object sender, MouseEventArgs e)
-        {
-            mainBoard.softswitches.Pb0 = false;
+            mainBoard.joystick = !mainBoard.joystick;
+            Apple2sharp.Properties.Settings.Default["Joystick"] = mainBoard.joystick.ToString();
+            Apple2sharp.Properties.Settings.Default.Save();
+            if (mainBoard.joystick)
+            {
+                mainBoard.timerpdl0 = 1790;
+                mainBoard.timerpdl1 = 1790;
+                mainBoard.timerpdl2 = 1790;
+                mainBoard.timerpdl3 = 1790;
+            }
+            else
+            {
+                mainBoard.timerpdl0 = 0;
+                mainBoard.timerpdl1 = 0;
+                mainBoard.timerpdl2 = 0;
+                mainBoard.timerpdl3 = 0;
+            }
             richTextBox1.Focus();
         }
     }

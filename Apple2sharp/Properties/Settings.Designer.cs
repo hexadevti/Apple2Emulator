@@ -158,12 +158,48 @@ namespace Apple2sharp.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("true")]
-        public string Speed1Mhz {
+        public string Adjust1mhz {
             get {
-                return ((string)(this["Speed1Mhz"]));
+                return ((string)(this["Adjust1mhz"]));
             }
             set {
-                this["Speed1Mhz"] = value;
+                this["Adjust1mhz"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("true")]
+        public string ScanLines {
+            get {
+                return ((string)(this["ScanLines"]));
+            }
+            set {
+                this["ScanLines"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("true")]
+        public string Idealized {
+            get {
+                return ((string)(this["Idealized"]));
+            }
+            set {
+                this["Idealized"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("false")]
+        public string Joystick {
+            get {
+                return ((string)(this["Joystick"]));
+            }
+            set {
+                this["Joystick"] = value;
             }
         }
     }

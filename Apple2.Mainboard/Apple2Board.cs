@@ -23,7 +23,14 @@ namespace Apple2.Mainboard
         public int audioJumpInterval = 25;
         public bool videoColor = true;
         public bool scanLines = true;
-        public bool Idealized = false;
+        public bool idealized = false;
+        public bool joystick = false;
+        public int timerpdl0;
+        public int timerpdl1;
+        public int timerpdl2;
+        public int timerpdl3;
+
+
         public int audioBuffer { get; set; }
         public void ClearBaseRAM()
         {
