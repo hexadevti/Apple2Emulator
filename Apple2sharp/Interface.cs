@@ -112,6 +112,19 @@ namespace Apple2
                 mainBoard.timerpdl2 = 1790;
                 mainBoard.timerpdl3 = 1790;
             }
+
+            if (mainBoard.adjust1Mhz)
+            {
+                mainBoard.clickBuffer.Clear();
+                tbSpeed.Value = 1;
+                tbSpeed.Enabled = false;
+            }
+            else
+            {
+                mainBoard.clickBuffer.Clear();
+                tbSpeed.Value = 10;
+                tbSpeed.Enabled = true;
+            }
         }
         private void LoadCardsCombos()
         {
@@ -324,6 +337,8 @@ namespace Apple2
             mainBoard.clickBuffer.Clear();
             tbSpeed.Value = 1;
             tbSpeed.Enabled = false;
+            Apple2sharp.Properties.Settings.Default["Adjust1mhz"] = mainBoard.adjust1Mhz.ToString();
+            Apple2sharp.Properties.Settings.Default.Save();
             richTextBox1.Focus();
         }
 
