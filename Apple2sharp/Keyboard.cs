@@ -1,11 +1,14 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Apple2.Mainboard;
+using Apple2.Mainboard.Enums;
 using Apple2.Mainboard.Interfaces;
 
 namespace Apple2
@@ -39,6 +42,21 @@ namespace Apple2
                         {
                             mainBoard.softswitches.Pb0 = true;
                             mainBoard.softswitches.Pb1 = true;
+                            switch (e.KeyCode)
+                            {
+                                case Keys.Left:
+                                    mainBoard.timerpdl0 = (int)JoysticPosition.Min;
+                                    break;
+                                case Keys.Right:
+                                    mainBoard.timerpdl0 = (int)JoysticPosition.Max;
+                                    break;
+                                case Keys.Up:
+                                    mainBoard.timerpdl1 = (int)JoysticPosition.Min;
+                                    break;
+                                case Keys.Down:
+                                    mainBoard.timerpdl1 = (int)JoysticPosition.Max;
+                                    break;
+                            }
                         }
                         break;
                 }
@@ -60,7 +78,25 @@ namespace Apple2
                         if (e.KeyValue > 0x40 && e.KeyValue < 0x60)
                             mainBoard.KeyPressedBuffer = (byte)(e.KeyValue + 0x40);
                         else if (mainBoard.joystick)
+                        {
                             mainBoard.softswitches.Pb0 = true;
+                            switch (e.KeyCode)
+                            {
+                                case Keys.Left:
+                                    mainBoard.timerpdl0 = (int)JoysticPosition.Min;
+                                    break;
+                                case Keys.Right:
+                                    mainBoard.timerpdl0 = (int)JoysticPosition.Max;
+                                    break;
+                                case Keys.Up:
+                                    mainBoard.timerpdl1 = (int)JoysticPosition.Min;
+                                    break;
+                                case Keys.Down:
+                                    mainBoard.timerpdl1 = (int)JoysticPosition.Max;
+                                    break;
+                            }
+                            
+                        }
                         break;
                 }
             }
@@ -85,29 +121,29 @@ namespace Apple2
                             switch (e.KeyCode)
                             {
                                 case Keys.Left:
-                                    mainBoard.timerpdl0 = 10;
+                                    mainBoard.timerpdl0 = (int)JoysticPosition.Min;
                                     mainBoard.KeyPressedBuffer = 0x88;
                                     break;
                                 case Keys.Right:
-                                    mainBoard.timerpdl0 = 3580;
+                                    mainBoard.timerpdl0 = (int)JoysticPosition.Max;
                                     mainBoard.KeyPressedBuffer = 0x95;
                                     break;
                                 case Keys.Up:
-                                    mainBoard.timerpdl1 = 10;
+                                    mainBoard.timerpdl1 = (int)JoysticPosition.Min;
                                     mainBoard.KeyPressedBuffer = 0x8b;
                                     break;
                                 case Keys.Down:
-                                    mainBoard.timerpdl1 = 3580;
+                                    mainBoard.timerpdl1 = (int)JoysticPosition.Max;
                                     mainBoard.KeyPressedBuffer = 0x8a;
                                     break;
                                 // case Keys.A:
-                                //     mainBoard.timerpdl0 = 10;
+                                //     mainBoard.timerpdl0 = (int)JoysticPosition.Min;
                                 //     break;
                                 // case Keys.D:
                                 //     mainBoard.timerpdl0 = 3580;
                                 //     break;
                                 // case Keys.W:
-                                //     mainBoard.timerpdl1 = 10;
+                                //     mainBoard.timerpdl1 = (int)JoysticPosition.Min;
                                 //     break;
                                 // case Keys.S:
                                 //     mainBoard.timerpdl1 = 3580;
@@ -152,29 +188,17 @@ namespace Apple2
                 switch (e.KeyCode)
                 {
                     case Keys.Left:
-                        mainBoard.timerpdl0 = 1790;
+                        mainBoard.timerpdl0 = (int)JoysticPosition.Middle;
                         break;
                     case Keys.Right:
-                        mainBoard.timerpdl0 = 1790;
+                        mainBoard.timerpdl0 = (int)JoysticPosition.Middle;
                         break;
                     case Keys.Up:
-                        mainBoard.timerpdl1 = 1790;
+                        mainBoard.timerpdl1 = (int)JoysticPosition.Middle;
                         break;
                     case Keys.Down:
-                        mainBoard.timerpdl1 = 1790;
+                        mainBoard.timerpdl1 = (int)JoysticPosition.Middle;
                         break;
-                    // case Keys.A:
-                    //     mainBoard.timerpdl0 = 1790;
-                    //     break;
-                    // case Keys.D:
-                    //     mainBoard.timerpdl0 = 1790;
-                    //     break;
-                    // case Keys.W:
-                    //     mainBoard.timerpdl1 = 1790;
-                    //     break;
-                    // case Keys.S:
-                    //     mainBoard.timerpdl1 = 1790;
-                    //     break;
                     case Keys.ControlKey:
                         mainBoard.softswitches.Pb0 = false;
                         break;
