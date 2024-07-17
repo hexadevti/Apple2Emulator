@@ -6,6 +6,7 @@ using Apple2.Mainboard;
 using Apple2.Mainboard.Interfaces;
 using Apple2.Mainboard.Enums;
 using Apple2.CPU.Mos6502;
+using System.Threading.Tasks.Dataflow;
 
 namespace Apple2.CPU.Mos6502
 {
@@ -51,10 +52,10 @@ namespace Apple2.CPU.Mos6502
             lastPC = state.PC;
             OpCodePart? opCodePart = OpCodes.GetOpCode(instruction);
             // Break point with lastPC
-            if (lastPC == 0xe000)
-            {
-                Thread.Sleep(1);
-            }
+            //if (lastPC == 0xe000)
+            //{
+            //    Thread.Sleep(1);
+            //}
             ushort? refAddress = OpCodes.ProcessAddressing(opCodePart, state, mainBoard, this);
             OpCodes.Process(opCodePart, state, mainBoard, refAddress);
             EnqueueCycles(opCodePart);
@@ -102,6 +103,10 @@ namespace Apple2.CPU.Mos6502
             int cyclesPerMilliseconds = 19500;
             int adjCoef = 100;
             int cyclesPerMillisecondsAdj = cyclesPerMilliseconds;
+            int joystickCycles0 = 0;
+            int joystickCycles1 = 0;
+            int joystickCycles2 = 0;
+            int joystickCycles3 = 0;
 
             while (cpuState != CpuState.Stopped)
             {
@@ -113,6 +118,7 @@ namespace Apple2.CPU.Mos6502
 
                 if (mainBoard.adjust1Mhz)
                 {
+                    
                     cpuCycles++;
                     if (!mainBoard.cycleWait.TryDequeue(out n))
                     {
@@ -163,6 +169,53 @@ namespace Apple2.CPU.Mos6502
                             soundCycles++;
                         }
                     }
+
+                    if (mainBoard.softswitches.CgReset0)
+                    {
+                        joystickCycles0++;
+                    }
+                    if (mainBoard.softswitches.CgReset1)
+                    {
+                        joystickCycles1++;
+                    }
+                    if (mainBoard.softswitches.CgReset2)
+                    {
+                        joystickCycles2++;
+                    }
+                    if (mainBoard.softswitches.CgReset3)
+                    {
+                        joystickCycles3++;
+                    }
+
+                    if (joystickCycles0 >= 1790) // for 1Mhz 0 -> 10, 127 (center) -> 1790, 255 -> 3580
+                    {
+                        joystickCycles0 = 0;
+                        mainBoard.softswitches.Cg0 = false;
+                        mainBoard.softswitches.CgReset0 = false;
+                    }
+
+                    if (joystickCycles1 >= 3500) // for 1Mhz 0 -> 10, 127 (center) -> 1790, 255 -> 3580
+                    {
+                        joystickCycles1 = 0;
+                        mainBoard.softswitches.Cg1 = false;
+                        mainBoard.softswitches.CgReset1 = false;
+                    }
+
+                    if (joystickCycles2 >= 500) // for 1Mhz 0 -> 10, 127 (center) -> 1790, 255 -> 3580
+                    {
+                        joystickCycles2 = 0;
+                        mainBoard.softswitches.Cg2 = false;
+                        mainBoard.softswitches.CgReset2 = false;
+                    }
+
+                    if (joystickCycles3 >= 1790) // for 1Mhz 0 -> 10, 127 (center) -> 1790, 255 -> 3580
+                    {
+                        joystickCycles3 = 0;
+                        mainBoard.softswitches.Cg3 = false;
+                        mainBoard.softswitches.CgReset3 = false;
+                    }
+
+
 
                     if (cpuCycles >= cyclesPerMilliseconds)
                     {

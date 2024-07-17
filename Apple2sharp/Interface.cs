@@ -334,9 +334,15 @@ namespace Apple2
             else
             {
                 if (active)
+                {
                     control.BackColor = color;
+                    control.ForeColor = Color.White;
+                }
                 else
-                    control.BackColor = Color.White;
+                {
+                    control.BackColor = Color.Black;
+                    control.ForeColor = Color.White;
+                }
             }
         }
 
@@ -413,7 +419,7 @@ namespace Apple2
                     openFileDialog2.FileName = "";
                     disk2_TextChanged(sender, e);
                 }
-                    
+
             }
         }
         public static bool IsFileInUseGeneric(string file)
@@ -451,10 +457,10 @@ namespace Apple2
             tbSpeed.Enabled = true;
             richTextBox1.Focus();
         }
-        
+
         private void btnPaused_Click(object sender, EventArgs e)
         {
-            if (cpu.cpuState == CpuState.Paused) 
+            if (cpu.cpuState == CpuState.Paused)
                 cpu.cpuState = CpuState.Running;
             else if (cpu.cpuState == CpuState.Running)
                 cpu.cpuState = CpuState.Paused;
@@ -464,6 +470,18 @@ namespace Apple2
         private void btnIdealized_Click(object sender, EventArgs e)
         {
             mainBoard.Idealized = !mainBoard.Idealized;
+            richTextBox1.Focus();
+        }
+
+        private void joybtn0_MouseDown(object sender, MouseEventArgs e)
+        {
+            mainBoard.softswitches.Pb0 = true;
+            richTextBox1.Focus();
+        }
+
+        private void joybtn0_MouseUp(object sender, MouseEventArgs e)
+        {
+            mainBoard.softswitches.Pb0 = false;
             richTextBox1.Focus();
         }
     }

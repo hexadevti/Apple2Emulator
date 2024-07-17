@@ -43,6 +43,7 @@ namespace Apple2.Mainboard.Cards
         }
         public byte[] CC00ROM { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
+        Dictionary<string, List<byte>> output = new Dictionary<string, List<byte>>();
         public DiskIICard(int slotNumber, byte[] c000ROM, string disk1, string disk2)
         {
             _slotNumber = slotNumber;
@@ -53,7 +54,7 @@ namespace Apple2.Mainboard.Cards
 
         public void Write(ushort address, byte b, Apple2Board mainBoard)
         {
-            Dictionary<string, List<byte>> output = new Dictionary<string, List<byte>>();
+         
             var sec = Drive1_2 ? (drive1.FlagDos_Prodos ? mainBoard.ReadByte(0x2d) : mainBoard.ReadByte(0xd357)) : (drive2.FlagDos_Prodos ? mainBoard.ReadByte(0x2d) : mainBoard.ReadByte(0xd357));
             var trk = Drive1_2 ? drive1.track : drive2.track;
             string key = trk + "_" + sec;

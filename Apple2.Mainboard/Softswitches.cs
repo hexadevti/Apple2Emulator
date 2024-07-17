@@ -9,7 +9,23 @@ namespace Apple2.Mainboard
         public bool Cols40_80 { get; set; }
         public bool SoundClick { get; set; }
 
-         public void Write(ushort address, byte b, Apple2Board mainBoard)
+        public bool Cg0 { get; set;}
+        public bool Cg1 { get; set;}
+        public bool Cg2 { get; set; }
+        public bool Cg3 { get; set; }
+        public bool CgReset0 { get; set; }
+        public bool CgReset1 { get; set; }
+        public bool CgReset2 { get; set; }
+        public bool CgReset3 { get; set; }
+
+        public bool Pb0 { get; set; }
+        public bool Pb1 { get; set; }
+        public bool Pb2 { get; set; }
+        
+
+
+
+        public void Write(ushort address, byte b, Apple2Board mainBoard)
         {
             ProcessSwitch(address, b, mainBoard);
         }
@@ -63,8 +79,33 @@ namespace Apple2.Mainboard
                 mainBoard.softswitches.Cols40_80 = true;
             else if (address == 0xc059)
                 mainBoard.softswitches.Cols40_80 = false;
+            else if (address == 0xc061)
+                return (byte)(mainBoard.softswitches.Pb0 ? 0x80 : 0x00);
+            else if (address == 0xc062)
+                return (byte)(mainBoard.softswitches.Pb1 ? 0x80 : 0x00);
             else if (address == 0xc063)
-                return 0x80; // Apple II+ default. For Apple IIe it is defined by shift key pressed
+                return (byte)(mainBoard.softswitches.Pb2 ? 0x80 : 0x00);
+            //else if (address == 0xc063)
+            //    return 0x80; // Apple II+ default. For Apple IIe it is defined by shift key pressed
+            else if (address == 0xc064)
+                return (byte)(mainBoard.softswitches.Cg0 ? 0x80 : 0x00);
+            else if (address == 0xc065)
+                return (byte)(mainBoard.softswitches.Cg1 ? 0x80 : 0x00);
+            else if (address == 0xc066)
+                return (byte)(mainBoard.softswitches.Cg2 ? 0x80 : 0x00);
+            else if (address == 0xc067)
+                return (byte)(mainBoard.softswitches.Cg3 ? 0x80 : 0x00);
+            else if (address == 0xc070)
+            {
+                mainBoard.softswitches.CgReset0 = true;
+                mainBoard.softswitches.CgReset1 = true;
+                mainBoard.softswitches.CgReset2 = true;
+                mainBoard.softswitches.CgReset3 = true;
+                mainBoard.softswitches.Cg0 = true;
+                mainBoard.softswitches.Cg1 = true;
+                mainBoard.softswitches.Cg2 = true;
+                mainBoard.softswitches.Cg3 = true;
+            }
             return 0;
 
         }

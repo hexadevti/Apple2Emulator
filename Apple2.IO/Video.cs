@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.Design;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
@@ -12,7 +13,7 @@ namespace Apple2
         public static Bitmap Generate(Apple2Board mainBoard, int pixelSize)
         {
             int byteid = 0;
-            
+
             ushort graphicsPage = 0x2000;
             ushort textPage = 0x400;
             byte[] bmp = new byte[280 * pixelSize * 192 * pixelSize];
@@ -96,7 +97,7 @@ namespace Apple2
                                                 pixels[4] = (blockline[0] ? 4 : 0) + (blockline[3] ? 2 : 0) + (blockline[4] ? 1 : 0);
                                                 pixels[5] = (blockline[0] ? 4 : 0) + (blockline[3] ? 2 : 0) + (blockline[2] ? 1 : 0);
                                                 pixels[6] = (blockline[0] ? 4 : 0) + (blockline[1] ? 2 : 0) + (blockline[2] ? 1 : 0);
-                                                
+
                                             }
                                             else //Even
                                             {
@@ -108,19 +109,19 @@ namespace Apple2
                                                 pixels[5] = (blockline[0] ? 4 : 0) + (blockline[2] ? 2 : 0) + (blockline[3] ? 1 : 0);
                                                 pixels[6] = (blockline[0] ? 4 : 0) + (blockline[2] ? 2 : 0) + (blockline[1] ? 1 : 0);
                                             }
-                                            
+
 
                                             for (int id = 0; id < 7; id++)
                                             {
                                                 for (int ps2 = 0; ps2 < pixelSize; ps2++)
                                                 {
-                                                    if (mainBoard.scanLines && pixelSize > 2 && ps1 == pixelSize-1)
+                                                    if (mainBoard.scanLines && pixelSize > 2 && ps1 == pixelSize - 1)
                                                         bmp[byteid] = 0;
                                                     else
                                                         bmp[byteid] = (byte)pixels[id];
                                                     byteid++;
                                                 }
-                                                
+
                                             }
                                             blocklineAnt = blockline;
                                         }
@@ -130,7 +131,7 @@ namespace Apple2
                                             {
                                                 for (int ps2 = 0; ps2 < pixelSize; ps2++)
                                                 {
-                                                    if (mainBoard.scanLines && pixelSize > 2 && ps1 == pixelSize-1)
+                                                    if (mainBoard.scanLines && pixelSize > 2 && ps1 == pixelSize - 1)
                                                         bmp[byteid] = 0;
                                                     else
                                                     {
@@ -144,49 +145,8 @@ namespace Apple2
                                             }
                                         }
                                     }
-                                    
-                                    if (mainBoard.Idealized)
-                                    {
-                                        int lineSize = 0x28 * 7 * pixelSize;
-                                        int pixelSize2 = pixelSize / 2;
-                                        for (int i = 0; i < lineSize; i = i + pixelSize2)
-                                        {
-                                            if (i >= pixelSize && i < lineSize - pixelSize)
-                                            {
-                                                int actualPosition = byteid - lineSize + i;
-                                                int actualPosition2 = byteid - lineSize + i + 1;
-                                                int lastPosition = actualPosition - pixelSize;
-                                                int lastPosition2 = actualPosition - pixelSize2 + 1;
-                                                int nextPosition = actualPosition + pixelSize;
-                                                int nextPosition2 = actualPosition + pixelSize + 1;
-                                                int finalPixel = -1;
-                                                int finalPixel2 = -1;
-                                                if (bmp[actualPosition] == 1 || bmp[actualPosition] == 2 || bmp[actualPosition] == 5 || bmp[actualPosition] == 6)
-                                                {
-                                                    if ((bmp[lastPosition] == 0 || bmp[lastPosition] == 4) && (bmp[nextPosition] == 3 || bmp[nextPosition] == 7))
-                                                    {
-                                                        finalPixel = 0;
-                                                        finalPixel2 = 7;
-                                                    }
-                                                    else if ((bmp[lastPosition] == 3 || bmp[lastPosition] == 7) && (bmp[nextPosition] == 0 || bmp[nextPosition] == 4))
-                                                    {
-                                                        finalPixel = 7;
-                                                        finalPixel2 = 0;
-                                                    }
-                                                } 
-                                                
-
-                                                if (finalPixel != -1)
-                                                    for (int ps2 = 0; ps2 < pixelSize2; ps2++)
-                                                    {
-                                                        bmp[actualPosition + ps2] = (byte)finalPixel;
-                                                        bmp[actualPosition + ps2 + pixelSize2] = (byte)finalPixel2;
-                                                    }
 
 
-                                            }
-                                        }
-                                    }
                                 }
                             }
                         }
@@ -218,15 +178,15 @@ namespace Apple2
                                         {
                                             if (objout != null)
                                             {
-                                                   if (mainBoard.scanLines && pixelSize > 2 && ps1 == pixelSize-1)
-                                                        bmp[byteid] = 0;
+                                                if (mainBoard.scanLines && pixelSize > 2 && ps1 == pixelSize - 1)
+                                                    bmp[byteid] = 0;
+                                                else
+                                                {
+                                                    if ((bool)objout)
+                                                        bmp[byteid] = 0xff;
                                                     else
-                                                    {
-                                                        if ((bool)objout)
-                                                            bmp[byteid] = 0xff;
-                                                        else
-                                                            bmp[byteid] = 0x0;
-                                                    }
+                                                        bmp[byteid] = 0x0;
+                                                }
                                             }
                                             else
                                                 bmp[byteid] = 0x0;
@@ -237,6 +197,121 @@ namespace Apple2
                             }
                         }
                         posV = posV + 1;
+                    }
+                }
+            }
+
+            if (mainBoard.Idealized)
+            {
+
+                for (int l = 0; l < 192 * pixelSize; l++)
+                {
+                    int lineSize = 0x28 * 7 * pixelSize;
+                    int pixelSize2 = pixelSize / 2;
+                    for (int i = 0; i < lineSize; i = i + pixelSize2)
+                    {
+                        if (i >= pixelSize && i < lineSize - pixelSize)
+                        {
+                            int actualPixel = lineSize * l + i;
+                            int upperPixel = l > pixelSize - 1 ? actualPixel - lineSize * pixelSize : -1;
+                            int bottomPixel = l < (192 * pixelSize - pixelSize) ? actualPixel + lineSize * pixelSize : -1;
+                            int lastPixel = actualPixel - pixelSize;
+                            int lastPixel2 = actualPixel - pixelSize * 2;
+                            int nextPixel = actualPixel + pixelSize;
+                            int nextPixel2 = actualPixel + pixelSize * 2;
+                            int finalPixel = -1;
+                            int finalPixel2 = -1;
+                            if (bmp[actualPixel] == 1 || bmp[actualPixel] == 2 || bmp[actualPixel] == 5 || bmp[actualPixel] == 6) // Color
+                            {
+                                if (bmp[lastPixel] == 0 || bmp[lastPixel] == 4) // last black
+                                {
+                                    if (bmp[nextPixel] == 3 || bmp[nextPixel] == 7) // next white
+                                    {
+                                        finalPixel = 0; // 
+                                        finalPixel2 = 7; //
+                                    }
+                                    //else if (bmp[nextPixel] == 1 || bmp[nextPixel] == 2 || bmp[nextPixel] == 5 || bmp[nextPixel] == 6) // next color
+                                    //{
+                                    //    if (bmp[nextPixel2] == 0 || bmp[nextPixel2] == 4) // second next black
+                                    //    {
+                                    //        if (upperPixel != -1 && bottomPixel != -1)
+                                    //        {
+                                    //            if ((bmp[upperPixel] == 0 || bmp[upperPixel] == 4 || bmp[upperPixel] == 3 || bmp[upperPixel] == 7)) // upper black or white
+                                    //            {
+                                    //                if (bmp[bottomPixel] == 0 || bmp[bottomPixel] == 4 || bmp[bottomPixel] == 3 || bmp[bottomPixel] == 7) // bottom black or white
+                                    //                {
+                                    //                    //finalPixel = 7; // 
+                                    //                    //finalPixel2 = 7; //
+                                    //                }
+
+                                    //            }
+
+                                    //        }  
+                                    //    }
+                                    //}
+                                    else if (bmp[nextPixel] == 0 || bmp[nextPixel] == 4) // next black
+                                    {
+                                        finalPixel = 7; // 
+                                        finalPixel2 = 0; //
+                                    }
+
+                                }
+                                else if (bmp[lastPixel] == 3 || bmp[lastPixel] == 7) // last white
+                                {
+                                    if (bmp[nextPixel] == 0 || bmp[nextPixel] == 4) // next black
+                                    {
+                                        finalPixel = 7; // white | white,black | black
+                                        finalPixel2 = 0; //
+                                    }
+                                    else if (bmp[nextPixel] == 1 || bmp[nextPixel] == 2 || bmp[nextPixel] == 5 || bmp[nextPixel] == 6) // next color
+                                    {
+                                        if (bmp[nextPixel2] == 3 || bmp[nextPixel2] == 7) // second next white
+                                        {
+                                            finalPixel = 7; // 
+                                            finalPixel2 = 0; //
+                                        }
+                                    }
+                                    else if (bmp[nextPixel] == 3 || bmp[nextPixel] == 7) // next white
+                                    {
+                                        finalPixel = 0; // white | white,black | black
+                                        finalPixel2 = 7; //
+                                    }
+
+
+
+                                }
+                                else if (bmp[lastPixel] == 1 || bmp[lastPixel] == 2 || bmp[lastPixel] == 5 || bmp[lastPixel] == 6) // last color
+                                {
+                                    //if (bmp[nextPixel2] == 0 || bmp[nextPixel2] == 4) // second next black
+                                    //{
+                                    //    if (upperPixel != -1 && bottomPixel != -1)
+                                    //    {
+                                    //        if ((bmp[upperPixel] == 0 || bmp[upperPixel] == 4 || bmp[upperPixel] == 3 || bmp[upperPixel] == 7)) // upper black or white
+                                    //        {
+                                    //            if (bmp[bottomPixel] == 0 || bmp[bottomPixel] == 4 || bmp[bottomPixel] == 3 || bmp[bottomPixel] == 7) // bottom black or white
+                                    //            {
+                                    //                finalPixel = 7; // 
+                                    //                finalPixel2 = 7; //
+                                    //            }
+
+                                    //        }
+
+                                    //    }
+                                    //}
+
+                                }
+
+                            }
+
+                            if (finalPixel != -1)
+                                for (int ps2 = 0; ps2 < pixelSize2; ps2++)
+                                {
+                                    bmp[actualPixel + ps2] = (byte)finalPixel;
+                                    bmp[actualPixel + ps2 + pixelSize2] = (byte)finalPixel2;
+                                }
+
+
+                        }
                     }
                 }
             }

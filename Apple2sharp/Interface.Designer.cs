@@ -72,6 +72,7 @@ namespace Apple2
             btnScanLines = new Button();
             btnPaused = new Button();
             btnIdealized = new Button();
+            joybtn0 = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)tbSpeed).BeginInit();
             drivePanel1.SuspendLayout();
@@ -476,12 +477,14 @@ namespace Apple2
             // 
             // btnTurbo
             // 
+            btnTurbo.BackColor = SystemColors.ControlText;
+            btnTurbo.ForeColor = SystemColors.ControlLightLight;
             btnTurbo.Location = new Point(1391, 129);
             btnTurbo.Name = "btnTurbo";
             btnTurbo.Size = new Size(95, 50);
             btnTurbo.TabIndex = 45;
             btnTurbo.Text = "Turbo";
-            btnTurbo.UseVisualStyleBackColor = true;
+            btnTurbo.UseVisualStyleBackColor = false;
             btnTurbo.Click += btnTurbo_Click;
             // 
             // btnColor
@@ -508,12 +511,14 @@ namespace Apple2
             // 
             // btnPaused
             // 
+            btnPaused.BackColor = SystemColors.ControlText;
+            btnPaused.ForeColor = SystemColors.ControlLightLight;
             btnPaused.Location = new Point(1286, 73);
             btnPaused.Name = "btnPaused";
             btnPaused.Size = new Size(200, 50);
             btnPaused.TabIndex = 49;
             btnPaused.Text = "Paused";
-            btnPaused.UseVisualStyleBackColor = true;
+            btnPaused.UseVisualStyleBackColor = false;
             btnPaused.Click += btnPaused_Click;
             // 
             // btnIdealized
@@ -527,6 +532,19 @@ namespace Apple2
             btnIdealized.UseVisualStyleBackColor = false;
             btnIdealized.Click += btnIdealized_Click;
             // 
+            // joybtn0
+            // 
+            joybtn0.BackColor = SystemColors.ControlText;
+            joybtn0.ForeColor = SystemColors.ControlLightLight;
+            joybtn0.Location = new Point(1333, 387);
+            joybtn0.Name = "joybtn0";
+            joybtn0.Size = new Size(95, 50);
+            joybtn0.TabIndex = 51;
+            joybtn0.Text = "joybtn";
+            joybtn0.UseVisualStyleBackColor = false;
+            joybtn0.MouseDown += joybtn0_MouseDown;
+            joybtn0.MouseUp += joybtn0_MouseUp;
+            // 
             // Interface
             // 
             AutoScaleDimensions = new SizeF(144F, 144F);
@@ -534,6 +552,7 @@ namespace Apple2
             BackgroundImage = (Image)resources.GetObject("$this.BackgroundImage");
             BackgroundImageLayout = ImageLayout.Stretch;
             ClientSize = new Size(1924, 1228);
+            Controls.Add(joybtn0);
             Controls.Add(btnIdealized);
             Controls.Add(btnPaused);
             Controls.Add(btnScanLines);
@@ -614,5 +633,6 @@ namespace Apple2
         private Button btnScanLines;
         private Button btnPaused;
         private Button btnIdealized;
+        private Button joybtn0;
     }
 }
