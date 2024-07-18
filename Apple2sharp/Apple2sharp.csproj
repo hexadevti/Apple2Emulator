@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
-    <Content Include="AppIcon.ico" />
+    <Content Include="images\AppIcon.ico" />
     <Content Include="roms\ApplesoftD000.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -82,6 +82,6 @@
     <!-- <PublishTrimmed>true</PublishTrimmed>
     <PublishAOT>true</PublishAOT> -->
     <ForceDesignerDpiUnaware>false</ForceDesignerDpiUnaware>
-    <ApplicationIcon>AppIcon.ico</ApplicationIcon>
+    <ApplicationIcon>images\AppIcon.ico</ApplicationIcon>
   </PropertyGroup>
 </Project>

@@ -23,6 +23,8 @@ namespace Apple2Sharp
         const int pixelSize = 4;
         private Apple2Board mainBoard { get; set; }
         private IProcessor cpu { get; set; }
+
+        private Clock clock { get; set; }
         private State state = new State();
 
         private string? assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -47,6 +49,7 @@ namespace Apple2Sharp
             D1OFF.Visible = true;
             D2OFF.Visible = true;
             cpu = new Mos6502(state, mainBoard);
+            clock = new Clock(cpu, mainBoard);
             Keyboard keyboard = new Keyboard(mainBoard, cpu);
             richTextBox1.KeyDown += keyboard.OnKeyDown;
             richTextBox1.KeyUp += keyboard.OnKeyUp;
@@ -287,7 +290,7 @@ namespace Apple2Sharp
                 }
             }));
 
-            threads.Add(Task.Run(() => cpu.Run()));
+            threads.Add(Task.Run(() => clock.Run()));
         }
 
         private void StartSpeaker()

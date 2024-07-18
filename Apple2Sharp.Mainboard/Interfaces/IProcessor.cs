@@ -6,8 +6,6 @@ public interface IProcessor
 {
     void IncrementPC();
 
-    void Run();
-
     void RunCycle();
 
     void Reset();
