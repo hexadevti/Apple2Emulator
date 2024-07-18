@@ -72,8 +72,6 @@ namespace Apple2Sharp
             LoadThreads();
         }
 
-
-
         private void LoadContext()
         {
             string Disk1Path = Apple2Sharp.Properties.Settings.Default.Disk1Path;
@@ -180,21 +178,11 @@ namespace Apple2Sharp
             }
 
         }
-
-        private void cbSlot_SelectedValueChanged(object? sender, EventArgs e)
-        {
-            string settings = ((ComboBox)sender).Name.Replace("cb", "") + "Card";
-            Apple2Sharp.Properties.Settings.Default[settings] = ((ComboBox)sender).SelectedValue;
-            Apple2Sharp.Properties.Settings.Default.Save();
-
-        }
-
         private void InitSlots()
         {
             for (int i = 0; i < 8; i++)
                 mainBoard.slots[i] = (ICard)GetInstance(cbSlots[i].SelectedValue.ToString(), i);
         }
-
         public object? GetInstance(string type, int slot)
         {
             if (type == "LanguageCard")
@@ -211,19 +199,6 @@ namespace Apple2Sharp
                 return new EmptySlot();
 
         }
-
-        private void tbSpeed_ValueChanged(object? sender, EventArgs e)
-        {
-            mainBoard.clickBuffer.Clear();
-            richTextBox1.Focus();
-        }
-
-        private void FormCloseEvent(object? sender, FormClosingEventArgs e)
-        {
-            cpu.cpuState = CpuState.Stopped;
-        }
-
-
         public void LoadThreads()
         {
             threads.Add(Task.Run(() =>
@@ -292,21 +267,13 @@ namespace Apple2Sharp
 
             threads.Add(Task.Run(() => clock.Run()));
         }
-
         private void StartSpeaker()
         {
             waveFormat = new WaveFormat(120000, 8, 1);
-            mainBoard.audioBuffer = 4800;
             speaker = new Speaker(mainBoard, waveFormat);
             soundOutput.Init(speaker);
             soundOutput.Play();
         }
-
-        private void Form1_Shown(object? sender, EventArgs e)
-        {
-            richTextBox1.Focus();
-        }
-
         private void UpdateDisks()
         {
             ICard actualDiskCard = null;
@@ -321,30 +288,13 @@ namespace Apple2Sharp
                 ((DiskIICard)actualDiskCard).drive2 = new DiskDrive(openFileDialog2.FileName, (DiskIICard)actualDiskCard);
             }
         }
-
-        private void pictureBox1_Click(object sender, EventArgs e)
+        public static int ReadTrackBar(TrackBar control)
         {
-            richTextBox1.Focus();
+            if (control.InvokeRequired)
+                return (int)control.Invoke(new Func<int>(() => ReadTrackBar(control)));
+            else
+                return control.Value;
         }
-
-        private void btn_restart_Click(object sender, EventArgs e)
-        {
-            InitSlots();
-            cpu.WarmStart();
-            richTextBox1.Focus();
-        }
-
-        private void btnClockAdjust_Click(object sender, EventArgs e)
-        {
-            mainBoard.adjust1Mhz = true;
-            mainBoard.clickBuffer.Clear();
-            tbSpeed.Value = 1;
-            tbSpeed.Enabled = false;
-            Apple2Sharp.Properties.Settings.Default["Adjust1mhz"] = mainBoard.adjust1Mhz.ToString();
-            Apple2Sharp.Properties.Settings.Default.Save();
-            richTextBox1.Focus();
-        }
-
         public void SetLabel(Control control, string text)
         {
             if (D1T.InvokeRequired)
@@ -355,7 +305,6 @@ namespace Apple2Sharp
             else
                 control.Text = text;
         }
-
         public void SetButtonActive(Button control, bool active, Color color)
         {
             if (D1T.InvokeRequired)
@@ -377,15 +326,6 @@ namespace Apple2Sharp
                 }
             }
         }
-
-        public static int ReadTrackBar(TrackBar control)
-        {
-            if (control.InvokeRequired)
-                return (int)control.Invoke(new Func<int>(() => ReadTrackBar(control)));
-            else
-                return control.Value;
-        }
-
         public void SetDriveLight(PictureBox control, bool check)
         {
             if (D1T.InvokeRequired)
@@ -396,7 +336,6 @@ namespace Apple2Sharp
             else
                 control.Visible = check;
         }
-
         public void SetRichTextBox(RichTextBox control, string text)
         {
             if (control.InvokeRequired)
@@ -411,7 +350,64 @@ namespace Apple2Sharp
             }
 
         }
+        public static bool IsFileInUseGeneric(string file)
+        {
+            FileInfo fi = new FileInfo(file);
+            try
+            {
+                using var stream = fi.Open(FileMode.Open, FileAccess.Read, FileShare.None);
+            }
+            catch (IOException)
+            {
+                System.Windows.Forms.MessageBox.Show("Selected File in use by other application. Try another file.");
+                return true;
+            }
+            return false;
+        }
 
+        private void Form1_Shown(object? sender, EventArgs e)
+        {
+            richTextBox1.Focus();
+        }
+        private void tbSpeed_ValueChanged(object? sender, EventArgs e)
+        {
+            mainBoard.clickBuffer.Clear();
+            richTextBox1.Focus();
+        }
+
+        private void FormCloseEvent(object? sender, FormClosingEventArgs e)
+        {
+            cpu.cpuState = CpuState.Stopped;
+        }
+
+        
+        private void cbSlot_SelectedValueChanged(object? sender, EventArgs e)
+        {
+            string settings = ((ComboBox)sender).Name.Replace("cb", "") + "Card";
+            Apple2Sharp.Properties.Settings.Default[settings] = ((ComboBox)sender).SelectedValue;
+            Apple2Sharp.Properties.Settings.Default.Save();
+
+        }
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            richTextBox1.Focus();
+        }
+        private void btn_restart_Click(object sender, EventArgs e)
+        {
+            InitSlots();
+            cpu.WarmStart();
+            richTextBox1.Focus();
+        }
+        private void btnClockAdjust_Click(object sender, EventArgs e)
+        {
+            mainBoard.adjust1Mhz = true;
+            mainBoard.clickBuffer.Clear();
+            tbSpeed.Value = 1;
+            tbSpeed.Enabled = false;
+            Apple2Sharp.Properties.Settings.Default["Adjust1mhz"] = mainBoard.adjust1Mhz.ToString();
+            Apple2Sharp.Properties.Settings.Default.Save();
+            richTextBox1.Focus();
+        }
         private void disk1_TextChanged(object sender, EventArgs e)
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
@@ -432,7 +428,6 @@ namespace Apple2Sharp
                 }
             }
         }
-
         private void disk2_TextChanged(object sender, EventArgs e)
         {
             if (openFileDialog2.ShowDialog() == DialogResult.OK)
@@ -454,21 +449,6 @@ namespace Apple2Sharp
 
             }
         }
-        public static bool IsFileInUseGeneric(string file)
-        {
-            FileInfo fi = new FileInfo(file);
-            try
-            {
-                using var stream = fi.Open(FileMode.Open, FileAccess.Read, FileShare.None);
-            }
-            catch (IOException)
-            {
-                System.Windows.Forms.MessageBox.Show("Selected File in use by other application. Try another file.");
-                return true;
-            }
-            return false;
-        }
-
         private void btnColor_Click(object sender, EventArgs e)
         {
             mainBoard.videoColor = !mainBoard.videoColor;
@@ -476,7 +456,6 @@ namespace Apple2Sharp
             Apple2Sharp.Properties.Settings.Default.Save();
             richTextBox1.Focus();
         }
-
         private void btnScanLines_Click(object sender, EventArgs e)
         {
             mainBoard.scanLines = !mainBoard.scanLines;
@@ -484,7 +463,6 @@ namespace Apple2Sharp
             Apple2Sharp.Properties.Settings.Default.Save();
             richTextBox1.Focus();
         }
-
         private void btnTurbo_Click(object sender, EventArgs e)
         {
             mainBoard.adjust1Mhz = false;
@@ -495,7 +473,6 @@ namespace Apple2Sharp
             Apple2Sharp.Properties.Settings.Default.Save();
             richTextBox1.Focus();
         }
-
         private void btnPaused_Click(object sender, EventArgs e)
         {
             if (cpu.cpuState == CpuState.Paused)
@@ -504,7 +481,6 @@ namespace Apple2Sharp
                 cpu.cpuState = CpuState.Paused;
             richTextBox1.Focus();
         }
-
         private void btnIdealized_Click(object sender, EventArgs e)
         {
             mainBoard.idealized = !mainBoard.idealized;
@@ -512,7 +488,6 @@ namespace Apple2Sharp
             Apple2Sharp.Properties.Settings.Default.Save();
             richTextBox1.Focus();
         }
-
         private void btnJoystick_Click(object sender, EventArgs e)
         {
             mainBoard.joystick = !mainBoard.joystick;

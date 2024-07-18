@@ -32,7 +32,6 @@ namespace Apple2Sharp.CPU.Mos6502
             mainBoard.ClearBaseRAM();
             Reset();
             cpuState = CpuState.Running;
-            
         }
         public void Reset()
         {
@@ -40,12 +39,10 @@ namespace Apple2Sharp.CPU.Mos6502
             lastPC = 0;
             state.PC = mainBoard.ReadAddressLLHH(0xfffc) ?? 0;
         }
-
         public void IncrementPC()
         {
             state.PC++;
         }
-
         public void RunCycle()
         {
             byte instruction = mainBoard.ReadByte(state.PC);
@@ -60,7 +57,6 @@ namespace Apple2Sharp.CPU.Mos6502
             OpCodes.Process(opCodePart, state, mainBoard, refAddress);
             EnqueueCycles(opCodePart);
         }
-
         public void EnqueueCycles(OpCodePart? opCodePart)
         {
             int cycles = opCodePart != null ? opCodePart.Cycles : 1;
@@ -72,7 +68,6 @@ namespace Apple2Sharp.CPU.Mos6502
             }
         
         }
-
         public void RunFast()
         {
             Stopwatch sw3 = Stopwatch.StartNew();
@@ -88,8 +83,6 @@ namespace Apple2Sharp.CPU.Mos6502
                 }
             }
         }
-
-        
     }
 
     
