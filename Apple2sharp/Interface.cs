@@ -106,6 +106,7 @@ namespace Apple2Sharp
             mainBoard.scanLines = Convert.ToBoolean(Apple2Sharp.Properties.Settings.Default["ScanLines"]);
             mainBoard.idealized = Convert.ToBoolean(Apple2Sharp.Properties.Settings.Default["Idealized"]);
             mainBoard.joystick = Convert.ToBoolean(Apple2Sharp.Properties.Settings.Default["Joystick"]);
+            richTextBox2.Visible = Convert.ToBoolean(Apple2Sharp.Properties.Settings.Default["Debug"]);
             if (mainBoard.joystick)
             {
                 mainBoard.timerpdl0 = 1790;
@@ -119,12 +120,13 @@ namespace Apple2Sharp
                 mainBoard.clickBuffer.Clear();
                 tbSpeed.Value = 1;
                 tbSpeed.Enabled = false;
+                soundOutput.Play();
             }
             else
             {
-                mainBoard.clickBuffer.Clear();
                 tbSpeed.Value = 10;
                 tbSpeed.Enabled = true;
+                soundOutput.Stop();
             }
         }
         private void LoadCardsCombos()
@@ -230,6 +232,7 @@ namespace Apple2Sharp
                     SetButtonActive(btnPaused, cpu.cpuState == CpuState.Paused, Color.SteelBlue);
                     SetButtonActive(btnIdealized, mainBoard.idealized, Color.SteelBlue);
                     SetButtonActive(btnJoystick, mainBoard.joystick, Color.SteelBlue);
+                    SetButtonActive(btnDebug, richTextBox2.Visible, Color.SteelBlue);
 
                     string text = "";
                     for (int i = 0; i < mainBoard.screenLog.Count; i++)
@@ -265,7 +268,11 @@ namespace Apple2Sharp
                 }
             }));
 
-            threads.Add(Task.Run(() => clock.Run()));
+            threads.Add(Task.Run(() => {
+                cpu.cpuState = CpuState.Running;
+                clock.Run();
+                }
+            ));
         }
         private void StartSpeaker()
         {
@@ -380,7 +387,7 @@ namespace Apple2Sharp
             cpu.cpuState = CpuState.Stopped;
         }
 
-        
+
         private void cbSlot_SelectedValueChanged(object? sender, EventArgs e)
         {
             string settings = ((ComboBox)sender).Name.Replace("cb", "") + "Card";
@@ -395,18 +402,40 @@ namespace Apple2Sharp
         private void btn_restart_Click(object sender, EventArgs e)
         {
             InitSlots();
+            LoadContext();
             cpu.WarmStart();
             richTextBox1.Focus();
         }
         private void btnClockAdjust_Click(object sender, EventArgs e)
         {
-            mainBoard.adjust1Mhz = true;
-            mainBoard.clickBuffer.Clear();
-            tbSpeed.Value = 1;
-            tbSpeed.Enabled = false;
+            mainBoard.adjust1Mhz = !mainBoard.adjust1Mhz;
+            if (mainBoard.adjust1Mhz)
+            {
+                tbSpeed.Value = 1;
+                tbSpeed.Enabled = false;
+                soundOutput.Play();
+            }
+            else
+            {
+                mainBoard.adjust1Mhz = false;
+                tbSpeed.Value = 10;
+                tbSpeed.Enabled = true;
+                soundOutput.Stop();
+            }
             Apple2Sharp.Properties.Settings.Default["Adjust1mhz"] = mainBoard.adjust1Mhz.ToString();
             Apple2Sharp.Properties.Settings.Default.Save();
             richTextBox1.Focus();
+        }
+        private void btnTurbo_Click(object sender, EventArgs e)
+        {
+            btnClockAdjust_Click(sender, e);
+            //mainBoard.adjust1Mhz = false;
+            //mainBoard.clickBuffer.Clear();
+            //tbSpeed.Value = 10;
+            //tbSpeed.Enabled = true;
+            //Apple2Sharp.Properties.Settings.Default["Adjust1mhz"] = mainBoard.adjust1Mhz.ToString();
+            //Apple2Sharp.Properties.Settings.Default.Save();
+            //richTextBox1.Focus();
         }
         private void disk1_TextChanged(object sender, EventArgs e)
         {
@@ -463,16 +492,7 @@ namespace Apple2Sharp
             Apple2Sharp.Properties.Settings.Default.Save();
             richTextBox1.Focus();
         }
-        private void btnTurbo_Click(object sender, EventArgs e)
-        {
-            mainBoard.adjust1Mhz = false;
-            mainBoard.clickBuffer.Clear();
-            tbSpeed.Value = 10;
-            tbSpeed.Enabled = true;
-            Apple2Sharp.Properties.Settings.Default["Adjust1mhz"] = mainBoard.adjust1Mhz.ToString();
-            Apple2Sharp.Properties.Settings.Default.Save();
-            richTextBox1.Focus();
-        }
+        
         private void btnPaused_Click(object sender, EventArgs e)
         {
             if (cpu.cpuState == CpuState.Paused)
@@ -485,6 +505,14 @@ namespace Apple2Sharp
         {
             mainBoard.idealized = !mainBoard.idealized;
             Apple2Sharp.Properties.Settings.Default["Idealized"] = mainBoard.idealized.ToString();
+            Apple2Sharp.Properties.Settings.Default.Save();
+            richTextBox1.Focus();
+        }
+
+        private void btnDebug_Click(object sender, EventArgs e)
+        {
+            richTextBox2.Visible = !richTextBox2.Visible;
+            Apple2Sharp.Properties.Settings.Default["Debug"] = richTextBox2.Visible.ToString();
             Apple2Sharp.Properties.Settings.Default.Save();
             richTextBox1.Focus();
         }

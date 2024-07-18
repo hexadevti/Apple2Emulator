@@ -73,6 +73,17 @@ namespace Apple2Sharp
             btnPaused = new Button();
             btnIdealized = new Button();
             btnJoystick = new Button();
+            pictureBox2 = new PictureBox();
+            btnDebug = new Button();
+            pictureBox3 = new PictureBox();
+            lblslot1 = new Label();
+            lblslot0 = new Label();
+            lblslot2 = new Label();
+            lblslot3 = new Label();
+            lblslot4 = new Label();
+            lblslot5 = new Label();
+            lblslot6 = new Label();
+            lblslot7 = new Label();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)tbSpeed).BeginInit();
             drivePanel1.SuspendLayout();
@@ -82,6 +93,8 @@ namespace Apple2Sharp
             ((System.ComponentModel.ISupportInitialize)D2ON).BeginInit();
             ((System.ComponentModel.ISupportInitialize)D2OFF).BeginInit();
             panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox3).BeginInit();
             SuspendLayout();
             // 
             // pictureBox1
@@ -208,9 +221,10 @@ namespace Apple2Sharp
             richTextBox2.ForeColor = Color.White;
             richTextBox2.Location = new Point(844, 986);
             richTextBox2.Name = "richTextBox2";
-            richTextBox2.Size = new Size(1034, 235);
+            richTextBox2.Size = new Size(1068, 235);
             richTextBox2.TabIndex = 15;
             richTextBox2.Text = "";
+            richTextBox2.Visible = false;
             // 
             // tbSpeed
             // 
@@ -544,6 +558,152 @@ namespace Apple2Sharp
             btnJoystick.UseVisualStyleBackColor = false;
             btnJoystick.Click += btnJoystick_Click;
             // 
+            // pictureBox2
+            // 
+            pictureBox2.BackColor = Color.Transparent;
+            pictureBox2.Image = (Image)resources.GetObject("pictureBox2.Image");
+            pictureBox2.Location = new Point(788, 996);
+            pictureBox2.Name = "pictureBox2";
+            pictureBox2.Size = new Size(771, 208);
+            pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox2.TabIndex = 52;
+            pictureBox2.TabStop = false;
+            // 
+            // btnDebug
+            // 
+            btnDebug.BackColor = SystemColors.ControlText;
+            btnDebug.ForeColor = SystemColors.ControlLightLight;
+            btnDebug.Location = new Point(1279, 930);
+            btnDebug.Name = "btnDebug";
+            btnDebug.Size = new Size(200, 50);
+            btnDebug.TabIndex = 53;
+            btnDebug.Text = "Debug Window";
+            btnDebug.UseVisualStyleBackColor = false;
+            btnDebug.Click += btnDebug_Click;
+            // 
+            // pictureBox3
+            // 
+            pictureBox3.BackColor = Color.Transparent;
+            pictureBox3.Image = (Image)resources.GetObject("pictureBox3.Image");
+            pictureBox3.Location = new Point(1496, 967);
+            pictureBox3.Name = "pictureBox3";
+            pictureBox3.Size = new Size(383, 249);
+            pictureBox3.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox3.TabIndex = 54;
+            pictureBox3.TabStop = false;
+            // 
+            // lblslot1
+            // 
+            lblslot1.AutoSize = true;
+            lblslot1.BackColor = Color.Transparent;
+            lblslot1.Font = new Font("Lucida Sans Unicode", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblslot1.ForeColor = SystemColors.ControlLightLight;
+            lblslot1.Location = new Point(1882, 261);
+            lblslot1.Margin = new Padding(4, 0, 4, 0);
+            lblslot1.Name = "lblslot1";
+            lblslot1.RightToLeft = RightToLeft.No;
+            lblslot1.Size = new Size(38, 39);
+            lblslot1.TabIndex = 9;
+            lblslot1.Text = "1";
+            // 
+            // lblslot0
+            // 
+            lblslot0.AutoSize = true;
+            lblslot0.BackColor = Color.Transparent;
+            lblslot0.Font = new Font("Lucida Sans Unicode", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblslot0.ForeColor = SystemColors.ControlLightLight;
+            lblslot0.Location = new Point(1882, 147);
+            lblslot0.Margin = new Padding(4, 0, 4, 0);
+            lblslot0.Name = "lblslot0";
+            lblslot0.RightToLeft = RightToLeft.No;
+            lblslot0.Size = new Size(38, 39);
+            lblslot0.TabIndex = 55;
+            lblslot0.Text = "0";
+            // 
+            // lblslot2
+            // 
+            lblslot2.AutoSize = true;
+            lblslot2.BackColor = Color.Transparent;
+            lblslot2.Font = new Font("Lucida Sans Unicode", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblslot2.ForeColor = SystemColors.ControlLightLight;
+            lblslot2.Location = new Point(1882, 370);
+            lblslot2.Margin = new Padding(4, 0, 4, 0);
+            lblslot2.Name = "lblslot2";
+            lblslot2.RightToLeft = RightToLeft.No;
+            lblslot2.Size = new Size(38, 39);
+            lblslot2.TabIndex = 56;
+            lblslot2.Text = "2";
+            // 
+            // lblslot3
+            // 
+            lblslot3.AutoSize = true;
+            lblslot3.BackColor = Color.Transparent;
+            lblslot3.Font = new Font("Lucida Sans Unicode", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblslot3.ForeColor = SystemColors.ControlLightLight;
+            lblslot3.Location = new Point(1882, 479);
+            lblslot3.Margin = new Padding(4, 0, 4, 0);
+            lblslot3.Name = "lblslot3";
+            lblslot3.RightToLeft = RightToLeft.No;
+            lblslot3.Size = new Size(38, 39);
+            lblslot3.TabIndex = 57;
+            lblslot3.Text = "3";
+            // 
+            // lblslot4
+            // 
+            lblslot4.AutoSize = true;
+            lblslot4.BackColor = Color.Transparent;
+            lblslot4.Font = new Font("Lucida Sans Unicode", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblslot4.ForeColor = SystemColors.ControlLightLight;
+            lblslot4.Location = new Point(1882, 589);
+            lblslot4.Margin = new Padding(4, 0, 4, 0);
+            lblslot4.Name = "lblslot4";
+            lblslot4.RightToLeft = RightToLeft.No;
+            lblslot4.Size = new Size(38, 39);
+            lblslot4.TabIndex = 58;
+            lblslot4.Text = "4";
+            // 
+            // lblslot5
+            // 
+            lblslot5.AutoSize = true;
+            lblslot5.BackColor = Color.Transparent;
+            lblslot5.Font = new Font("Lucida Sans Unicode", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblslot5.ForeColor = SystemColors.ControlLightLight;
+            lblslot5.Location = new Point(1882, 701);
+            lblslot5.Margin = new Padding(4, 0, 4, 0);
+            lblslot5.Name = "lblslot5";
+            lblslot5.RightToLeft = RightToLeft.No;
+            lblslot5.Size = new Size(38, 39);
+            lblslot5.TabIndex = 59;
+            lblslot5.Text = "5";
+            // 
+            // lblslot6
+            // 
+            lblslot6.AutoSize = true;
+            lblslot6.BackColor = Color.Transparent;
+            lblslot6.Font = new Font("Lucida Sans Unicode", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblslot6.ForeColor = SystemColors.ControlLightLight;
+            lblslot6.Location = new Point(1882, 811);
+            lblslot6.Margin = new Padding(4, 0, 4, 0);
+            lblslot6.Name = "lblslot6";
+            lblslot6.RightToLeft = RightToLeft.No;
+            lblslot6.Size = new Size(38, 39);
+            lblslot6.TabIndex = 60;
+            lblslot6.Text = "6";
+            // 
+            // lblslot7
+            // 
+            lblslot7.AutoSize = true;
+            lblslot7.BackColor = Color.Transparent;
+            lblslot7.Font = new Font("Lucida Sans Unicode", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblslot7.ForeColor = SystemColors.ControlLightLight;
+            lblslot7.Location = new Point(1882, 919);
+            lblslot7.Margin = new Padding(4, 0, 4, 0);
+            lblslot7.Name = "lblslot7";
+            lblslot7.RightToLeft = RightToLeft.No;
+            lblslot7.Size = new Size(38, 39);
+            lblslot7.TabIndex = 61;
+            lblslot7.Text = "7";
+            // 
             // Interface
             // 
             AutoScaleDimensions = new SizeF(144F, 144F);
@@ -551,6 +711,18 @@ namespace Apple2Sharp
             BackgroundImage = (Image)resources.GetObject("$this.BackgroundImage");
             BackgroundImageLayout = ImageLayout.Stretch;
             ClientSize = new Size(1924, 1228);
+            Controls.Add(lblslot7);
+            Controls.Add(lblslot6);
+            Controls.Add(lblslot5);
+            Controls.Add(lblslot4);
+            Controls.Add(lblslot3);
+            Controls.Add(lblslot2);
+            Controls.Add(lblslot0);
+            Controls.Add(lblslot1);
+            Controls.Add(btnDebug);
+            Controls.Add(richTextBox2);
+            Controls.Add(panel1);
+            Controls.Add(pictureBox1);
             Controls.Add(btnJoystick);
             Controls.Add(btnIdealized);
             Controls.Add(btnPaused);
@@ -565,14 +737,13 @@ namespace Apple2Sharp
             Controls.Add(cbslot2);
             Controls.Add(cbslot1);
             Controls.Add(panel2);
-            Controls.Add(panel1);
             Controls.Add(drivePanel1);
-            Controls.Add(richTextBox2);
             Controls.Add(btn1Mhz);
             Controls.Add(richTextBox1);
             Controls.Add(btn_restart);
-            Controls.Add(pictureBox1);
             Controls.Add(cbslot0);
+            Controls.Add(pictureBox3);
+            Controls.Add(pictureBox2);
             DoubleBuffered = true;
             FormBorderStyle = FormBorderStyle.FixedSingle;
             Icon = (Icon)resources.GetObject("$this.Icon");
@@ -590,7 +761,10 @@ namespace Apple2Sharp
             ((System.ComponentModel.ISupportInitialize)D2OFF).EndInit();
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox3).EndInit();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -633,5 +807,17 @@ namespace Apple2Sharp
         private Button btnPaused;
         private Button btnIdealized;
         private Button btnJoystick;
+        private PictureBox pictureBox2;
+        private Button btnDebug;
+        private PictureBox pictureBox3;
+        private Label label2;
+        private Label lblslot1;
+        private Label lblslot0;
+        private Label lblslot2;
+        private Label lblslot3;
+        private Label lblslot4;
+        private Label lblslot5;
+        private Label lblslot6;
+        private Label lblslot7;
     }
 }

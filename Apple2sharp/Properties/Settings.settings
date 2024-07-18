@@ -47,5 +47,8 @@
     <Setting Name="Joystick" Type="System.String" Scope="User">
       <Value Profile="(Default)">false</Value>
     </Setting>
+    <Setting Name="Debug" Type="System.String" Scope="User">
+      <Value Profile="(Default)">false</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

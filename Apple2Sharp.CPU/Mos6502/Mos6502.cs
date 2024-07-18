@@ -23,7 +23,7 @@ namespace Apple2Sharp.CPU.Mos6502
             this.mainBoard = mainBoard;
             this.state = state;
             last1mhz = DateTime.Now;
-            cpuState = CpuState.Running;
+            cpuState = CpuState.Stopped;
         }
 
         public void WarmStart()
