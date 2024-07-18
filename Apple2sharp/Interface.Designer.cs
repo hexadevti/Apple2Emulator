@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
 
-namespace Apple2
+namespace Apple2Sharp
 {
 
 
@@ -89,7 +89,7 @@ namespace Apple2
             pictureBox1.BackColor = Color.Black;
             pictureBox1.Location = new Point(16, 16);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(1264, 963);
+            pictureBox1.Size = new Size(1250, 963);
             pictureBox1.TabIndex = 0;
             pictureBox1.TabStop = false;
             pictureBox1.Click += pictureBox1_Click;
@@ -154,7 +154,7 @@ namespace Apple2
             // 
             btn_restart.BackColor = Color.Red;
             btn_restart.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            btn_restart.Location = new Point(1286, 16);
+            btn_restart.Location = new Point(1279, 16);
             btn_restart.Margin = new Padding(4);
             btn_restart.Name = "btn_restart";
             btn_restart.Size = new Size(200, 50);
@@ -175,7 +175,7 @@ namespace Apple2
             // btn1Mhz
             // 
             btn1Mhz.BackColor = Color.SteelBlue;
-            btn1Mhz.Location = new Point(1286, 129);
+            btn1Mhz.Location = new Point(1279, 129);
             btn1Mhz.Name = "btn1Mhz";
             btn1Mhz.Size = new Size(95, 50);
             btn1Mhz.TabIndex = 13;
@@ -479,7 +479,7 @@ namespace Apple2
             // 
             btnTurbo.BackColor = SystemColors.ControlText;
             btnTurbo.ForeColor = SystemColors.ControlLightLight;
-            btnTurbo.Location = new Point(1391, 129);
+            btnTurbo.Location = new Point(1384, 129);
             btnTurbo.Name = "btnTurbo";
             btnTurbo.Size = new Size(95, 50);
             btnTurbo.TabIndex = 45;
@@ -490,7 +490,7 @@ namespace Apple2
             // btnColor
             // 
             btnColor.BackColor = Color.SteelBlue;
-            btnColor.Location = new Point(1286, 185);
+            btnColor.Location = new Point(1279, 185);
             btnColor.Name = "btnColor";
             btnColor.Size = new Size(200, 50);
             btnColor.TabIndex = 46;
@@ -501,7 +501,7 @@ namespace Apple2
             // btnScanLines
             // 
             btnScanLines.BackColor = Color.SteelBlue;
-            btnScanLines.Location = new Point(1286, 241);
+            btnScanLines.Location = new Point(1279, 241);
             btnScanLines.Name = "btnScanLines";
             btnScanLines.Size = new Size(200, 50);
             btnScanLines.TabIndex = 47;
@@ -513,7 +513,7 @@ namespace Apple2
             // 
             btnPaused.BackColor = SystemColors.ControlText;
             btnPaused.ForeColor = SystemColors.ControlLightLight;
-            btnPaused.Location = new Point(1286, 73);
+            btnPaused.Location = new Point(1279, 73);
             btnPaused.Name = "btnPaused";
             btnPaused.Size = new Size(200, 50);
             btnPaused.TabIndex = 49;
@@ -524,7 +524,7 @@ namespace Apple2
             // btnIdealized
             // 
             btnIdealized.BackColor = Color.SteelBlue;
-            btnIdealized.Location = new Point(1286, 297);
+            btnIdealized.Location = new Point(1279, 297);
             btnIdealized.Name = "btnIdealized";
             btnIdealized.Size = new Size(200, 50);
             btnIdealized.TabIndex = 50;
@@ -536,7 +536,7 @@ namespace Apple2
             // 
             btnJoystick.BackColor = SystemColors.ControlText;
             btnJoystick.ForeColor = SystemColors.ControlLightLight;
-            btnJoystick.Location = new Point(1286, 353);
+            btnJoystick.Location = new Point(1279, 353);
             btnJoystick.Name = "btnJoystick";
             btnJoystick.Size = new Size(200, 50);
             btnJoystick.TabIndex = 51;

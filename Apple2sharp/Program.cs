@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Windows.Forms;
 
-namespace Apple2
+namespace Apple2Sharp
 {
     static class Program
     {

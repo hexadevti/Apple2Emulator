@@ -1,9 +1,9 @@
-Apple2.CPU/bin/*
-Apple2.CPU/obj/*
-Apple2.IO/bin/*
-Apple2.IO/obj/*
-Apple2.Mainboard/bin/*
-Apple2.Mainboard/obj/*
-Apple2sharp/bin/*
-Apple2sharp/obj/*
+Apple2Sharp.CPU/bin/*
+Apple2Sharp.CPU/obj/*
+Apple2Sharp.IO/bin/*
+Apple2Sharp.IO/obj/*
+Apple2Sharp.Mainboard/bin/*
+Apple2Sharp.Mainboard/obj/*
+Apple2Sharp/bin/*
+Apple2Sharp/obj/*
 .vs/*

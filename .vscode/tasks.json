@@ -6,7 +6,7 @@
         {
             "label": "buildForms",
             "type": "shell",
-            "command": "dotnet build ${workspaceFolder}/Apple2sharp/Apple2sharp.csproj"
+            "command": "dotnet build ${workspaceFolder}/Apple2Sharp/Apple2Sharp.csproj"
         }
     ]
 }

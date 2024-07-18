@@ -63,9 +63,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Apple2.Mainboard\Apple2.Mainboard.csproj" />
-    <ProjectReference Include="..\Apple2.IO\Apple2.IO.csproj" />
-    <ProjectReference Include="..\Apple2.CPU\Apple2.CPU.csproj" />
+    <ProjectReference Include="..\Apple2Sharp.Mainboard\Apple2Sharp.Mainboard.csproj" />
+    <ProjectReference Include="..\Apple2Sharp.IO\Apple2Sharp.IO.csproj" />
+    <ProjectReference Include="..\Apple2Sharp.CPU\Apple2Sharp.CPU.csproj" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Properties\Resources.resx">

@@ -7,11 +7,11 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Apple2.Mainboard;
-using Apple2.Mainboard.Enums;
-using Apple2.Mainboard.Interfaces;
+using Apple2Sharp.Mainboard;
+using Apple2Sharp.Mainboard.Enums;
+using Apple2Sharp.Mainboard.Interfaces;
 
-namespace Apple2
+namespace Apple2Sharp
 {
     public class Keyboard
     {

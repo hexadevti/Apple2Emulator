@@ -5,11 +5,11 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Apple2sharp (windows)",
+            "name": "Apple2Sharp (windows)",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "buildForms",
-            "program": "${workspaceFolder}/Apple2sharp/bin/Debug/net8.0-windows/Apple2sharp.dll",
+            "program": "${workspaceFolder}/Apple2Sharp/bin/Debug/net8.0-windows/Apple2Sharp.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,

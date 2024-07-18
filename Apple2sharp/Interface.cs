@@ -6,17 +6,17 @@ using System.IO;
 using System.Threading.Tasks;
 using System;
 using System.Threading;
-using Apple2.Mainboard;
-using Apple2.IO;
-using Apple2.CPU;
-using Apple2.Mainboard.Interfaces;
-using Apple2.Mainboard.Cards;
-using Apple2.Mainboard.Enums;
-using Apple2.CPU.Mos6502;
+using Apple2Sharp.Mainboard;
+using Apple2Sharp.IO;
+using Apple2Sharp.CPU;
+using Apple2Sharp.Mainboard.Interfaces;
+using Apple2Sharp.Mainboard.Cards;
+using Apple2Sharp.Mainboard.Enums;
+using Apple2Sharp.CPU.Mos6502;
 using System.Drawing;
 using System.Net.NetworkInformation;
 
-namespace Apple2
+namespace Apple2Sharp
 {
     public partial class Interface : Form
     {
@@ -73,7 +73,7 @@ namespace Apple2
 
         private void LoadContext()
         {
-            string Disk1Path = Apple2sharp.Properties.Settings.Default.Disk1Path;
+            string Disk1Path = Apple2Sharp.Properties.Settings.Default.Disk1Path;
             if (!string.IsNullOrEmpty(Disk1Path))
             {
                 openFileDialog1.FileName = Disk1Path;
@@ -85,7 +85,7 @@ namespace Apple2
                 openFileDialog1.FileName = "";
                 disk1.Text = "";
             }
-            string Disk2Path = Apple2sharp.Properties.Settings.Default.Disk2Path;
+            string Disk2Path = Apple2Sharp.Properties.Settings.Default.Disk2Path;
             if (!string.IsNullOrEmpty(Disk2Path))
             {
                 openFileDialog2.FileName = Disk2Path;
@@ -98,13 +98,13 @@ namespace Apple2
                 disk2.Text = "";
             }
             for (int i = 0; i < 8; i++)
-                cbSlots[i].SelectedValue = Apple2sharp.Properties.Settings.Default["Slot" + i + "Card"];
+                cbSlots[i].SelectedValue = Apple2Sharp.Properties.Settings.Default["Slot" + i + "Card"];
 
-            mainBoard.videoColor = Convert.ToBoolean(Apple2sharp.Properties.Settings.Default["Color"]);
-            mainBoard.adjust1Mhz = Convert.ToBoolean(Apple2sharp.Properties.Settings.Default["Adjust1mhz"]);
-            mainBoard.scanLines = Convert.ToBoolean(Apple2sharp.Properties.Settings.Default["ScanLines"]);
-            mainBoard.idealized = Convert.ToBoolean(Apple2sharp.Properties.Settings.Default["Idealized"]);
-            mainBoard.joystick = Convert.ToBoolean(Apple2sharp.Properties.Settings.Default["Joystick"]);
+            mainBoard.videoColor = Convert.ToBoolean(Apple2Sharp.Properties.Settings.Default["Color"]);
+            mainBoard.adjust1Mhz = Convert.ToBoolean(Apple2Sharp.Properties.Settings.Default["Adjust1mhz"]);
+            mainBoard.scanLines = Convert.ToBoolean(Apple2Sharp.Properties.Settings.Default["ScanLines"]);
+            mainBoard.idealized = Convert.ToBoolean(Apple2Sharp.Properties.Settings.Default["Idealized"]);
+            mainBoard.joystick = Convert.ToBoolean(Apple2Sharp.Properties.Settings.Default["Joystick"]);
             if (mainBoard.joystick)
             {
                 mainBoard.timerpdl0 = 1790;
@@ -181,8 +181,8 @@ namespace Apple2
         private void cbSlot_SelectedValueChanged(object? sender, EventArgs e)
         {
             string settings = ((ComboBox)sender).Name.Replace("cb", "") + "Card";
-            Apple2sharp.Properties.Settings.Default[settings] = ((ComboBox)sender).SelectedValue;
-            Apple2sharp.Properties.Settings.Default.Save();
+            Apple2Sharp.Properties.Settings.Default[settings] = ((ComboBox)sender).SelectedValue;
+            Apple2Sharp.Properties.Settings.Default.Save();
 
         }
 
@@ -337,8 +337,8 @@ namespace Apple2
             mainBoard.clickBuffer.Clear();
             tbSpeed.Value = 1;
             tbSpeed.Enabled = false;
-            Apple2sharp.Properties.Settings.Default["Adjust1mhz"] = mainBoard.adjust1Mhz.ToString();
-            Apple2sharp.Properties.Settings.Default.Save();
+            Apple2Sharp.Properties.Settings.Default["Adjust1mhz"] = mainBoard.adjust1Mhz.ToString();
+            Apple2Sharp.Properties.Settings.Default.Save();
             richTextBox1.Focus();
         }
 
@@ -417,8 +417,8 @@ namespace Apple2
                 {
                     string[] parts = openFileDialog1.FileName.Split('\\');
                     disk1.Text = parts[parts.Length - 1];
-                    Apple2sharp.Properties.Settings.Default["Disk1Path"] = openFileDialog1.FileName;
-                    Apple2sharp.Properties.Settings.Default.Save();
+                    Apple2Sharp.Properties.Settings.Default["Disk1Path"] = openFileDialog1.FileName;
+                    Apple2Sharp.Properties.Settings.Default.Save();
                     UpdateDisks();
                     richTextBox1.Focus();
                 }
@@ -438,8 +438,8 @@ namespace Apple2
                 {
                     string[] parts = openFileDialog2.FileName.Split('\\');
                     disk2.Text = parts[parts.Length - 1];
-                    Apple2sharp.Properties.Settings.Default["Disk2Path"] = openFileDialog2.FileName;
-                    Apple2sharp.Properties.Settings.Default.Save();
+                    Apple2Sharp.Properties.Settings.Default["Disk2Path"] = openFileDialog2.FileName;
+                    Apple2Sharp.Properties.Settings.Default.Save();
                     UpdateDisks();
                     richTextBox1.Focus();
                 }
@@ -469,16 +469,16 @@ namespace Apple2
         private void btnColor_Click(object sender, EventArgs e)
         {
             mainBoard.videoColor = !mainBoard.videoColor;
-            Apple2sharp.Properties.Settings.Default["Color"] = mainBoard.videoColor.ToString();
-            Apple2sharp.Properties.Settings.Default.Save();
+            Apple2Sharp.Properties.Settings.Default["Color"] = mainBoard.videoColor.ToString();
+            Apple2Sharp.Properties.Settings.Default.Save();
             richTextBox1.Focus();
         }
 
         private void btnScanLines_Click(object sender, EventArgs e)
         {
             mainBoard.scanLines = !mainBoard.scanLines;
-            Apple2sharp.Properties.Settings.Default["ScanLines"] = mainBoard.scanLines.ToString();
-            Apple2sharp.Properties.Settings.Default.Save();
+            Apple2Sharp.Properties.Settings.Default["ScanLines"] = mainBoard.scanLines.ToString();
+            Apple2Sharp.Properties.Settings.Default.Save();
             richTextBox1.Focus();
         }
 
@@ -488,8 +488,8 @@ namespace Apple2
             mainBoard.clickBuffer.Clear();
             tbSpeed.Value = 10;
             tbSpeed.Enabled = true;
-            Apple2sharp.Properties.Settings.Default["Adjust1mhz"] = mainBoard.adjust1Mhz.ToString();
-            Apple2sharp.Properties.Settings.Default.Save();
+            Apple2Sharp.Properties.Settings.Default["Adjust1mhz"] = mainBoard.adjust1Mhz.ToString();
+            Apple2Sharp.Properties.Settings.Default.Save();
             richTextBox1.Focus();
         }
 
@@ -505,16 +505,16 @@ namespace Apple2
         private void btnIdealized_Click(object sender, EventArgs e)
         {
             mainBoard.idealized = !mainBoard.idealized;
-            Apple2sharp.Properties.Settings.Default["Idealized"] = mainBoard.idealized.ToString();
-            Apple2sharp.Properties.Settings.Default.Save();
+            Apple2Sharp.Properties.Settings.Default["Idealized"] = mainBoard.idealized.ToString();
+            Apple2Sharp.Properties.Settings.Default.Save();
             richTextBox1.Focus();
         }
 
         private void btnJoystick_Click(object sender, EventArgs e)
         {
             mainBoard.joystick = !mainBoard.joystick;
-            Apple2sharp.Properties.Settings.Default["Joystick"] = mainBoard.joystick.ToString();
-            Apple2sharp.Properties.Settings.Default.Save();
+            Apple2Sharp.Properties.Settings.Default["Joystick"] = mainBoard.joystick.ToString();
+            Apple2Sharp.Properties.Settings.Default.Save();
             if (mainBoard.joystick)
             {
                 mainBoard.timerpdl0 = 1790;
