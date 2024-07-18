@@ -13,6 +13,8 @@ This emulator brings some features such as:
 - Saturn 128kb RAM card
 - 80 Columns Card
 - Disk II Card DOS/Prodos compatible .dsk, .po, .do image files*
+- Joystick (when activated, use arrows for directions and control/shift for buttons 1/2)
+
 
 *.dsk files examples at \disks folder
 
@@ -37,7 +39,6 @@ Essential books:
 
 Upcoming features:
 
-- Joystick
 - 65c02 (Apple //e)
 - Hard Drive
 - Double-High Resolution
