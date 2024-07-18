@@ -1,12 +1,13 @@
-namespace Apple2Sharp.CPU
+using Apple2Sharp.CPU6502;
+
+namespace Runtime
 {
-
-
     internal static class RegisterFunctions
     {
-        public static void IncrementProgramCounter(State processorState, int bytes = 1)
+        public static State IncrementProgramCounter(State processorState, int bytes = 1)
         {
             processorState.PC = (ushort)(processorState.PC + bytes);
+            return processorState;
         }
 
         public static bool IsNegative(this byte value1)
@@ -19,6 +20,11 @@ namespace Apple2Sharp.CPU
             return (value1 & 64) == 64;
         }
 
+        public static byte GetNegative(this byte value)
+        {
+            return (byte)(value & 0x7f);
+        }
+
         public static byte ReadCarryFlag(State processorState) =>
             processorState.C ? (byte)0x01 : (byte)0x00;
 
@@ -28,7 +34,7 @@ namespace Apple2Sharp.CPU
             processorState.Z = (sr & 0x02) == 0x02;
             processorState.I = (sr & 0x04) == 0x04;
             processorState.D = (sr & 0x08) == 0x08;
-            // processorState.B = (sr & 0x10) == 0x10;
+            processorState.B = (sr & 0x10) == 0x10;
             processorState.V = (sr & 0x40) == 0x40;
             processorState.N = (sr & 0x80) == 0x80;
         }

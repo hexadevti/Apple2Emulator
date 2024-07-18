@@ -1,6 +1,6 @@
 using System;
 using System.Linq;
-using Apple2Sharp.CPU;
+using Apple2Sharp.CPU6502;
 using Apple2Sharp.Mainboard;
 
 namespace Runtime

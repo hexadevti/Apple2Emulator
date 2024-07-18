@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
     <ProjectReference Include="..\Apple2Sharp.Mainboard\Apple2Sharp.Mainboard.csproj" />
-    <ProjectReference Include="..\Apple2Sharp.CPU\Apple2Sharp.CPU.csproj" />
+    <ProjectReference Include="..\Apple2Sharp.CPU6502\Apple2Sharp.CPU6502.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NAudio" Version="2.2.1" />

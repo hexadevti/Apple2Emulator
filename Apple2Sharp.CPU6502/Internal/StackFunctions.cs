@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using Apple2Sharp.Mainboard;
 
-namespace Apple2Sharp.CPU
+namespace Apple2Sharp.CPU6502
 {
 
 

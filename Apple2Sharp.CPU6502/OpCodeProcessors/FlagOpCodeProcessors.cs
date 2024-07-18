@@ -1,4 +1,6 @@
-namespace Apple2Sharp.CPU
+using Apple2Sharp.CPU6502;
+
+namespace Apple2Sharp.CPU6502
 {
     internal static class FlagOpCodeProcessors
     {

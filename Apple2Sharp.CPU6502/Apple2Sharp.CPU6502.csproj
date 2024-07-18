@@ -4,7 +4,7 @@
   </ItemGroup>
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <RootNamespace>Apple2Sharp.CPU</RootNamespace>
+    <RootNamespace>Apple2Sharp.CPU6502</RootNamespace>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>

@@ -1,4 +1,4 @@
-namespace Apple2Sharp.CPU
+namespace Apple2Sharp.CPU6502
 {
     public static class I6502StateExtensions
     {

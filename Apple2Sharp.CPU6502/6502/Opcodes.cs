@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Apple2Sharp.Mainboard;
 using Apple2Sharp.Mainboard.Enums;
 
-namespace Apple2Sharp.CPU.Mos6502
+namespace Apple2Sharp.CPU6502
 {
     public static class OpCodes
     {
@@ -187,7 +187,7 @@ namespace Apple2Sharp.CPU.Mos6502
             return ret;
         }
 
-        public static ushort? ProcessAddressing(OpCodePart? opCodePart, State state, Apple2Board mainBoard, Mos6502 cpu)
+        public static ushort? ProcessAddressing(OpCodePart? opCodePart, State state, Apple2Board mainBoard, CPU6502 cpu)
         {
             ushort? refAddress = null;
             switch (opCodePart?.Addressing)

@@ -8,11 +8,10 @@ using System;
 using System.Threading;
 using Apple2Sharp.Mainboard;
 using Apple2Sharp.IO;
-using Apple2Sharp.CPU;
+using Apple2Sharp.CPU6502;
 using Apple2Sharp.Mainboard.Interfaces;
 using Apple2Sharp.Mainboard.Cards;
 using Apple2Sharp.Mainboard.Enums;
-using Apple2Sharp.CPU.Mos6502;
 using System.Drawing;
 using System.Net.NetworkInformation;
 
@@ -48,7 +47,7 @@ namespace Apple2Sharp
             mainBoard.adjust1Mhz = true;
             D1OFF.Visible = true;
             D2OFF.Visible = true;
-            cpu = new Mos6502(state, mainBoard);
+            cpu = new CPU6502.CPU6502(state, mainBoard);
             clock = new Clock(cpu, mainBoard);
             Keyboard keyboard = new Keyboard(mainBoard, cpu);
             richTextBox1.KeyDown += keyboard.OnKeyDown;

@@ -5,12 +5,11 @@ using System.Diagnostics;
 using Apple2Sharp.Mainboard;
 using Apple2Sharp.Mainboard.Interfaces;
 using Apple2Sharp.Mainboard.Enums;
-using Apple2Sharp.CPU.Mos6502;
 using System.Threading.Tasks.Dataflow;
 
-namespace Apple2Sharp.CPU.Mos6502
+namespace Apple2Sharp.CPU6502
 {
-    public class Mos6502 : IProcessor
+    public class CPU6502 : IProcessor
     {
         public State state { get; set; }
         public Apple2Board mainBoard { get; set; }
@@ -18,7 +17,7 @@ namespace Apple2Sharp.CPU.Mos6502
         public ushort lastPC = 0;
         public DateTime last1mhz = DateTime.MinValue;
 
-        public Mos6502(State state, Apple2Board mainBoard)
+        public CPU6502(State state, Apple2Board mainBoard)
         {
             this.mainBoard = mainBoard;
             this.state = state;

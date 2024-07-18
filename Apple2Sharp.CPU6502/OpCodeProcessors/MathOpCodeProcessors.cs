@@ -1,6 +1,6 @@
 using Apple2Sharp.Mainboard;
 
-namespace Apple2Sharp.CPU
+namespace Apple2Sharp.CPU6502
 {
     internal static class MathOpCodeProcessors
     {

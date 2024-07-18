@@ -1,6 +1,6 @@
 using Apple2Sharp.Mainboard.Enums;
 
-namespace Apple2Sharp.CPU.Mos6502
+namespace Apple2Sharp.CPU6502
 {
 
     public class OpCodePart
