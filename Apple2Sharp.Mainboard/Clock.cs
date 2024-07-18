@@ -14,18 +14,20 @@ namespace Apple2Sharp.Mainboard
     {
         private IProcessor _cpu;
         private Apple2Board _mainBoard { get; set; }
+        private Sound _sound { get; set; }
 
         public Clock(IProcessor cpu, Apple2Board mainBoard)   
         {
             _cpu = cpu;
             _mainBoard = mainBoard;
+            _sound = new Sound();
         }
         public void Run()
         {
             Stopwatch sw3 = Stopwatch.StartNew();
             bool n = false;
             int cpuCycles = 0;
-            int cyclesPerMilliseconds = 19500;
+            int cyclesPerMilliseconds = 23000;
             int cyclesPerMillisecondsAdj = cyclesPerMilliseconds;
 
             while (_cpu.cpuState != CpuState.Stopped)
@@ -42,7 +44,7 @@ namespace Apple2Sharp.Mainboard
                     if (!_mainBoard.cycleWait.TryDequeue(out n))
                     {
                         _cpu.RunCycle();
-                        Sound.Sync(_mainBoard);
+                        cyclesPerMilliseconds = _sound.Sync(_mainBoard, cyclesPerMilliseconds);
                     }
 
                     Joystick.Process(_mainBoard);
@@ -57,31 +59,38 @@ namespace Apple2Sharp.Mainboard
                 {
                     if (_mainBoard.audioJumpInterval == 10)
                     {
-                        _cpu.RunCycle();
+                        if (!_mainBoard.cycleWait.TryDequeue(out n))
+                        {
+                            _cpu.RunCycle();
+                        }
+                        Joystick.Process(_mainBoard, 0.285f);
                     }
                     else
                     {
-                        cyclesPerMillisecondsAdj = cyclesPerMilliseconds + ((_mainBoard.audioJumpInterval) * 3000);
+                        cyclesPerMillisecondsAdj = cyclesPerMilliseconds + (_mainBoard.audioJumpInterval * 15000);
                         cpuCycles++;
                         if (!_mainBoard.cycleWait.TryDequeue(out n))
                         {
-
                             _cpu.RunCycle();
-
-                            Sound.Sync(_mainBoard);
+                            cyclesPerMillisecondsAdj = _sound.Sync(_mainBoard, cyclesPerMillisecondsAdj, (int)(_mainBoard.audioJumpInterval ));
                         }
+
+                        Joystick.Process(_mainBoard);
 
                         if (cpuCycles >= cyclesPerMillisecondsAdj)
                         {
                             Thread.Sleep(1);
                             cpuCycles = 0;
                         }
-
                     }
-
                 }
                 if (_mainBoard.cpuCycles >= 1000000)
                 {
+                    if (_mainBoard.adjust1Mhz || _mainBoard.audioJumpInterval < 10)
+                        _mainBoard.screenLog.Enqueue("Soundbuf: " + _mainBoard.clickBuffer.Count()
+                     + " cPerMilli = " + cyclesPerMilliseconds
+                     + " cw = " + _mainBoard.cycleWait.Count());
+                
                     sw3.Stop();
                     _mainBoard.clockSpeed = sw3.Elapsed.TotalMilliseconds;
                     _mainBoard.cpuCycles = 0;

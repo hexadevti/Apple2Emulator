@@ -102,6 +102,7 @@ namespace Apple2Sharp
             pictureBox1.BackColor = Color.Black;
             pictureBox1.Location = new Point(16, 16);
             pictureBox1.Name = "pictureBox1";
+            pictureBox1.Padding = new Padding(10);
             pictureBox1.Size = new Size(1250, 963);
             pictureBox1.TabIndex = 0;
             pictureBox1.TabStop = false;

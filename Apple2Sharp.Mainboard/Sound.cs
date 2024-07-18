@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,13 +20,14 @@ namespace Apple2Sharp.Mainboard
 
         static int k = 0;
 
-        static double adjcycle = 50;
+        static double adjcycle = 100;
 
-        static int cyclesPerMilliseconds = 19500;
         static int adjCoef = 100;
-        public static void Sync(Apple2Board _mainBoard)
+
+
+        public int Sync(Apple2Board _mainBoard, int cyclesPerMilliseconds, int jumpInterval = 1)
         {
-            if (soundCycles > (switchJumpInterval ? 1 : 1))
+            if (soundCycles > (switchJumpInterval ? jumpInterval : jumpInterval))
             {
                 switchJumpInterval = !switchJumpInterval;
 
@@ -45,20 +47,20 @@ namespace Apple2Sharp.Mainboard
                 TimeSpan delta2 = DateTime.Now - countTime;
                 if (delta2.TotalMilliseconds >= adjcycle)
                 {
-                    // mainBoard.screenLog.Enqueue(" Queue buffer: " + mainBoard.clickBuffer.Count()
-                    //  + " cyclesPerMilliseconds = " + cyclesPerMilliseconds);
 
                     if (_mainBoard.clickBuffer.Count() > 2)
                     {
-                        cyclesPerMilliseconds -= (_mainBoard.clickBuffer.Count() - 2) * adjCoef;
+                        cyclesPerMilliseconds -= (_mainBoard.clickBuffer.Count()) * adjCoef;
                     }
                     else if (_mainBoard.clickBuffer.Count() < 2)
                     {
-                        cyclesPerMilliseconds += (2 - _mainBoard.clickBuffer.Count()) * adjCoef;
+                        cyclesPerMilliseconds += 3 * adjCoef;
                     }
 
                     if (adjCoef > 10)
                         adjCoef--;
+
+
 
                     countTime = DateTime.Now;
                 }
@@ -68,7 +70,11 @@ namespace Apple2Sharp.Mainboard
             {
                 soundCycles++;
             }
+
+            return cyclesPerMilliseconds;
         }
+
+        
 
 
     }

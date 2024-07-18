@@ -37,28 +37,6 @@ namespace Apple2Sharp
                         e.Handled = true;
                         cpu.WarmStart();
                         break;
-                    default:
-                        if (mainBoard.joystick)
-                        {
-                            mainBoard.softswitches.Pb0 = true;
-                            mainBoard.softswitches.Pb1 = true;
-                            switch (e.KeyCode)
-                            {
-                                case Keys.Left:
-                                    mainBoard.timerpdl0 = (int)JoysticPosition.Min;
-                                    break;
-                                case Keys.Right:
-                                    mainBoard.timerpdl0 = (int)JoysticPosition.Max;
-                                    break;
-                                case Keys.Up:
-                                    mainBoard.timerpdl1 = (int)JoysticPosition.Min;
-                                    break;
-                                case Keys.Down:
-                                    mainBoard.timerpdl1 = (int)JoysticPosition.Max;
-                                    break;
-                            }
-                        }
-                        break;
                 }
             }
             else if (e.Control)
@@ -94,9 +72,21 @@ namespace Apple2Sharp
                                 case Keys.Down:
                                     mainBoard.timerpdl1 = (int)JoysticPosition.Max;
                                     break;
+                                case Keys.Menu:
+                                    mainBoard.softswitches.Pb1 = true;
+                                    break;
                             }
-                            
+
                         }
+                        break;
+                }
+            }
+            else if (e.KeyCode == Keys.Menu)
+            {
+                switch (e.KeyCode)
+                {
+                    case Keys.Menu:
+                        mainBoard.softswitches.Pb1 = true;
                         break;
                 }
             }
@@ -136,24 +126,10 @@ namespace Apple2Sharp
                                     mainBoard.timerpdl1 = (int)JoysticPosition.Max;
                                     mainBoard.KeyPressedBuffer = 0x8a;
                                     break;
-                                // case Keys.A:
-                                //     mainBoard.timerpdl0 = (int)JoysticPosition.Min;
-                                //     break;
-                                // case Keys.D:
-                                //     mainBoard.timerpdl0 = 3580;
-                                //     break;
-                                // case Keys.W:
-                                //     mainBoard.timerpdl1 = (int)JoysticPosition.Min;
-                                //     break;
-                                // case Keys.S:
-                                //     mainBoard.timerpdl1 = 3580;
-                                //     break;
                                 case Keys.ControlKey:
                                     mainBoard.softswitches.Pb0 = true;
                                     break;
-                                case Keys.ShiftKey:
-                                    mainBoard.softswitches.Pb1 = true;
-                                    break;
+
                             }
                         }
                         else
@@ -202,7 +178,7 @@ namespace Apple2Sharp
                     case Keys.ControlKey:
                         mainBoard.softswitches.Pb0 = false;
                         break;
-                    case Keys.ShiftKey:
+                    case Keys.Menu:
                         mainBoard.softswitches.Pb1 = false;
                         break;
                 }

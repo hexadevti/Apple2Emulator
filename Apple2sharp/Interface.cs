@@ -64,8 +64,8 @@ namespace Apple2Sharp
             LoadContext();
             mainBoard.LoadChars(File.ReadAllBytes(assemblyPath + "roms/CharROM.bin"));
             this.FormClosing += FormCloseEvent;
-            tbSpeed.Enabled = false;
             tbSpeed.ValueChanged += tbSpeed_ValueChanged;
+            tbSpeed.Visible = false;
             StartSpeaker();
             InitSlots();
             cpu.WarmStart();
@@ -120,13 +120,12 @@ namespace Apple2Sharp
                 mainBoard.clickBuffer.Clear();
                 tbSpeed.Value = 1;
                 tbSpeed.Enabled = false;
-                soundOutput.Play();
             }
             else
             {
+                mainBoard.clickBuffer.Clear();
                 tbSpeed.Value = 10;
                 tbSpeed.Enabled = true;
-                soundOutput.Stop();
             }
         }
         private void LoadCardsCombos()
@@ -429,13 +428,6 @@ namespace Apple2Sharp
         private void btnTurbo_Click(object sender, EventArgs e)
         {
             btnClockAdjust_Click(sender, e);
-            //mainBoard.adjust1Mhz = false;
-            //mainBoard.clickBuffer.Clear();
-            //tbSpeed.Value = 10;
-            //tbSpeed.Enabled = true;
-            //Apple2Sharp.Properties.Settings.Default["Adjust1mhz"] = mainBoard.adjust1Mhz.ToString();
-            //Apple2Sharp.Properties.Settings.Default.Save();
-            //richTextBox1.Focus();
         }
         private void disk1_TextChanged(object sender, EventArgs e)
         {
