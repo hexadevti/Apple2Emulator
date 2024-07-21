@@ -1,5 +1,7 @@
 Apple2Sharp.CPU6502/bin/*
 Apple2Sharp.CPU6502/obj/*
+Apple2Sharp.CPU65C02/bin/*
+Apple2Sharp.CPU65C02/obj/*
 Apple2Sharp.IO/bin/*
 Apple2Sharp.IO/obj/*
 Apple2Sharp.Mainboard/bin/*

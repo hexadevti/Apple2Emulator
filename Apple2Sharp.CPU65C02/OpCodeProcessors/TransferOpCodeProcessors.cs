@@ -1,4 +1,4 @@
-namespace Apple2Sharp.CPU6502
+namespace Apple2Sharp.CPU65C02
 {
     internal static class TransferOpCodeProcessors
     {

@@ -8,6 +8,7 @@ using System;
 using System.Threading;
 using Apple2Sharp.Mainboard;
 using Apple2Sharp.IO;
+using Apple2Sharp.CPU65C02;
 using Apple2Sharp.CPU6502;
 using Apple2Sharp.Mainboard.Interfaces;
 using Apple2Sharp.Mainboard.Cards;
@@ -24,7 +25,7 @@ namespace Apple2Sharp
         private IProcessor cpu { get; set; }
 
         private Clock clock { get; set; }
-        private State state = new State();
+        private CPU65C02.State state = new CPU65C02.State();
 
         private string? assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         private List<Task> threads = new List<Task>();
@@ -47,7 +48,7 @@ namespace Apple2Sharp
             mainBoard.adjust1Mhz = true;
             D1OFF.Visible = true;
             D2OFF.Visible = true;
-            cpu = new CPU6502.CPU6502(state, mainBoard);
+            cpu = new CPU65C02.CPU65C02(state, mainBoard);
             clock = new Clock(cpu, mainBoard);
             Keyboard keyboard = new Keyboard(mainBoard, cpu);
             richTextBox1.KeyDown += keyboard.OnKeyDown;

@@ -1,4 +1,4 @@
-
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apple2Sharp.Mainboard", "Apple2Sharp.Mainboard\Apple2Sharp.Mainboard.csproj", "{2FD2421B-BA09-4CD9-A9E3-A4AAF9F556DA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apple2Sharp.CPU6502", "Apple2Sharp.CPU6502\Apple2Sharp.CPU6502.csproj", "{B7E2EED3-DC7D-4ED9-B73A-AE03B9EE7B1C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apple2Sharp.CPU65C02", "Apple2Sharp.CPU65C02\Apple2Sharp.CPU65C02.csproj", "{433BE472-B988-43F7-9242-27ED8FED9ACD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,5 +38,9 @@ Global
 		{B7E2EED3-DC7D-4ED9-B73A-AE03B9EE7B1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B7E2EED3-DC7D-4ED9-B73A-AE03B9EE7B1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B7E2EED3-DC7D-4ED9-B73A-AE03B9EE7B1C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{433BE472-B988-43F7-9242-27ED8FED9ACD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{433BE472-B988-43F7-9242-27ED8FED9ACD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{433BE472-B988-43F7-9242-27ED8FED9ACD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{433BE472-B988-43F7-9242-27ED8FED9ACD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
