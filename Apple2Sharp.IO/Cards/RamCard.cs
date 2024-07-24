@@ -8,6 +8,7 @@ namespace Apple2Sharp.Mainboard.Cards
 
     public class RamCard : ICard, IRamCard
     {
+        public bool Empty { get { return false; } }
         private int _slotNumber = 1;
         private int _banks = 8;
         private byte[] _c000ROM;

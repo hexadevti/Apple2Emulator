@@ -19,6 +19,25 @@
     <Content Include="roms\ApplesoftF800.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="roms\AppleIIeEnhancedC0-DF.bin">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="roms\AppleIIeEnhancedE0-FF.bin">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="roms\AppleIIeEnhancedC0-FF.bin">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    
+    <Content Include="roms\AppleIIeC0-DF.bin">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="roms\AppleIIeE0-FF.bin">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="roms\AppleIIeVideoEnhanced.bin">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="roms\CharROM.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

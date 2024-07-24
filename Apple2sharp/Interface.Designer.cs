@@ -712,6 +712,7 @@ namespace Apple2Sharp
             BackgroundImage = (Image)resources.GetObject("$this.BackgroundImage");
             BackgroundImageLayout = ImageLayout.Stretch;
             ClientSize = new Size(1924, 1228);
+            WindowState = FormWindowState.Maximized;
             Controls.Add(lblslot7);
             Controls.Add(lblslot6);
             Controls.Add(lblslot5);

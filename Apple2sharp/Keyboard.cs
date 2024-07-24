@@ -200,7 +200,7 @@ namespace Apple2Sharp
                         if (item == '\n')
                         {
                             mainBoard.KeyPressedBuffer = 0x8d;
-                            Thread.Sleep(100);
+                            Thread.Sleep(200);
                         }
                         else
                             mainBoard.KeyPressedBuffer = (byte)(Encoding.ASCII.GetBytes(new[] { item })[0] | 0b10000000);

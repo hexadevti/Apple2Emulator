@@ -25,7 +25,8 @@ namespace Apple2Sharp
         private IProcessor cpu { get; set; }
 
         private Clock clock { get; set; }
-        private CPU65C02.State state = new CPU65C02.State();
+        private CPU6502.State state = new CPU6502.State();
+        private CPU65C02.State stateC = new CPU65C02.State();
 
         private string? assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         private List<Task> threads = new List<Task>();
@@ -48,21 +49,24 @@ namespace Apple2Sharp
             mainBoard.adjust1Mhz = true;
             D1OFF.Visible = true;
             D2OFF.Visible = true;
-            cpu = new CPU65C02.CPU65C02(state, mainBoard);
+            //cpu = new CPU65C02.CPU65C02(stateC, mainBoard);
+            cpu = new CPU6502.CPU6502(state, mainBoard);
             clock = new Clock(cpu, mainBoard);
             Keyboard keyboard = new Keyboard(mainBoard, cpu);
             richTextBox1.KeyDown += keyboard.OnKeyDown;
             richTextBox1.KeyUp += keyboard.OnKeyUp;
             richTextBox1.TextChanged += keyboard.Keyb_TextChanged;
+            // mainBoard.LoadAppleIIeInternalROM(0xc000, File.ReadAllBytes(assemblyPath + "roms/AppleIIeEnhancedC0-FF.bin"));
+            // mainBoard.LoadIIeChars(File.ReadAllBytes(assemblyPath + "roms/AppleIIeVideoEnhanced.bin"));
             mainBoard.LoadROM(0xf800, File.ReadAllBytes(assemblyPath + "roms/ApplesoftF800.bin"));
             mainBoard.LoadROM(0xf000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftF000.bin"));
             mainBoard.LoadROM(0xe800, File.ReadAllBytes(assemblyPath + "roms/ApplesoftE800.bin"));
             mainBoard.LoadROM(0xe000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftE000.bin"));
             mainBoard.LoadROM(0xd800, File.ReadAllBytes(assemblyPath + "roms/ApplesoftD800.bin"));
             mainBoard.LoadROM(0xd000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftD000.bin"));
+            mainBoard.LoadChars(File.ReadAllBytes(assemblyPath + "roms/CharROM.bin"));
             LoadCardsCombos();
             LoadContext();
-            mainBoard.LoadChars(File.ReadAllBytes(assemblyPath + "roms/CharROM.bin"));
             this.FormClosing += FormCloseEvent;
             tbSpeed.ValueChanged += tbSpeed_ValueChanged;
             tbSpeed.Visible = false;
@@ -263,7 +267,7 @@ namespace Apple2Sharp
                         catch { }
                     }
 
-                    Thread.Sleep(50);
+                    Thread.Sleep(10);
                 }
             }));
 

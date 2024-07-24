@@ -9,10 +9,12 @@ namespace Apple2Sharp.Mainboard
     {
         public object displayLock = new object();
         public Dictionary<byte, bool[,]> charSet = new Dictionary<byte, bool[,]>();
+        public Dictionary<byte, bool[,]> altCharSet = new Dictionary<byte, bool[,]>();
         public bool adjust1Mhz = true;
         public double clockSpeed = 0;
         public byte[] baseRAM = new byte[0xc000];
-        public byte[] ROM = new byte[0x4000];
+        public byte[] ROM = new byte[0x3000];
+        public byte[] AppleIIeInternalROM = new byte[0x1000];
         public byte KeyPressedBuffer { get; set; }
         public Softswitches softswitches = new Softswitches();
         public Queue<byte[]> clickBuffer = new Queue<byte[]>(100);
@@ -21,10 +23,12 @@ namespace Apple2Sharp.Mainboard
         public Queue<string> screenLog = new Queue<string>();
         public Queue<bool> cycleWait = new Queue<bool>();
         public int audioJumpInterval = 25;
+        public int selectedC8Slot = 0;
         public bool videoColor = true;
         public bool scanLines = true;
         public bool idealized = false;
         public bool joystick = false;
+        public bool AppleIIe = false;
         public int timerpdl0;
         public int timerpdl1;
         public int timerpdl2;
@@ -114,9 +118,57 @@ namespace Apple2Sharp.Mainboard
                 charSet.Add(item, charboolItem);
             }
         }
+
+        public void LoadIIeChars(byte[] rom)
+        {
+            charSet = new Dictionary<byte, bool[,]>();
+            ushort id = 0;
+            for (int i = 0; i <= 0xff; i++)
+            {
+                bool[,] charboolItem = new bool[8, 7];
+                for (int charLayer = 0; charLayer < 8; charLayer++)
+                {
+                    byte charItem = rom[id];
+                    bool[] bitsLayer = Tools.ConvertByteToBoolArray(charItem, false);
+                    for (int charBits = 1; charBits < 8; charBits++)
+                    {
+                        charboolItem[charLayer, charBits - 1] = !bitsLayer[charBits];
+                    }
+                    id++;
+                }
+                charSet.Add((byte)i, charboolItem);
+            }
+            for (int i = 0; i <= 0xff; i++)
+            {
+                bool[,] charboolItem = new bool[8, 7];
+                for (int charLayer = 0; charLayer < 8; charLayer++)
+                {
+                    byte charItem = rom[id];
+                    bool[] bitsLayer = Tools.ConvertByteToBoolArray(charItem, false);
+                    for (int charBits = 1; charBits < 8; charBits++)
+                    {
+                        charboolItem[charLayer, charBits - 1] = !bitsLayer[charBits];
+                    }
+                    id++;
+                }
+                altCharSet.Add((byte)i, charboolItem);
+            }
+        }
         public void LoadROM(ushort startAddress, byte[] rom)
         {
             for (int i = 0; i < rom.Length; i++)
+            {
+                ROM[startAddress - 0xd000 + i] = rom[i];
+            }
+        }
+
+        public void LoadAppleIIeInternalROM(ushort startAddress, byte[] rom)
+        {
+            for (int i = 0; i < 0x1000; i++)
+            {
+                AppleIIeInternalROM[startAddress - 0xc000 + i] = rom[i];
+            }
+            for (int i = 0x1000; i < rom.Length; i++)
             {
                 ROM[startAddress - 0xd000 + i] = rom[i];
             }
@@ -152,30 +204,68 @@ namespace Apple2Sharp.Mainboard
                 }
 
             }
-            else if (address >= 0xc800) // Extended ROM Area
-            {
-                //TODO: Put condition to redirect to correct slot
-                ret = slots[3].Read(address, this);
-            }
-            else if (address >= 0xc100)
-            {
-                for (int i = 1; i<8;i++)
-                {
-                    if (address >= 0xc000 + (0x100 * i) && address < 0xc000 + (0x100 * (i+1)))
-                    {
-                        ret = slots[i].C000ROM[address - (0xc000 + (0x100 * i))];
-                    }
-                }
-            }
-            else if (address >= 0xc080)
+            else if (address >= 0xc080 && address < 0xc100)
             {
                 for (int i = 0; i < 8; i++)
                 {
                     if (address >= 0xc080 + (0x10 * i) && address < 0xc080 + (0x10 * (i+1))) 
                         ret = slots[i].Read(address, this);    
                 }
-
             }
+            else if (softswitches.IntCXRomOn_Off)
+            {
+                if (address >= 0xc100 && address < 0xd000)
+                {
+                    ret = AppleIIeInternalROM[address - 0xc000];
+                }
+            }
+            else
+            {
+                if (address >= 0xc800) // Extended ROM Area
+                {
+                    if (softswitches.IntC8RomOn_Off)
+                    {
+                        ret = AppleIIeInternalROM[address - 0xc000];
+                    }
+                    else
+                    {
+                        ret = slots[selectedC8Slot].Read(address, this);
+                    }
+                }
+                else if (address >= 0xc100)
+                {
+                    for (int i = 1; i < 8; i++)
+                    {
+                        if (i == 3)
+                        {   
+                            if (address >= 0xc000 + (0x100 * i) && address < 0xc000 + (0x100 * (i+1)))
+                            {
+                                if (slots[i].Empty && softswitches.SlotC3RomOn_Off)
+                                {
+                                    ret = AppleIIeInternalROM[address - 0xc000];
+                                    softswitches.IntC8RomOn_Off = true;
+                                }
+                                else 
+                                {
+                                    ret = slots[i].C000ROM[address - (0xc000 + (0x100 * i))];
+                                    softswitches.IntC8RomOn_Off = false;
+                                    selectedC8Slot = i;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (address >= 0xc000 + (0x100 * i) && address < 0xc000 + (0x100 * (i+1)))
+                            {
+                                ret = slots[i].C000ROM[address - (0xc000 + (0x100 * i))];
+                                softswitches.IntC8RomOn_Off = false;
+                                selectedC8Slot = i;
+                            }
+                        }
+                    }
+                }
+            }
+            
             return ret;
         }
 
@@ -201,8 +291,7 @@ namespace Apple2Sharp.Mainboard
             }
             else if (address >= 0xc800) // Slots reserved ROM 
             {
-                //TODO: Condition to select right slot
-                slots[3].Write(address, value, this); //cols80RAM[address - 0xcc00 + softswitches.cols80PageSelect * 0x200] = value;
+                slots[selectedC8Slot].Write(address, value, this); 
             }
             else if (address >= 0xc080) // Slots SoftSwitches
             {
@@ -212,8 +301,6 @@ namespace Apple2Sharp.Mainboard
                         slots[i].Write(address, value, this);
                 }
             }
-
-
         }
 
         public ushort? ReadAddressLLHH(ushort? address)

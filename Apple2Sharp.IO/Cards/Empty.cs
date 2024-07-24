@@ -10,6 +10,7 @@ namespace Apple2Sharp.Mainboard.Cards
 {
     public class EmptySlot : ICard
     {
+        public bool Empty { get { return true; } }
         private int _slotNumber;
         private byte[] _c000ROM;
 

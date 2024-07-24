@@ -15,6 +15,7 @@ namespace Apple2Sharp.Mainboard.Cards
     public class Cols80Card : ICard
     {
         private int _slotNumber = 3;
+        public bool Empty { get { return false; } }
         private byte[] _c000ROM;
         private byte[] _cc00ROM;
         private Dictionary<byte, bool[,]> _charSet;

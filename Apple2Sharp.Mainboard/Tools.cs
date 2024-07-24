@@ -47,7 +47,7 @@ namespace Apple2Sharp.Mainboard
             return ret;
         }
 
-        public static bool[] ConvertByteToBoolArray(byte b)
+        public static bool[] ConvertByteToBoolArray(byte b, bool reverse = true)
         {
             // prepare the return result
             bool[] result = new bool[8];
@@ -55,9 +55,9 @@ namespace Apple2Sharp.Mainboard
             // check each bit in the byte. if 1 set to true, if 0 set to false
             for (int i = 0; i < 8; i++)
                 result[i] = (b & (1 << i)) != 0;
-
             // reverse the array
-            Array.Reverse(result);
+            if (reverse)
+                Array.Reverse(result);
 
             return result;
         }

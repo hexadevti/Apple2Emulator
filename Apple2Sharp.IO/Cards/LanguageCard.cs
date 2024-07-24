@@ -5,11 +5,11 @@ using Apple2Sharp.Mainboard.Interfaces;
 
 namespace Apple2Sharp.Mainboard.Cards
 {
-
-
-
     public class LanguageCard : ICard, IRamCard
     {
+        public bool Empty { get { return false; } }
+        
+
         public int SlotNumber { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public byte[] C000ROM => throw new NotImplementedException();

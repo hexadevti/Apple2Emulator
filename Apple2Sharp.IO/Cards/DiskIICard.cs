@@ -12,6 +12,7 @@ namespace Apple2Sharp.Mainboard.Cards
 {
     public class DiskIICard : ICard
     {
+        public bool Empty { get { return false; } }
         private int pointer = 0;
         private int _slotNumber = 6;
         private byte[] _c000ROM;

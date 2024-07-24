@@ -23,8 +23,8 @@ namespace Apple2Sharp
             int posV = 0;
             byte[] linha = new byte[0x28];
 
-            graphicsPage = (ushort)(mainBoard.softswitches.TextPage1_Page2 ? 0x2000 : 0x4000);
-            textPage = (ushort)(mainBoard.softswitches.TextPage1_Page2 ? 0x400 : 0x800);
+            graphicsPage = (ushort)(mainBoard.softswitches.Page1_Page2 ? 0x2000 : 0x4000);
+            textPage = (ushort)(mainBoard.softswitches.Page1_Page2 ? 0x400 : 0x800);
 
             for (int b = 0; b < 3; b++)
             {
@@ -158,10 +158,20 @@ namespace Apple2Sharp
                             posH = c;
 
                             var chr = mainBoard.baseRAM[(ushort)(textPage + (b * 0x28) + (l * 0x80) + c)];
-                            if (chr >= 0x40 && chr < 0x80)
-                                chr = Math.Floor((float)(DateTime.Now.Millisecond / 500)) % 2 == 0 ? (byte)(chr + 0x40) : chr;
-                            if (posV == mainBoard.baseRAM[0x25] && posH == mainBoard.baseRAM[0x24])
-                                chr = Math.Floor((float)(DateTime.Now.Millisecond / 500)) % 2 == 0 ? (byte)(chr + 0x40) : chr;
+                            if (!mainBoard.AppleIIe)
+                            {
+                                if (chr >= 0x40 && chr < 0x80)
+                                    chr = Math.Floor((float)(DateTime.Now.Millisecond / 500)) % 2 == 0 ? (byte)(chr + 0x40) : chr;
+                                if (posV == mainBoard.baseRAM[0x25] && posH == mainBoard.baseRAM[0x24])
+                                    chr = Math.Floor((float)(DateTime.Now.Millisecond / 500)) % 2 == 0 ? (byte)(chr + 0x40) : chr;
+                            }
+                            else
+                            {
+                                // if (chr >= 0x40 && chr < 0x60)
+                                //     chr = Math.Floor((float)(DateTime.Now.Millisecond / 500)) % 2 == 0 ? (byte)(chr + 0x20) : chr;
+                                 if (chr >= 0x60 && chr < 0x80)
+                                    chr = Math.Floor((float)(DateTime.Now.Millisecond / 500)) % 2 == 0 ? (byte)(chr + 0x80) : chr;
+                            }
                             linha[c] = chr;
                         }
 

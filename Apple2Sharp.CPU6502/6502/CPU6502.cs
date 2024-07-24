@@ -29,6 +29,11 @@ namespace Apple2Sharp.CPU6502
         {
             cpuState = CpuState.Paused;
             mainBoard.ClearBaseRAM();
+            mainBoard.softswitches.SlotC3RomOn_Off = true;
+            mainBoard.softswitches.IntCXRomOn_Off = false;
+            mainBoard.softswitches.AltCharSetOn_Off = false;
+            mainBoard.softswitches.Store80On_Off = false;
+            mainBoard.softswitches.IntC8RomOn_Off = false;
             Reset();
             cpuState = CpuState.Running;
         }
