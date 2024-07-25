@@ -28,7 +28,7 @@ namespace Apple2Sharp
 
         private Clock clock { get; set; }
         private CPU6502.State state = new CPU6502.State();
-        //private CPU65C02.State stateC = new CPU65C02.State();
+        private CPU65C02.State stateC = new CPU65C02.State();
 
         private string? assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         private List<Task> threads = new List<Task>();
@@ -58,6 +58,7 @@ namespace Apple2Sharp
             LoadCPU();
             LoadKeyboard();
             StartSpeaker();
+            CPUThread();
             cpu.WarmStart();
             LoadThreads();
 
@@ -79,7 +80,7 @@ namespace Apple2Sharp
             if (mainBoard.appleIIe)
             {
                 // Apple IIe
-                //cpu = new CPU65C02.CPU65C02(stateC, mainBoard);
+                cpu = new CPU65C02.CPU65C02(stateC, mainBoard);
                 mainBoard.LoadAppleIIeInternalROM(0xc000, File.ReadAllBytes(assemblyPath + "roms/AppleIIeEnhancedC0-FF.bin"));
                 mainBoard.LoadIIeChars(File.ReadAllBytes(assemblyPath + "roms/AppleIIeVideoEnhanced.bin"));
             }
@@ -95,7 +96,6 @@ namespace Apple2Sharp
                 mainBoard.LoadROM(0xd000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftD000.bin"));
                 mainBoard.LoadChars(File.ReadAllBytes(assemblyPath + "roms/CharROM.bin"));
             }
-            cpu.cpuState = CpuState.Running;
             clock = new Clock(cpu, mainBoard);
         }
 
@@ -239,9 +239,10 @@ namespace Apple2Sharp
         }
         public void LoadThreads()
         {
+            threads = new List<Task>();
             threads.Add(Task.Run(() =>
             {
-                while (cpu.cpuState != CpuState.Stopped)
+                while (formRunning)
                 {
                     mainBoard.audioJumpInterval = ReadTrackBar(tbSpeed);
                     SetLabel(lblClockSpeed, (1000 / mainBoard.clockSpeed).ToString("0.00") + " Mhz");
@@ -286,7 +287,7 @@ namespace Apple2Sharp
 
             threads.Add(Task.Run(() =>
             {
-                while (cpu.cpuState != CpuState.Stopped)
+                while (formRunning)
                 {
                     lock (mainBoard.displayLock)
                     {
@@ -305,15 +306,19 @@ namespace Apple2Sharp
                         catch { }
                     }
 
-                    Thread.Sleep(10);
+                    Thread.Sleep(50);
                 }
             }));
+        }
 
-            threads.Add(Task.Run(() =>
+        private void CPUThread()
+        {
+            Task.Run(() =>
             {
+                cpu.cpuState = CpuState.Running;
                 clock.Run();
             }
-            ));
+            );
         }
         private void StartSpeaker()
         {
@@ -444,27 +449,9 @@ namespace Apple2Sharp
         }
         private void btn_restart_Click(object sender, EventArgs e)
         {
-            if (btn_restart.Enabled)
-            {
-                btn_restart.Enabled = false;
-                cpu.cpuState = CpuState.Stopped;
-                while (threads.Where(x => x.Status == TaskStatus.Running).Any())
-                {
-                    Thread.Sleep(50);
-                }
-
-                LoadContext();
-                InitSlots();
-                LoadCPU();
-                LoadKeyboard();
-                StartSpeaker();
-                LoadThreads();
-
-                cpu.WarmStart();
-
-                btn_restart.Enabled = true;
-                richTextBox1.Focus();
-            }
+            InitSlots();
+            cpu.WarmStart();
+            richTextBox1.Focus();
         }
         private void btnClockAdjust_Click(object sender, EventArgs e)
         {
@@ -593,16 +580,15 @@ namespace Apple2Sharp
 
         private void btnAppleIIe_Click(object sender, EventArgs e)
         {
-
-            if (btnAppleIIe.Enabled)
-            {
-                btnAppleIIe.Enabled = false;
-                mainBoard.appleIIe = !mainBoard.appleIIe;
-                Apple2Sharp.Properties.Settings.Default["AppleIIe"] = mainBoard.appleIIe.ToString();
-                Apple2Sharp.Properties.Settings.Default.Save();
-                btn_restart_Click(sender, e);
-                btnAppleIIe.Enabled = true;
-            }
+            mainBoard.appleIIe = !mainBoard.appleIIe;
+            cpu.cpuState = CpuState.Stopped;
+            LoadCPU();
+            CPUThread();
+            Apple2Sharp.Properties.Settings.Default["AppleIIe"] = mainBoard.appleIIe.ToString();
+            Apple2Sharp.Properties.Settings.Default.Save();
+            cbslot0.Visible = !mainBoard.appleIIe;
+            lblslot0.Visible = !mainBoard.appleIIe;
+            btn_restart_Click(sender, e);
 
         }
     }
