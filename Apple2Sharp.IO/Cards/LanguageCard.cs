@@ -55,18 +55,15 @@ namespace Apple2Sharp.Mainboard.Cards
         {
             if (address >= 0xd000)
             {
-                // if (MemoryBankReadRAM_ROM)
-                // {
-                    if (address >= 0xd000 && address < 0xe000)
-                    {
-                        if (MemoryBankBankSelect1_2)
-                            _memoryBankSwitchedRAM2_1[_selectedBank, address - 0xd000] = b;
-                        else
-                            _memoryBankSwitchedRAM2_2[_selectedBank, address - 0xd000] = b;
-                    }
+                if (address >= 0xd000 && address < 0xe000)
+                {
+                    if (MemoryBankBankSelect1_2)
+                        _memoryBankSwitchedRAM2_1[_selectedBank, address - 0xd000] = b;
                     else
-                        _memoryBankSwitchedRAM1[_selectedBank, address - 0xe000] = b;
-                //}
+                        _memoryBankSwitchedRAM2_2[_selectedBank, address - 0xd000] = b;
+                }
+                else
+                    _memoryBankSwitchedRAM1[_selectedBank, address - 0xe000] = b;
             }
             ProcessSwitch(address, b, mainBoard);
         }

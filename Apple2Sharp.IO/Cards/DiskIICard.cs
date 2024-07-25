@@ -135,8 +135,8 @@ namespace Apple2Sharp.Mainboard.Cards
         public byte Read(ushort address, Apple2Board mainBoard)
         {
             int trackSize = 5856;
-            var sec = mainBoard.baseRAM[0x2d];
-            var trk = mainBoard.baseRAM[0x2e];
+            var sec = mainBoard.ReadByte(0x2d);
+            var trk = mainBoard.ReadByte(0x2e);
             string key = trk + "_" + sec;
             if (Drive1_2)
             {

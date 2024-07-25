@@ -214,5 +214,17 @@ namespace Apple2Sharp.Properties {
                 this["Debug"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("false")]
+        public string AppleIIe {
+            get {
+                return ((string)(this["AppleIIe"]));
+            }
+            set {
+                this["AppleIIe"] = value;
+            }
+        }
     }
 }

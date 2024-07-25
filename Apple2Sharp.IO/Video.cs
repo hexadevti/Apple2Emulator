@@ -151,30 +151,29 @@ namespace Apple2Sharp
                             }
                         }
                     }
-                    else
+                    else if (mainBoard.softswitches.Cols40_80)
                     {
                         for (ushort c = 0; c < 0x28; c++)
                         {
                             posH = c;
 
                             var chr = mainBoard.baseRAM[(ushort)(textPage + (b * 0x28) + (l * 0x80) + c)];
-                            if (!mainBoard.AppleIIe)
+                            if (!mainBoard.appleIIe)
                             {
                                 if (chr >= 0x40 && chr < 0x80)
                                     chr = Math.Floor((float)(DateTime.Now.Millisecond / 500)) % 2 == 0 ? (byte)(chr + 0x40) : chr;
-                                if (posV == mainBoard.baseRAM[0x25] && posH == mainBoard.baseRAM[0x24])
+                                if (posV == mainBoard.baseZP[0x25] && posH == mainBoard.baseZP[0x24])
                                     chr = Math.Floor((float)(DateTime.Now.Millisecond / 500)) % 2 == 0 ? (byte)(chr + 0x40) : chr;
                             }
                             else
                             {
                                 // if (chr >= 0x40 && chr < 0x60)
                                 //     chr = Math.Floor((float)(DateTime.Now.Millisecond / 500)) % 2 == 0 ? (byte)(chr + 0x20) : chr;
-                                 if (chr >= 0x60 && chr < 0x80)
+                                if (chr >= 0x60 && chr < 0x80)
                                     chr = Math.Floor((float)(DateTime.Now.Millisecond / 500)) % 2 == 0 ? (byte)(chr + 0x80) : chr;
                             }
                             linha[c] = chr;
                         }
-
                         for (int i = 0; i < 8; i++)
                         {
                             for (int ps1 = 0; ps1 < pixelSize; ps1++)
@@ -208,6 +207,64 @@ namespace Apple2Sharp
                         }
                         posV = posV + 1;
                     }
+                    else if (mainBoard.appleIIe && !mainBoard.softswitches.Cols40_80)
+                    {
+                        for (ushort c = 0; c < 0x28; c++)
+                        {
+                            posH = c;
+
+                            var chr = mainBoard.baseRAM[(ushort)(textPage + (b * 0x28) + (l * 0x80) + c)];
+                            if (!mainBoard.appleIIe)
+                            {
+                                if (chr >= 0x40 && chr < 0x80)
+                                    chr = Math.Floor((float)(DateTime.Now.Millisecond / 500)) % 2 == 0 ? (byte)(chr + 0x40) : chr;
+                                if (posV == mainBoard.baseZP[0x25] && posH == mainBoard.baseZP[0x24])
+                                    chr = Math.Floor((float)(DateTime.Now.Millisecond / 500)) % 2 == 0 ? (byte)(chr + 0x40) : chr;
+                            }
+                            else
+                            {
+                                // if (chr >= 0x40 && chr < 0x60)
+                                //     chr = Math.Floor((float)(DateTime.Now.Millisecond / 500)) % 2 == 0 ? (byte)(chr + 0x20) : chr;
+                                if (chr >= 0x60 && chr < 0x80)
+                                    chr = Math.Floor((float)(DateTime.Now.Millisecond / 500)) % 2 == 0 ? (byte)(chr + 0x80) : chr;
+                            }
+                            linha[c] = chr;
+                        }
+                        for (int i = 0; i < 8; i++)
+                        {
+                            for (int ps1 = 0; ps1 < pixelSize; ps1++)
+                            {
+                                for (int j = 0; j < 0x28; j++)
+                                {
+                                    for (int k = 0; k < 7; k++)
+                                    {
+                                        object? objout = mainBoard.charSet[linha[j]].GetValue(i, k);
+                                        for (int ps2 = 0; ps2 < pixelSize; ps2++)
+                                        {
+                                            if (objout != null)
+                                            {
+                                                if (mainBoard.scanLines && pixelSize > 2 && ps1 == pixelSize - 1)
+                                                    bmp[byteid] = 0;
+                                                else
+                                                {
+                                                    if ((bool)objout)
+                                                        bmp[byteid] = 0xff;
+                                                    else
+                                                        bmp[byteid] = 0x0;
+                                                }
+                                            }
+                                            else
+                                                bmp[byteid] = 0x0;
+                                            byteid++;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        posV = posV + 1;
+                    }
+
+
                 }
             }
 
@@ -240,25 +297,6 @@ namespace Apple2Sharp
                                         finalPixel = 0; // 
                                         finalPixel2 = 7; //
                                     }
-                                    //else if (bmp[nextPixel] == 1 || bmp[nextPixel] == 2 || bmp[nextPixel] == 5 || bmp[nextPixel] == 6) // next color
-                                    //{
-                                    //    if (bmp[nextPixel2] == 0 || bmp[nextPixel2] == 4) // second next black
-                                    //    {
-                                    //        if (upperPixel != -1 && bottomPixel != -1)
-                                    //        {
-                                    //            if ((bmp[upperPixel] == 0 || bmp[upperPixel] == 4 || bmp[upperPixel] == 3 || bmp[upperPixel] == 7)) // upper black or white
-                                    //            {
-                                    //                if (bmp[bottomPixel] == 0 || bmp[bottomPixel] == 4 || bmp[bottomPixel] == 3 || bmp[bottomPixel] == 7) // bottom black or white
-                                    //                {
-                                    //                    //finalPixel = 7; // 
-                                    //                    //finalPixel2 = 7; //
-                                    //                }
-
-                                    //            }
-
-                                    //        }  
-                                    //    }
-                                    //}
                                     else if (bmp[nextPixel] == 0 || bmp[nextPixel] == 4) // next black
                                     {
                                         finalPixel = 7; // 
@@ -286,31 +324,7 @@ namespace Apple2Sharp
                                         finalPixel = 0; // white | white,black | black
                                         finalPixel2 = 7; //
                                     }
-
-
-
                                 }
-                                else if (bmp[lastPixel] == 1 || bmp[lastPixel] == 2 || bmp[lastPixel] == 5 || bmp[lastPixel] == 6) // last color
-                                {
-                                    //if (bmp[nextPixel2] == 0 || bmp[nextPixel2] == 4) // second next black
-                                    //{
-                                    //    if (upperPixel != -1 && bottomPixel != -1)
-                                    //    {
-                                    //        if ((bmp[upperPixel] == 0 || bmp[upperPixel] == 4 || bmp[upperPixel] == 3 || bmp[upperPixel] == 7)) // upper black or white
-                                    //        {
-                                    //            if (bmp[bottomPixel] == 0 || bmp[bottomPixel] == 4 || bmp[bottomPixel] == 3 || bmp[bottomPixel] == 7) // bottom black or white
-                                    //            {
-                                    //                finalPixel = 7; // 
-                                    //                finalPixel2 = 7; //
-                                    //            }
-
-                                    //        }
-
-                                    //    }
-                                    //}
-
-                                }
-
                             }
 
                             if (finalPixel != -1)
@@ -319,8 +333,6 @@ namespace Apple2Sharp
                                     bmp[actualPixel + ps2] = (byte)finalPixel;
                                     bmp[actualPixel + ps2 + pixelSize2] = (byte)finalPixel2;
                                 }
-
-
                         }
                     }
                 }
@@ -370,5 +382,7 @@ namespace Apple2Sharp
             return bitmap;
 
         }
+
+        
     }
 }

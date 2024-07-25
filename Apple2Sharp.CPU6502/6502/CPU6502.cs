@@ -34,6 +34,9 @@ namespace Apple2Sharp.CPU6502
             mainBoard.softswitches.AltCharSetOn_Off = false;
             mainBoard.softswitches.Store80On_Off = false;
             mainBoard.softswitches.IntC8RomOn_Off = false;
+            mainBoard.softswitches.IIEMemoryBankReadRAM_ROM = false;
+            mainBoard.softswitches.RAMReadOn_Off = false;
+            mainBoard.softswitches.AltZPOn_Off = false;
             Reset();
             cpuState = CpuState.Running;
         }
@@ -53,10 +56,10 @@ namespace Apple2Sharp.CPU6502
             lastPC = state.PC;
             OpCodePart? opCodePart = OpCodes.GetOpCode(instruction);
             // Break point with lastPC
-            //if (lastPC == 0xe000)
-            //{
-            //    Thread.Sleep(1);
-            //}
+            if (lastPC == 0x008f)
+            {
+               Thread.Sleep(1);
+            }
             ushort? refAddress = OpCodes.ProcessAddressing(opCodePart, state, mainBoard, this);
             OpCodes.Process(opCodePart, state, mainBoard, refAddress);
             EnqueueCycles(opCodePart);

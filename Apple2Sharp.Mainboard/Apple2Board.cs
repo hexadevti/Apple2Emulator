@@ -10,9 +10,15 @@ namespace Apple2Sharp.Mainboard
         public object displayLock = new object();
         public Dictionary<byte, bool[,]> charSet = new Dictionary<byte, bool[,]>();
         public Dictionary<byte, bool[,]> altCharSet = new Dictionary<byte, bool[,]>();
+
+        public Dictionary<byte, bool[,]> CharSet80 = new Dictionary<byte, bool[,]>();
+
         public bool adjust1Mhz = true;
         public double clockSpeed = 0;
-        public byte[] baseRAM = new byte[0xc000];
+        public byte[] baseZP = new byte[0x200];
+        public byte[] baseRAM = new byte[0xc0000];
+        public byte[] auxZP = new byte[0x200];
+        public byte[] auxRAM = new byte[0xc0000];
         public byte[] ROM = new byte[0x3000];
         public byte[] AppleIIeInternalROM = new byte[0x1000];
         public byte KeyPressedBuffer { get; set; }
@@ -28,14 +34,29 @@ namespace Apple2Sharp.Mainboard
         public bool scanLines = true;
         public bool idealized = false;
         public bool joystick = false;
-        public bool AppleIIe = false;
+        public bool appleIIe = false;
         public int timerpdl0;
         public int timerpdl1;
         public int timerpdl2;
         public int timerpdl3;
 
+        private byte[,] IIEmemoryBankSwitchedRAM1 = new byte[1, 0x2000];
+        private byte[,] IIEmemoryBankSwitchedRAM2_1 = new byte[1, 0x1000];
+        private byte[,] IIEmemoryBankSwitchedRAM2_2 = new byte[1, 0x1000];
 
-        public int audioBuffer { get; set; }
+        private int IIEselectedBank = 0;
+
+        public Apple2Board()
+        {
+            IIEmemoryBankSwitchedRAM1 = new byte[1, 0x2000];
+            IIEmemoryBankSwitchedRAM2_1 = new byte[1, 0x1000];
+            IIEmemoryBankSwitchedRAM2_2 = new byte[1, 0x1000];
+            charSet = new Dictionary<byte, bool[,]>();
+            altCharSet = new Dictionary<byte, bool[,]>();
+            baseRAM = new byte[0xc000];
+            baseZP =  new byte[0x200];
+        }
+
         public void ClearBaseRAM()
         {
             Random rnd = new Random();
@@ -45,6 +66,7 @@ namespace Apple2Sharp.Mainboard
             {
                 baseRAM[i] = b[i];
             }
+            
         }
 
         public void LoadChars(byte[] rom)
@@ -122,6 +144,7 @@ namespace Apple2Sharp.Mainboard
         public void LoadIIeChars(byte[] rom)
         {
             charSet = new Dictionary<byte, bool[,]>();
+            altCharSet = new Dictionary<byte, bool[,]>();
             ushort id = 0;
             for (int i = 0; i <= 0xff; i++)
             {
@@ -178,9 +201,68 @@ namespace Apple2Sharp.Mainboard
         public byte ReadByte(ushort address)
         {
             byte ret = 0;
-            if (address < 0xc000)
+            if (address < 0x0200)
             {
-                ret = baseRAM[address];
+                if (appleIIe)
+                {
+                    if (softswitches.AltZPOn_Off)
+                        ret = auxZP[address];
+                    else
+                        ret = baseZP[address];
+                }
+                else
+                    ret = baseZP[address];
+            }
+            else if (address < 0xc000)
+            {
+                if (appleIIe)
+                {
+                    if (!softswitches.Store80On_Off)
+                    {
+                        if (softswitches.RAMReadOn_Off)
+                            ret = auxRAM[address];
+                        else
+                            ret = baseRAM[address];
+                    }
+                    else // softswitches.Store80On_Off
+                    {
+                        if (address >= 0x0400 && address < 0x0800)
+                        {
+                            if (!softswitches.Page1_Page2) // Page 2
+                                ret = auxRAM[address];
+                            else                           // Page 1
+                                ret = baseRAM[address];
+                        } // Text Pages
+                        else if (address >= 0x2000 && address < 0x4000) // Graphics Pages
+                        {
+                            if (softswitches.LoRes_HiRes)
+                            {
+                                if (softswitches.RAMReadOn_Off)
+                                    ret = auxRAM[address];
+                                else
+                                    ret = baseRAM[address];
+                            }
+                            else
+                            {
+                                if (!softswitches.Page1_Page2) // Page 2
+                                    ret = auxRAM[address];
+                                else                           // Page 1
+                                    ret = baseRAM[address];
+                            }
+                        }
+                        else
+                        {
+                            if (softswitches.RAMReadOn_Off)
+                                ret = auxRAM[address];
+                            else
+                                ret = baseRAM[address];
+                        }
+                    }
+                }
+                else
+                {
+                    ret = baseRAM[address];
+                }
             }
             else if (address >= 0xc000 && address <= 0xc079)
             {
@@ -191,11 +273,31 @@ namespace Apple2Sharp.Mainboard
                 bool read = false;
                 for (int i = 0; i < 5; i++)
                 {
-                    if (slots[i] is IRamCard && ((IRamCard)slots[i]).MemoryBankReadRAM_ROM)
+                    if (i == 0 && appleIIe)
                     {
-                        ret = slots[i].Read(address, this);
-                        read = true;
-                        break;
+                        if (softswitches.IIEMemoryBankReadRAM_ROM)
+                        {
+                            if (address >= 0xd000 && address < 0xe000)
+                            {
+                                if (softswitches.IIEMemoryBankBankSelect1_2)
+                                    ret = IIEmemoryBankSwitchedRAM2_1[IIEselectedBank, address - 0xd000];
+                                else
+                                    ret = IIEmemoryBankSwitchedRAM2_2[IIEselectedBank, address - 0xd000];
+                            }
+                            else if (address >= 0xd000)
+                                ret = IIEmemoryBankSwitchedRAM1[IIEselectedBank, address - 0xe000];
+                            read = true;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        if (slots[i] is IRamCard && ((IRamCard)slots[i]).MemoryBankReadRAM_ROM)
+                        {
+                            ret = slots[i].Read(address, this);
+                            read = true;
+                            break;
+                        }
                     }
                 }
                 if (!read)
@@ -208,8 +310,16 @@ namespace Apple2Sharp.Mainboard
             {
                 for (int i = 0; i < 8; i++)
                 {
-                    if (address >= 0xc080 + (0x10 * i) && address < 0xc080 + (0x10 * (i+1))) 
-                        ret = slots[i].Read(address, this);    
+                    if (i == 0 && appleIIe)
+                    {
+                        if (address >= 0xc080 + (0x10 * i) && address < 0xc080 + (0x10 * (i+1))) 
+                            ret = softswitches.Read(address, this);
+                    }
+                    else
+                    {
+                        if (address >= 0xc080 + (0x10 * i) && address < 0xc080 + (0x10 * (i+1))) 
+                            ret = slots[i].Read(address, this);    
+                    }
                 }
             }
             else if (softswitches.IntCXRomOn_Off)
@@ -240,7 +350,7 @@ namespace Apple2Sharp.Mainboard
                         {   
                             if (address >= 0xc000 + (0x100 * i) && address < 0xc000 + (0x100 * (i+1)))
                             {
-                                if (slots[i].Empty && softswitches.SlotC3RomOn_Off)
+                                if (slots[i].Empty && !softswitches.SlotC3RomOn_Off)
                                 {
                                     ret = AppleIIeInternalROM[address - 0xc000];
                                     softswitches.IntC8RomOn_Off = true;
@@ -271,9 +381,69 @@ namespace Apple2Sharp.Mainboard
 
         public void WriteByte(ushort address, byte value)
         {
+            if (address < 0x0200)
+            {
+                if (appleIIe)
+                {
+                    if (softswitches.AltZPOn_Off)
+                        auxZP[address] = value;
+                    else
+                        baseZP[address] = value;
+                }
+                else
+                    baseZP[address] = value;
+            }
             if (address < 0xc000)
             {
-                baseRAM[address] = value;
+                if (appleIIe)
+                {
+                    if (!softswitches.Store80On_Off)
+                    {
+                        if (softswitches.RAMReadOn_Off)
+                            auxRAM[address] = value;
+                        else
+                            baseRAM[address] = value;
+                    }
+                    else // softswitches.Store80On_Off
+                    {
+                        if (address >= 0x0400 && address < 0x0800) // Text Pages
+                        {
+                            if (!softswitches.Page1_Page2)
+                                auxRAM[address] = value;
+                            else
+                                baseRAM[address] = value;
+                        }
+                        else if (address >= 0x2000 && address < 0x4000) // Graphics Pages
+                        {
+                            if (softswitches.LoRes_HiRes)
+                            {
+                                if (softswitches.RAMReadOn_Off)
+                                    auxRAM[address] = value;
+                                else
+                                    baseRAM[address] = value;
+                            }
+                            else
+                            {
+                                if (!softswitches.Page1_Page2) // Page 2
+                                    auxRAM[address] = value;
+                                else                           // Page 1
+                                    baseRAM[address] = value;
+                            }
+
+                        }
+                        else
+                        {
+                            if (softswitches.RAMReadOn_Off)
+                                auxRAM[address] = value;
+                            else
+                                baseRAM[address] = value;
+                        }
+                    }
+                }
+                else
+                {
+                    baseRAM[address] = value;
+                }
             }
             else if (address >= 0xc000 && address <0xc079)
             {
@@ -283,9 +453,24 @@ namespace Apple2Sharp.Mainboard
             {
                 for (int i = 0; i < 5; i++)
                 {
-                    if (slots[i] is IRamCard && ((IRamCard)slots[i]).MemoryBankWriteRAM_NoWrite)
+                    if (i == 0 && appleIIe)
                     {
-                        slots[i].Write(address, value, this);
+                        if (address >= 0xd000 && address < 0xe000)
+                        {
+                            if (softswitches.IIEMemoryBankBankSelect1_2)
+                                IIEmemoryBankSwitchedRAM2_1[IIEselectedBank, address - 0xd000] = value;
+                            else
+                                IIEmemoryBankSwitchedRAM2_2[IIEselectedBank, address - 0xd000] = value;
+                        }
+                        else
+                            IIEmemoryBankSwitchedRAM1[IIEselectedBank, address - 0xe000] = value;
+                    }
+                    else
+                    {
+                        if (slots[i] is IRamCard && ((IRamCard)slots[i]).MemoryBankWriteRAM_NoWrite)
+                        {
+                            slots[i].Write(address, value, this);
+                        }
                     }
                 }
             }
@@ -295,10 +480,19 @@ namespace Apple2Sharp.Mainboard
             }
             else if (address >= 0xc080) // Slots SoftSwitches
             {
+                
                 for (int i = 0; i < 8; i++)
                 {
-                    if (address >= 0xc080 + (0x10 * i) && address < 0xc080 + (0x10 * (i+1))) 
-                        slots[i].Write(address, value, this);
+                    if (i == 0 && appleIIe)
+                    {
+                        if (address >= 0xc080 + (0x10 * i) && address < 0xc080 + (0x10 * (i+1))) 
+                            softswitches.Write(address, value, this);
+                    }
+                    else
+                    {
+                        if (address >= 0xc080 + (0x10 * i) && address < 0xc080 + (0x10 * (i+1))) 
+                            slots[i].Write(address, value, this);
+                    }
                 }
             }
         }

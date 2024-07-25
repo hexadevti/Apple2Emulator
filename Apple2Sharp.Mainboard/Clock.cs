@@ -34,7 +34,7 @@ namespace Apple2Sharp.Mainboard
             {
                 if (_cpu.cpuState == CpuState.Paused)
                 {
-                    Thread.Sleep(50);
+                    Thread.Sleep(5);
                     continue;
                 }
 

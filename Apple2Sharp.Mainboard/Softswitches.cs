@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Threading.Channels;
 
 namespace Apple2Sharp.Mainboard
@@ -32,7 +33,13 @@ namespace Apple2Sharp.Mainboard
         public bool AltCharSetOn_Off { get; set; }
         public bool Store80On_Off { get; set; }
         
+        public bool IIEMemoryBankBankSelect1_2 { get; set; }
+        public bool IIEMemoryBankReadRAM_ROM { get; set; }
+        public bool IIEMemoryBankWriteRAM_NoWrite { get; set; }
 
+        public bool RAMReadOn_Off { get; set; }
+        public bool RAMWriteOn_Off { get; set;} 
+        public bool AltZPOn_Off { get; set; }   
 
 
         public void Write(ushort address, byte b, Apple2Board mainBoard)
@@ -64,11 +71,22 @@ namespace Apple2Sharp.Mainboard
                 if (!Read_Write)
                     mainBoard.softswitches.Store80On_Off = true;
             }
-
+            else if (address == 0xc002)
+                mainBoard.softswitches.RAMReadOn_Off = false;
+            else if (address == 0xc003)
+                mainBoard.softswitches.RAMReadOn_Off = true;
+            else if (address == 0xc004)
+                mainBoard.softswitches.RAMWriteOn_Off = false;
+            else if (address == 0xc005)
+                mainBoard.softswitches.RAMWriteOn_Off = true;
             else if (address == 0xc006)
                 mainBoard.softswitches.IntCXRomOn_Off = false;
             else if (address == 0xc007)
                 mainBoard.softswitches.IntCXRomOn_Off = true;
+            else if (address == 0xc008)
+                mainBoard.softswitches.AltZPOn_Off = false;
+            else if (address == 0xc009)
+                mainBoard.softswitches.AltZPOn_Off = true;
             else if (address == 0xc00a)
                 mainBoard.softswitches.SlotC3RomOn_Off = false;
             else if (address == 0xc00b)
@@ -89,8 +107,18 @@ namespace Apple2Sharp.Mainboard
                 if (!Read_Write)
                     mainBoard.softswitches.Cols40_80 = false; // Apple IIc IIe
             }
+            else if (address == 0xc011)
+                return (byte)(mainBoard.softswitches.IIEMemoryBankBankSelect1_2 ? 0x00 : 0xff);
+            else if (address == 0xc012)
+                return (byte)(mainBoard.softswitches.IIEMemoryBankReadRAM_ROM ? 0xff : 0x00);
+            else if (address == 0xc011)
+                return (byte)(mainBoard.softswitches.RAMReadOn_Off ? 0xff : 0x00);
+            else if (address == 0xc014)
+                return (byte)(mainBoard.softswitches.RAMWriteOn_Off ? 0xff : 0x00);
             else if (address == 0xc015)
                 return (byte)(mainBoard.softswitches.IntCXRomOn_Off ? 0xff : 0x00);
+            else if (address == 0xc016)
+                return (byte)(mainBoard.softswitches.AltZPOn_Off ? 0xff : 0x00);
             else if (address == 0xc017)
                 return (byte)(mainBoard.softswitches.SlotC3RomOn_Off ? 0xff : 0x00);
             else if (address == 0xc018)
@@ -163,6 +191,35 @@ namespace Apple2Sharp.Mainboard
                 mainBoard.softswitches.Cg1 = true;
                 mainBoard.softswitches.Cg2 = true;
                 mainBoard.softswitches.Cg3 = true;
+            }
+            else if (mainBoard.appleIIe)
+            {
+                if (address >= 0xc080 && address < 0xc090)
+                {
+                    var last4bits = (address & 0b00001111);
+                    BitArray bits = new BitArray(new byte[] { (byte)last4bits });
+                    IIEMemoryBankBankSelect1_2 = bits[3];
+                    if (bits[1] && bits[0])
+                    {
+                        IIEMemoryBankReadRAM_ROM = true;
+                        IIEMemoryBankWriteRAM_NoWrite = true;
+                    }
+                    else if (!bits[1] && bits[0])
+                    {
+                        IIEMemoryBankReadRAM_ROM = false;
+                        IIEMemoryBankWriteRAM_NoWrite = true;
+                    }
+                    else if (bits[1] && !bits[0])
+                    {
+                        IIEMemoryBankReadRAM_ROM = false;
+                        IIEMemoryBankWriteRAM_NoWrite = false;
+                    }
+                    else if (!bits[1] && !bits[0])
+                    {
+                        IIEMemoryBankReadRAM_ROM = true;
+                        IIEMemoryBankWriteRAM_NoWrite = false;
+                    }
+                }
             }
             return 0;
 

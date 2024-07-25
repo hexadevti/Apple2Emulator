@@ -15,18 +15,20 @@ using Apple2Sharp.Mainboard.Cards;
 using Apple2Sharp.Mainboard.Enums;
 using System.Drawing;
 using System.Net.NetworkInformation;
+using System.Linq;
 
 namespace Apple2Sharp
 {
     public partial class Interface : Form
     {
         const int pixelSize = 4;
+        private bool formRunning = true;
         private Apple2Board mainBoard { get; set; }
         private IProcessor cpu { get; set; }
 
         private Clock clock { get; set; }
         private CPU6502.State state = new CPU6502.State();
-        private CPU65C02.State stateC = new CPU65C02.State();
+        //private CPU65C02.State stateC = new CPU65C02.State();
 
         private string? assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         private List<Task> threads = new List<Task>();
@@ -45,35 +47,58 @@ namespace Apple2Sharp
                 assemblyPath += "/";
 
             this.Shown += Form1_Shown;
+            this.FormClosing += FormCloseEvent;
+            tbSpeed.ValueChanged += tbSpeed_ValueChanged;
+
+
             mainBoard = new Apple2Board();
-            mainBoard.adjust1Mhz = true;
-            D1OFF.Visible = true;
-            D2OFF.Visible = true;
-            //cpu = new CPU65C02.CPU65C02(stateC, mainBoard);
-            cpu = new CPU6502.CPU6502(state, mainBoard);
-            clock = new Clock(cpu, mainBoard);
+            LoadCardsCombos();
+            LoadContext();
+            InitSlots();
+            LoadCPU();
+            LoadKeyboard();
+            StartSpeaker();
+            LoadThreads();
+            mainBoard.CharSet80 = Tools.Load80Chars(File.ReadAllBytes(assemblyPath + "roms/Videx Videoterm Character ROM Normal.bin"));
+
+            cpu.WarmStart();
+
+            soundOutput.Play();
+
+
+        }
+
+        private void LoadKeyboard()
+        {
             Keyboard keyboard = new Keyboard(mainBoard, cpu);
             richTextBox1.KeyDown += keyboard.OnKeyDown;
             richTextBox1.KeyUp += keyboard.OnKeyUp;
             richTextBox1.TextChanged += keyboard.Keyb_TextChanged;
-            // mainBoard.LoadAppleIIeInternalROM(0xc000, File.ReadAllBytes(assemblyPath + "roms/AppleIIeEnhancedC0-FF.bin"));
-            // mainBoard.LoadIIeChars(File.ReadAllBytes(assemblyPath + "roms/AppleIIeVideoEnhanced.bin"));
-            mainBoard.LoadROM(0xf800, File.ReadAllBytes(assemblyPath + "roms/ApplesoftF800.bin"));
-            mainBoard.LoadROM(0xf000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftF000.bin"));
-            mainBoard.LoadROM(0xe800, File.ReadAllBytes(assemblyPath + "roms/ApplesoftE800.bin"));
-            mainBoard.LoadROM(0xe000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftE000.bin"));
-            mainBoard.LoadROM(0xd800, File.ReadAllBytes(assemblyPath + "roms/ApplesoftD800.bin"));
-            mainBoard.LoadROM(0xd000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftD000.bin"));
-            mainBoard.LoadChars(File.ReadAllBytes(assemblyPath + "roms/CharROM.bin"));
-            LoadCardsCombos();
-            LoadContext();
-            this.FormClosing += FormCloseEvent;
-            tbSpeed.ValueChanged += tbSpeed_ValueChanged;
-            tbSpeed.Visible = false;
-            StartSpeaker();
-            InitSlots();
-            cpu.WarmStart();
-            LoadThreads();
+
+        }
+        private void LoadCPU()
+        {
+            if (mainBoard.appleIIe)
+            {
+                // Apple IIe
+                //cpu = new CPU65C02.CPU65C02(stateC, mainBoard);
+                mainBoard.LoadAppleIIeInternalROM(0xc000, File.ReadAllBytes(assemblyPath + "roms/AppleIIeEnhancedC0-FF.bin"));
+                mainBoard.LoadIIeChars(File.ReadAllBytes(assemblyPath + "roms/AppleIIeVideoEnhanced.bin"));
+            }
+            else
+            {
+                // Apple II+
+                cpu = new CPU6502.CPU6502(state, mainBoard);
+                mainBoard.LoadROM(0xf800, File.ReadAllBytes(assemblyPath + "roms/ApplesoftF800.bin"));
+                mainBoard.LoadROM(0xf000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftF000.bin"));
+                mainBoard.LoadROM(0xe800, File.ReadAllBytes(assemblyPath + "roms/ApplesoftE800.bin"));
+                mainBoard.LoadROM(0xe000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftE000.bin"));
+                mainBoard.LoadROM(0xd800, File.ReadAllBytes(assemblyPath + "roms/ApplesoftD800.bin"));
+                mainBoard.LoadROM(0xd000, File.ReadAllBytes(assemblyPath + "roms/ApplesoftD000.bin"));
+                mainBoard.LoadChars(File.ReadAllBytes(assemblyPath + "roms/CharROM.bin"));
+            }
+            cpu.cpuState = CpuState.Running;
+            clock = new Clock(cpu, mainBoard);
         }
 
         private void LoadContext()
@@ -102,14 +127,21 @@ namespace Apple2Sharp
                 openFileDialog2.FileName = "";
                 disk2.Text = "";
             }
+
             for (int i = 0; i < 8; i++)
-                cbSlots[i].SelectedValue = Apple2Sharp.Properties.Settings.Default["Slot" + i + "Card"];
+            {
+                if (string.IsNullOrEmpty(Apple2Sharp.Properties.Settings.Default["Slot" + i + "Card"].ToString()))
+                    cbSlots[i].SelectedValue = "EmptySlot";
+                else
+                    cbSlots[i].SelectedValue = Apple2Sharp.Properties.Settings.Default["Slot" + i + "Card"];
+            }
 
             mainBoard.videoColor = Convert.ToBoolean(Apple2Sharp.Properties.Settings.Default["Color"]);
             mainBoard.adjust1Mhz = Convert.ToBoolean(Apple2Sharp.Properties.Settings.Default["Adjust1mhz"]);
             mainBoard.scanLines = Convert.ToBoolean(Apple2Sharp.Properties.Settings.Default["ScanLines"]);
             mainBoard.idealized = Convert.ToBoolean(Apple2Sharp.Properties.Settings.Default["Idealized"]);
             mainBoard.joystick = Convert.ToBoolean(Apple2Sharp.Properties.Settings.Default["Joystick"]);
+            mainBoard.appleIIe = Convert.ToBoolean(Apple2Sharp.Properties.Settings.Default["AppleIIe"]);
             richTextBox2.Visible = Convert.ToBoolean(Apple2Sharp.Properties.Settings.Default["Debug"]);
             if (mainBoard.joystick)
             {
@@ -131,6 +163,9 @@ namespace Apple2Sharp
                 tbSpeed.Value = 10;
                 tbSpeed.Enabled = true;
             }
+
+            cbslot0.Visible = !mainBoard.appleIIe;
+            lblslot0.Visible = !mainBoard.appleIIe;
         }
         private void LoadCardsCombos()
         {
@@ -235,6 +270,7 @@ namespace Apple2Sharp
                     SetButtonActive(btnPaused, cpu.cpuState == CpuState.Paused, Color.SteelBlue);
                     SetButtonActive(btnIdealized, mainBoard.idealized, Color.SteelBlue);
                     SetButtonActive(btnJoystick, mainBoard.joystick, Color.SteelBlue);
+                    SetButtonActive(btnAppleIIe, mainBoard.appleIIe, Color.SteelBlue);
                     SetButtonActive(btnDebug, richTextBox2.Visible, Color.SteelBlue);
 
                     string text = "";
@@ -243,10 +279,12 @@ namespace Apple2Sharp
                         if (mainBoard.screenLog.TryDequeue(out text))
                             SetRichTextBox(richTextBox2, text + Environment.NewLine);
                     }
+
                     Thread.Sleep(50);
                 }
-            }));
 
+
+            }));
 
             threads.Add(Task.Run(() =>
             {
@@ -262,6 +300,8 @@ namespace Apple2Sharp
                             {
                                 if (mainBoard.slots[3].GetType() == typeof(Cols80Card))
                                     pictureBox1.Image = ((Cols80Card)mainBoard.slots[3]).Generate(mainBoard, pixelSize);
+                                else if (mainBoard.appleIIe)
+                                    pictureBox1.Image = Video.Generate(mainBoard, pixelSize);
                             }
                         }
                         catch { }
@@ -271,10 +311,10 @@ namespace Apple2Sharp
                 }
             }));
 
-            threads.Add(Task.Run(() => {
-                cpu.cpuState = CpuState.Running;
+            threads.Add(Task.Run(() =>
+            {
                 clock.Run();
-                }
+            }
             ));
         }
         private void StartSpeaker()
@@ -282,7 +322,6 @@ namespace Apple2Sharp
             waveFormat = new WaveFormat(120000, 8, 1);
             speaker = new Speaker(mainBoard, waveFormat);
             soundOutput.Init(speaker);
-            soundOutput.Play();
         }
         private void UpdateDisks()
         {
@@ -388,6 +427,7 @@ namespace Apple2Sharp
         private void FormCloseEvent(object? sender, FormClosingEventArgs e)
         {
             cpu.cpuState = CpuState.Stopped;
+            formRunning = false;
         }
 
 
@@ -396,6 +436,7 @@ namespace Apple2Sharp
             string settings = ((ComboBox)sender).Name.Replace("cb", "") + "Card";
             Apple2Sharp.Properties.Settings.Default[settings] = ((ComboBox)sender).SelectedValue;
             Apple2Sharp.Properties.Settings.Default.Save();
+            richTextBox1.Focus();
 
         }
         private void pictureBox1_Click(object sender, EventArgs e)
@@ -404,10 +445,27 @@ namespace Apple2Sharp
         }
         private void btn_restart_Click(object sender, EventArgs e)
         {
-            InitSlots();
-            LoadContext();
-            cpu.WarmStart();
-            richTextBox1.Focus();
+            if (btn_restart.Enabled)
+            {
+                btn_restart.Enabled = false;
+                cpu.cpuState = CpuState.Stopped;
+                while (threads.Where(x => x.Status == TaskStatus.Running).Any())
+                {
+                    Thread.Sleep(50);
+                }
+
+                LoadContext();
+                InitSlots();
+                LoadCPU();
+                LoadKeyboard();
+                StartSpeaker();
+                LoadThreads();
+
+                cpu.WarmStart();
+
+                btn_restart.Enabled = true;
+                richTextBox1.Focus();
+            }
         }
         private void btnClockAdjust_Click(object sender, EventArgs e)
         {
@@ -488,7 +546,7 @@ namespace Apple2Sharp
             Apple2Sharp.Properties.Settings.Default.Save();
             richTextBox1.Focus();
         }
-        
+
         private void btnPaused_Click(object sender, EventArgs e)
         {
             if (cpu.cpuState == CpuState.Paused)
@@ -532,6 +590,21 @@ namespace Apple2Sharp
                 mainBoard.timerpdl3 = 0;
             }
             richTextBox1.Focus();
+        }
+
+        private void btnAppleIIe_Click(object sender, EventArgs e)
+        {
+
+            if (btnAppleIIe.Enabled)
+            {
+                btnAppleIIe.Enabled = false;
+                mainBoard.appleIIe = !mainBoard.appleIIe;
+                Apple2Sharp.Properties.Settings.Default["AppleIIe"] = mainBoard.appleIIe.ToString();
+                Apple2Sharp.Properties.Settings.Default.Save();
+                btn_restart_Click(sender, e);
+                btnAppleIIe.Enabled = true;
+            }
+
         }
     }
 }
