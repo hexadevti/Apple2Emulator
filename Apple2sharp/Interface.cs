@@ -58,12 +58,10 @@ namespace Apple2Sharp
             LoadCPU();
             LoadKeyboard();
             StartSpeaker();
-            LoadThreads();
-            mainBoard.CharSet80 = Tools.Load80Chars(File.ReadAllBytes(assemblyPath + "roms/Videx Videoterm Character ROM Normal.bin"));
-
             cpu.WarmStart();
+            LoadThreads();
 
-            soundOutput.Play();
+            
 
 
         }
@@ -322,6 +320,7 @@ namespace Apple2Sharp
             waveFormat = new WaveFormat(120000, 8, 1);
             speaker = new Speaker(mainBoard, waveFormat);
             soundOutput.Init(speaker);
+            soundOutput.Play();
         }
         private void UpdateDisks()
         {
