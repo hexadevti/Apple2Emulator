@@ -44,7 +44,13 @@ namespace Apple2Sharp.Mainboard
         private byte[,] IIEmemoryBankSwitchedRAM2_1 = new byte[1, 0x1000];
         private byte[,] IIEmemoryBankSwitchedRAM2_2 = new byte[1, 0x1000];
 
+        private byte[,] IIEAuxBankSwitchedRAM1 = new byte[1, 0x2000];
+        private byte[,] IIEAuxBankSwitchedRAM2_1 = new byte[1, 0x1000];
+        private byte[,] IIEAuxBankSwitchedRAM2_2 = new byte[1, 0x1000];
+
         private int IIEselectedBank = 0;
+
+        public bool videoMain_Aux = true;
 
         public Apple2Board()
         {
@@ -64,9 +70,18 @@ namespace Apple2Sharp.Mainboard
             rnd.NextBytes(b);
             for (ushort i = 0; i < b.Length; i++)
             {
+                auxRAM[i] = b[i];
                 baseRAM[i] = b[i];
             }
-            
+            IIEmemoryBankSwitchedRAM1 = new byte[1, 0x2000];
+            IIEmemoryBankSwitchedRAM2_1 = new byte[1, 0x1000];
+            IIEmemoryBankSwitchedRAM2_2 = new byte[1, 0x1000];
+            IIEselectedBank = 0;
+            IIEAuxBankSwitchedRAM1 = new byte[1, 0x2000];
+            IIEAuxBankSwitchedRAM2_1 = new byte[1, 0x1000];
+            IIEAuxBankSwitchedRAM2_2 = new byte[1, 0x1000];
+            baseZP = new byte[0x200];
+            auxZP = new byte[0x200];
         }
 
         public void LoadChars(byte[] rom)
@@ -280,12 +295,27 @@ namespace Apple2Sharp.Mainboard
                             if (address >= 0xd000 && address < 0xe000)
                             {
                                 if (softswitches.IIEMemoryBankBankSelect1_2)
-                                    ret = IIEmemoryBankSwitchedRAM2_1[IIEselectedBank, address - 0xd000];
+                                {
+                                    if (softswitches.AltZPOn_Off)
+                                        ret = IIEAuxBankSwitchedRAM2_1[IIEselectedBank, address - 0xd000];
+                                    else
+                                        ret = IIEmemoryBankSwitchedRAM2_1[IIEselectedBank, address - 0xd000];
+                                }
                                 else
-                                    ret = IIEmemoryBankSwitchedRAM2_2[IIEselectedBank, address - 0xd000];
+                                {
+                                    if (softswitches.AltZPOn_Off)
+                                        ret = IIEAuxBankSwitchedRAM2_2[IIEselectedBank, address - 0xd000];
+                                    else
+                                        ret = IIEmemoryBankSwitchedRAM2_2[IIEselectedBank, address - 0xd000];
+                                }
                             }
                             else if (address >= 0xd000)
-                                ret = IIEmemoryBankSwitchedRAM1[IIEselectedBank, address - 0xe000];
+                            {
+                                if (softswitches.AltZPOn_Off)
+                                    ret = IIEAuxBankSwitchedRAM1[IIEselectedBank, address - 0xe000];
+                                else
+                                    ret = IIEmemoryBankSwitchedRAM1[IIEselectedBank, address - 0xe000];
+                            }
                             read = true;
                             break;
                         }
@@ -399,7 +429,7 @@ namespace Apple2Sharp.Mainboard
                 {
                     if (!softswitches.Store80On_Off)
                     {
-                        if (softswitches.RAMReadOn_Off)
+                        if (softswitches.RAMWriteOn_Off)
                             auxRAM[address] = value;
                         else
                             baseRAM[address] = value;
@@ -417,7 +447,7 @@ namespace Apple2Sharp.Mainboard
                         {
                             if (softswitches.LoRes_HiRes)
                             {
-                                if (softswitches.RAMReadOn_Off)
+                                if (softswitches.RAMWriteOn_Off)
                                     auxRAM[address] = value;
                                 else
                                     baseRAM[address] = value;
@@ -433,7 +463,7 @@ namespace Apple2Sharp.Mainboard
                         }
                         else
                         {
-                            if (softswitches.RAMReadOn_Off)
+                            if (softswitches.RAMWriteOn_Off)
                                 auxRAM[address] = value;
                             else
                                 baseRAM[address] = value;
@@ -458,12 +488,27 @@ namespace Apple2Sharp.Mainboard
                         if (address >= 0xd000 && address < 0xe000)
                         {
                             if (softswitches.IIEMemoryBankBankSelect1_2)
-                                IIEmemoryBankSwitchedRAM2_1[IIEselectedBank, address - 0xd000] = value;
+                            {
+                                if (softswitches.AltZPOn_Off)
+                                    IIEAuxBankSwitchedRAM2_1[IIEselectedBank, address - 0xd000] = value;
+                                else
+                                    IIEmemoryBankSwitchedRAM2_1[IIEselectedBank, address - 0xd000] = value;
+                            }
                             else
-                                IIEmemoryBankSwitchedRAM2_2[IIEselectedBank, address - 0xd000] = value;
+                            {
+                                if (softswitches.AltZPOn_Off)
+                                    IIEAuxBankSwitchedRAM2_2[IIEselectedBank, address - 0xd000] = value;
+                                else
+                                    IIEmemoryBankSwitchedRAM2_2[IIEselectedBank, address - 0xd000] = value;
+                            }
                         }
                         else
-                            IIEmemoryBankSwitchedRAM1[IIEselectedBank, address - 0xe000] = value;
+                        {
+                            if (softswitches.AltZPOn_Off)
+                                IIEAuxBankSwitchedRAM1[IIEselectedBank, address - 0xe000] = value;
+                            else
+                                IIEmemoryBankSwitchedRAM1[IIEselectedBank, address - 0xe000] = value;
+                        }
                     }
                     else
                     {

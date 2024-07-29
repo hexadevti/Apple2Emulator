@@ -411,7 +411,7 @@ namespace Apple2Sharp.Mainboard
         {
             if (!string.IsNullOrEmpty(_diskPath))
             {
-                if (diskRawData[track] == null || update)
+                    if (diskRawData[track] == null || update)
                 {
                     List<byte> selectedSector = new List<byte>();
 

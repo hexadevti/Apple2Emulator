@@ -2,7 +2,9 @@ using System;
 using System.ComponentModel.Design;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
+using System.Threading;
 using Apple2Sharp.Mainboard;
 
 namespace Apple2Sharp
@@ -22,6 +24,7 @@ namespace Apple2Sharp
             int posH = 0;
             int posV = 0;
             byte[] linha = new byte[0x28];
+            byte[] linha80 = new byte[0x50];
 
             graphicsPage = (ushort)(mainBoard.softswitches.Page1_Page2 ? 0x2000 : 0x4000);
             textPage = (ushort)(mainBoard.softswitches.Page1_Page2 ? 0x400 : 0x800);
@@ -56,20 +59,71 @@ namespace Apple2Sharp
                                             {
                                                 var firstColor = (linha[j] & 0b11110000) >> 4;
                                                 var secondColor = linha[j] & 0b00001111;
-                                                if (i < 4)
+                                                if (mainBoard.scanLines && pixelSize > 2 && ps1 == pixelSize - 1)
+                                                {
+                                                    bmp[byteid] = 0;
+                                                }
+                                                else if (i < 4)
                                                 {
                                                     bmp[byteid] = (byte)secondColor;
-                                                    byteid++;
                                                 }
                                                 else
                                                 {
                                                     bmp[byteid] = (byte)firstColor;
-                                                    byteid++;
                                                 }
+                                                byteid++;
                                             }
 
                                         }
                                     }
+                                }
+                            }
+                        } 
+                        else if (mainBoard.softswitches.DHiResOn_Off)
+                        {
+                            for (int block = 0; block < 8; block++)
+                            {
+                                for (int ps1 = 0; ps1 < pixelSize; ps1++)
+                                {
+                                    
+                                    for (ushort c = 0; c < 0x50; c++)
+                                    {
+                                        byte chr;
+                                        if (c % 2 == 0)
+                                        {
+                                            chr = mainBoard.auxRAM[(ushort)((0x2000 + (b * 0x28) + (l * 0x80) + c/2) + block * 0x400)];
+                                        }
+                                        else
+                                        {
+                                            chr = mainBoard.baseRAM[(ushort)((0x2000 + (b * 0x28) + (l * 0x80) + (c-1)/2) + block * 0x400)];
+                                        }
+                                        bool[] blockline = Tools.ConvertByteToBoolArray(chr);
+                                        for (int i = 7; i > 0; i--)
+                                        {
+                                            for (int ps2 = 0; ps2 < pixelSize/2; ps2++)
+                                            {
+                                                if (mainBoard.scanLines && pixelSize > 2 && ps1 == pixelSize - 1)
+                                                    bmp[byteid] = 0;
+                                                else
+                                                {
+                                                    if (blockline[i])
+                                                        bmp[byteid] = 0xff;
+                                                    else
+                                                        bmp[byteid] = 0x00;
+                                                }
+                                                byteid++;
+                                            }
+                                        }
+                                    }
+
+                                    //if (mainBoard.videoColor)
+                                    //{
+                                    //    for (int p = firstLineByte; p < bmp.Length; p = p + pixelSize)
+                                    //    {
+                                    //        byte color = (byte)((bmp[p] == 0xff ? 8 : 0) + (bmp[p + 1] == 0xff ? 4 : 0) + (bmp[p + 2] == 0xff ? 2 : 0) + (bmp[p + 3] == 0xff ? 1 : 0));
+                                    //        bmp[p] = bmp[p + 1] = bmp[p + 2] = bmp[p + 3] = color;
+                                    //    }
+                                    //}
                                 }
                             }
                         }
@@ -209,37 +263,29 @@ namespace Apple2Sharp
                     }
                     else if (mainBoard.appleIIe && !mainBoard.softswitches.Cols40_80)
                     {
-                        for (ushort c = 0; c < 0x28; c++)
+                        for (ushort c = 0; c < 0x50; c++)
                         {
-                            posH = c;
-
-                            var chr = mainBoard.baseRAM[(ushort)(textPage + (b * 0x28) + (l * 0x80) + c)];
-                            if (!mainBoard.appleIIe)
+                            byte chr;
+                            if (c % 2 == 0)
                             {
-                                if (chr >= 0x40 && chr < 0x80)
-                                    chr = Math.Floor((float)(DateTime.Now.Millisecond / 500)) % 2 == 0 ? (byte)(chr + 0x40) : chr;
-                                if (posV == mainBoard.baseZP[0x25] && posH == mainBoard.baseZP[0x24])
-                                    chr = Math.Floor((float)(DateTime.Now.Millisecond / 500)) % 2 == 0 ? (byte)(chr + 0x40) : chr;
+                                chr = mainBoard.auxRAM[(ushort)(0x400 + (b * 0x28) + (l * 0x80) + c/2)];
                             }
                             else
                             {
-                                // if (chr >= 0x40 && chr < 0x60)
-                                //     chr = Math.Floor((float)(DateTime.Now.Millisecond / 500)) % 2 == 0 ? (byte)(chr + 0x20) : chr;
-                                if (chr >= 0x60 && chr < 0x80)
-                                    chr = Math.Floor((float)(DateTime.Now.Millisecond / 500)) % 2 == 0 ? (byte)(chr + 0x80) : chr;
+                                chr = mainBoard.baseRAM[(ushort)(0x400 + (b * 0x28) + (l * 0x80) + (c-1)/2)];
                             }
-                            linha[c] = chr;
+                            linha80[c] = chr;
                         }
                         for (int i = 0; i < 8; i++)
                         {
                             for (int ps1 = 0; ps1 < pixelSize; ps1++)
                             {
-                                for (int j = 0; j < 0x28; j++)
+                                for (int j = 0; j < 0x50; j++)
                                 {
                                     for (int k = 0; k < 7; k++)
                                     {
-                                        object? objout = mainBoard.charSet[linha[j]].GetValue(i, k);
-                                        for (int ps2 = 0; ps2 < pixelSize; ps2++)
+                                        object? objout = mainBoard.charSet[linha80[j]].GetValue(i, k);
+                                        for (int ps2 = 0; ps2 < pixelSize/2; ps2++)
                                         {
                                             if (objout != null)
                                             {
@@ -341,7 +387,7 @@ namespace Apple2Sharp
 
             Bitmap bitmap = new Bitmap(280 * pixelSize, 192 * pixelSize, System.Drawing.Imaging.PixelFormat.Format8bppIndexed);
             ColorPalette pal = bitmap.Palette;
-            if (mainBoard.softswitches.LoRes_HiRes)
+            if (mainBoard.softswitches.LoRes_HiRes || mainBoard.softswitches.DHiResOn_Off)
             {
                 pal.Entries[0x00] = Color.Black;
                 pal.Entries[0x01] = Color.MediumVioletRed;

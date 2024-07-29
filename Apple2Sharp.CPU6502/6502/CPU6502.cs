@@ -37,6 +37,8 @@ namespace Apple2Sharp.CPU6502
             mainBoard.softswitches.IIEMemoryBankReadRAM_ROM = false;
             mainBoard.softswitches.RAMReadOn_Off = false;
             mainBoard.softswitches.AltZPOn_Off = false;
+            mainBoard.softswitches.IOUDisOn_Off = true;
+            mainBoard.softswitches.DHiResOn_Off = false;
             Reset();
             cpuState = CpuState.Running;
         }

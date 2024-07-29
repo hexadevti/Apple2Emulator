@@ -41,6 +41,10 @@ namespace Apple2Sharp.Mainboard
         public bool RAMWriteOn_Off { get; set;} 
         public bool AltZPOn_Off { get; set; }   
 
+        public bool IOUDisOn_Off { get; set; }
+
+        public bool DHiResOn_Off { get; set; } 
+
 
         public void Write(ushort address, byte b, Apple2Board mainBoard)
         {
@@ -165,6 +169,16 @@ namespace Apple2Sharp.Mainboard
                 mainBoard.softswitches.Cols40_80 = true;
             else if (address == 0xc059)
                 mainBoard.softswitches.Cols40_80 = false;
+            else if (address == 0xc05e)
+            {
+                if (mainBoard.softswitches.IOUDisOn_Off)
+                    mainBoard.softswitches.DHiResOn_Off = true;
+            }
+            else if (address == 0xc05f)
+            {
+                if (mainBoard.softswitches.IOUDisOn_Off)
+                    mainBoard.softswitches.DHiResOn_Off = false;
+            }
             else if (address == 0xc061)
                 return (byte)(mainBoard.softswitches.Pb0 ? 0x80 : 0x00);
             else if (address == 0xc062)
@@ -191,6 +205,32 @@ namespace Apple2Sharp.Mainboard
                 mainBoard.softswitches.Cg1 = true;
                 mainBoard.softswitches.Cg2 = true;
                 mainBoard.softswitches.Cg3 = true;
+            }
+            else if (address == 0xc07e)
+            {
+                mainBoard.softswitches.IOUDisOn_Off = true;
+            }
+            else if (address == 0xc07f)
+            {
+                if (Read_Write)
+                {
+                    return (byte)(mainBoard.softswitches.DHiResOn_Off ? 0xff : 0x00);
+                }
+                else
+                    mainBoard.softswitches.IOUDisOn_Off = false;
+            }
+            else if (address == 0xc07e)
+            {   
+                if (Read_Write)
+                {
+                    return (byte)(mainBoard.softswitches.IOUDisOn_Off ? 0x00 : 0xff);
+                }
+                else
+                    mainBoard.softswitches.IOUDisOn_Off = true;
+            }
+            else if (address >= 0xc070 && address < 0xc080)
+            {
+
             }
             else if (mainBoard.appleIIe)
             {

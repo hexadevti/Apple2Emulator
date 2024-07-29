@@ -62,7 +62,7 @@ namespace Apple2Sharp
             cpu.WarmStart();
             LoadThreads();
 
-            
+
 
 
         }
@@ -591,5 +591,6 @@ namespace Apple2Sharp
             btn_restart_Click(sender, e);
 
         }
+
     }
 }
