@@ -303,7 +303,9 @@ namespace Apple2Sharp
                                     pictureBox1.Image = Video.Generate(mainBoard, pixelSize);
                             }
                         }
-                        catch { }
+                        catch (Exception ex) { 
+
+                        }
                     }
 
                     Thread.Sleep(50);
