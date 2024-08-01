@@ -29,6 +29,7 @@ namespace Apple2Sharp.CPU65C02
         {
             cpuState = CpuState.Paused;
             mainBoard.ClearBaseRAM();
+            mainBoard.softswitches = new Softswitches();
             mainBoard.softswitches.SlotC3RomOn_Off = true;
             mainBoard.softswitches.IntCXRomOn_Off = false;
             mainBoard.softswitches.AltCharSetOn_Off = false;
@@ -39,6 +40,10 @@ namespace Apple2Sharp.CPU65C02
             mainBoard.softswitches.AltZPOn_Off = false;
             mainBoard.softswitches.IOUDisOn_Off = true;
             mainBoard.softswitches.DHiResOn_Off = false;
+            mainBoard.softswitches.IIeExpansionCardBank = 0;
+            mainBoard.softswitches.Pb0 = false;
+            mainBoard.softswitches.Pb1 = false;
+            mainBoard.softswitches.Pb2 = true;
 
             Reset();
             cpuState = CpuState.Running;
@@ -59,7 +64,7 @@ namespace Apple2Sharp.CPU65C02
             lastPC = state.PC;
             OpCodePart? opCodePart = OpCodes.GetOpCode(instruction);
             // Break point with lastPC
-            // if (lastPC == 0x84)
+            // if (lastPC == 0x29fe)
             // {
             //     Thread.Sleep(1);
             // }

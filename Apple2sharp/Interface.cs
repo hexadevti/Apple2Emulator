@@ -50,6 +50,7 @@ namespace Apple2Sharp
             this.FormClosing += FormCloseEvent;
             tbSpeed.ValueChanged += tbSpeed_ValueChanged;
 
+            this.WindowState = FormWindowState.Maximized;
 
             mainBoard = new Apple2Board();
             LoadCardsCombos();

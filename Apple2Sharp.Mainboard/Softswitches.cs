@@ -45,6 +45,8 @@ namespace Apple2Sharp.Mainboard
 
         public bool DHiResOn_Off { get; set; } 
 
+        public int IIeExpansionCardBank { get; set; }
+
 
         public void Write(ushort address, byte b, Apple2Board mainBoard)
         {
@@ -205,6 +207,11 @@ namespace Apple2Sharp.Mainboard
                 mainBoard.softswitches.Cg1 = true;
                 mainBoard.softswitches.Cg2 = true;
                 mainBoard.softswitches.Cg3 = true;
+            }
+            else if (address == 0xc071 || address == 0xc073 ||address == 0xc075 ||address == 0xc077)
+            {
+                if (b < mainBoard.IIEAuxBanks)
+                    IIeExpansionCardBank = b;
             }
             else if (address == 0xc07e)
             {

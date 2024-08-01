@@ -40,8 +40,12 @@ Essential books:
 Upcoming features:
 
 - 65c02 (Apple //e)
+- Apple //e board
 - Hard Drive
 - Double-High Resolution
+- 800kb disks
+- Mouse
+
 
 Compatibility:
 

@@ -79,7 +79,7 @@ namespace Apple2Sharp
                                 }
                             }
                         } 
-                        else if (mainBoard.softswitches.DHiResOn_Off)
+                        else if (mainBoard.softswitches.DHiResOn_Off && !mainBoard.idealized)
                         {
                             for (int block = 0; block < 8; block++)
                             {
@@ -93,7 +93,7 @@ namespace Apple2Sharp
                                         byte chr;
                                         if (c % 2 == 0)
                                         {
-                                            chr = mainBoard.auxRAM[(ushort)((0x2000 + (b * 0x28) + (l * 0x80) + c/2) + block * 0x400)];
+                                            chr = mainBoard.auxRAM[0, (ushort)((0x2000 + (b * 0x28) + (l * 0x80) + c/2) + block * 0x400)];
                                         }
                                         else
                                         {
@@ -131,7 +131,7 @@ namespace Apple2Sharp
                                         }
                                     }
 
-                                    if (mainBoard.videoColor && !mainBoard.idealized)
+                                    if (mainBoard.videoColor)
                                     {
                                         for (int i = 0; i < line.Length; i = i + 4)
                                         {
@@ -148,99 +148,99 @@ namespace Apple2Sharp
                                             }
                                         }
                                     }
-                                    else if (mainBoard.videoColor && mainBoard.idealized)
-                                    {
-                                        for (int i = 0; i < line.Length; i = i + 4)
-                                        {
+                                    // else if (mainBoard.videoColor && mainBoard.idealized)
+                                    // {
+                                    //     for (int i = 0; i < line.Length; i = i + 4)
+                                    //     {
 
-                                            for (int ps2 = 0; ps2 < pixelSize * 2; ps2++)
-                                            {
-                                                if (mainBoard.scanLines && pixelSize > 2 && ps1 == pixelSize - 1)
-                                                {
-                                                    bmp[byteid] = 0;
-                                                }
-                                                else
-                                                {
+                                    //         for (int ps2 = 0; ps2 < pixelSize * 2; ps2++)
+                                    //         {
+                                    //             if (mainBoard.scanLines && pixelSize > 2 && ps1 == pixelSize - 1)
+                                    //             {
+                                    //                 bmp[byteid] = 0;
+                                    //             }
+                                    //             else
+                                    //             {
                                                     
-                                                    if (ps2 == 0)
-                                                    {
-                                                        int color;
-                                                        int offset = 0;
-                                                        if (i > line.Length - 4 - offset)
-                                                            offset = 0;
-                                                        color = (line[i + 2 + offset] ? 8 : 0) + (line[i + 1 + offset] ? 4 : 0) + (line[i + offset] ? 2 : 0) + (line[i + 3 + offset] ? 1 : 0);
-                                                        bmp[byteid] = (byte)color;
-                                                    }
-                                                    else if (ps2 == 1)
-                                                    {
-                                                        int color;
-                                                        int offset = 0;
-                                                        if (i > line.Length - 4 - offset)
-                                                            offset = 0;
-                                                        color = (line[i + 2 + offset] ? 8 : 0) + (line[i + 1 + offset] ? 4 : 0) + (line[i + offset] ? 2 : 0) + (line[i + 3 + offset] ? 1 : 0);
-                                                        bmp[byteid] = (byte)color;
-                                                    }
-                                                    else if (ps2 == 2)
-                                                    {
-                                                        int color;
-                                                        int offset = 0;
-                                                        if (i > line.Length - 4 - offset)
-                                                            offset = 0;
-                                                        color = (line[i + 2 + offset] ? 8 : 0) + (line[i + 1 + offset] ? 4 : 0) + (line[i + offset] ? 2 : 0) + (line[i + 3 + offset] ? 1 : 0);
-                                                        bmp[byteid] = (byte)color;
-                                                    }
-                                                    else if (ps2 == 3)
-                                                    {
-                                                        int color;
-                                                        int offset = 0;
-                                                        if (i > line.Length - 4 - offset)
-                                                            offset = 0;
-                                                        color = (line[i + 2 + offset] ? 8 : 0) + (line[i + 1 + offset] ? 4 : 0) + (line[i + offset] ? 2 : 0) + (line[i + 3 + offset] ? 1 : 0);
-                                                        bmp[byteid] = (byte)color;
-                                                    }
-                                                    else if (ps2 == 4)
-                                                    {
-                                                        int color;
-                                                        int offset = 0;
-                                                        if (i > line.Length - 4 - offset)
-                                                            offset = 0;
-                                                        color = (line[i + 2 + offset] ? 8 : 0) + (line[i + 1 + offset] ? 4 : 0) + (line[i + offset] ? 2 : 0) + (line[i + 3 + offset] ? 1 : 0);
-                                                        bmp[byteid] = (byte)color;
-                                                    }
-                                                    else if (ps2 == 5)
-                                                    {
-                                                        int color;
-                                                        int offset = 0;
-                                                        if (i > line.Length - 4 - offset)
-                                                            offset = 0;
-                                                        color = (line[i + 2 + offset] ? 8 : 0) + (line[i + 1 + offset] ? 4 : 0) + (line[i + offset] ? 2 : 0) + (line[i + 3 + offset] ? 1 : 0);
-                                                        bmp[byteid] = (byte)color;
-                                                    }
-                                                    else if (ps2 == 6)
-                                                    {
-                                                        int color;
-                                                        int offset = 0;
-                                                        if (i > line.Length - 4 - offset)
-                                                            offset = 0;
-                                                        color = (line[i + 2 + offset] ? 8 : 0) + (line[i + 1 + offset] ? 4 : 0) + (line[i + offset] ? 2 : 0) + (line[i + 3 + offset] ? 1 : 0);
-                                                        bmp[byteid] = (byte)color;
-                                                    }
-                                                    else if (ps2 == 7)
-                                                    {
-                                                        int color;
-                                                        int offset = 0;
-                                                        if (i > line.Length - 4 - offset)
-                                                            offset = 0;
-                                                        color = (line[i + 2 + offset] ? 8 : 0) + (line[i + 1 + offset] ? 4 : 0) + (line[i + offset] ? 2 : 0) + (line[i + 3 + offset] ? 1 : 0);
-                                                        bmp[byteid] = (byte)color;
-                                                    }
+                                    //                 if (ps2 == 0)
+                                    //                 {
+                                    //                     int color;
+                                    //                     int offset = 0;
+                                    //                     if (i > line.Length - 4 - offset)
+                                    //                         offset = 0;
+                                    //                     color = (line[i + 2 + offset] ? 8 : 0) + (line[i + 1 + offset] ? 4 : 0) + (line[i + offset] ? 2 : 0) + (line[i + 3 + offset] ? 1 : 0);
+                                    //                     bmp[byteid] = (byte)color;
+                                    //                 }
+                                    //                 else if (ps2 == 1)
+                                    //                 {
+                                    //                     int color;
+                                    //                     int offset = 0;
+                                    //                     if (i > line.Length - 4 - offset)
+                                    //                         offset = 0;
+                                    //                     color = (line[i + 2 + offset] ? 8 : 0) + (line[i + 1 + offset] ? 4 : 0) + (line[i + offset] ? 2 : 0) + (line[i + 3 + offset] ? 1 : 0);
+                                    //                     bmp[byteid] = (byte)color;
+                                    //                 }
+                                    //                 else if (ps2 == 2)
+                                    //                 {
+                                    //                     int color;
+                                    //                     int offset = 0;
+                                    //                     if (i > line.Length - 4 - offset)
+                                    //                         offset = 0;
+                                    //                     color = (line[i + 2 + offset] ? 8 : 0) + (line[i + 1 + offset] ? 4 : 0) + (line[i + offset] ? 2 : 0) + (line[i + 3 + offset] ? 1 : 0);
+                                    //                     bmp[byteid] = (byte)color;
+                                    //                 }
+                                    //                 else if (ps2 == 3)
+                                    //                 {
+                                    //                     int color;
+                                    //                     int offset = 0;
+                                    //                     if (i > line.Length - 4 - offset)
+                                    //                         offset = 0;
+                                    //                     color = (line[i + 2 + offset] ? 8 : 0) + (line[i + 1 + offset] ? 4 : 0) + (line[i + offset] ? 2 : 0) + (line[i + 3 + offset] ? 1 : 0);
+                                    //                     bmp[byteid] = (byte)color;
+                                    //                 }
+                                    //                 else if (ps2 == 4)
+                                    //                 {
+                                    //                     int color;
+                                    //                     int offset = 0;
+                                    //                     if (i > line.Length - 4 - offset)
+                                    //                         offset = 0;
+                                    //                     color = (line[i + 2 + offset] ? 8 : 0) + (line[i + 1 + offset] ? 4 : 0) + (line[i + offset] ? 2 : 0) + (line[i + 3 + offset] ? 1 : 0);
+                                    //                     bmp[byteid] = (byte)color;
+                                    //                 }
+                                    //                 else if (ps2 == 5)
+                                    //                 {
+                                    //                     int color;
+                                    //                     int offset = 0;
+                                    //                     if (i > line.Length - 4 - offset)
+                                    //                         offset = 0;
+                                    //                     color = (line[i + 2 + offset] ? 8 : 0) + (line[i + 1 + offset] ? 4 : 0) + (line[i + offset] ? 2 : 0) + (line[i + 3 + offset] ? 1 : 0);
+                                    //                     bmp[byteid] = (byte)color;
+                                    //                 }
+                                    //                 else if (ps2 == 6)
+                                    //                 {
+                                    //                     int color;
+                                    //                     int offset = 0;
+                                    //                     if (i > line.Length - 4 - offset)
+                                    //                         offset = 0;
+                                    //                     color = (line[i + 2 + offset] ? 8 : 0) + (line[i + 1 + offset] ? 4 : 0) + (line[i + offset] ? 2 : 0) + (line[i + 3 + offset] ? 1 : 0);
+                                    //                     bmp[byteid] = (byte)color;
+                                    //                 }
+                                    //                 else if (ps2 == 7)
+                                    //                 {
+                                    //                     int color;
+                                    //                     int offset = 0;
+                                    //                     if (i > line.Length - 4 - offset)
+                                    //                         offset = 0;
+                                    //                     color = (line[i + 2 + offset] ? 8 : 0) + (line[i + 1 + offset] ? 4 : 0) + (line[i + offset] ? 2 : 0) + (line[i + 3 + offset] ? 1 : 0);
+                                    //                     bmp[byteid] = (byte)color;
+                                    //                 }
 
 
-                                                }
-                                                byteid++;                                                
-                                            }
-                                        }
-                                    }
+                                    //             }
+                                    //             byteid++;                                                
+                                    //         }
+                                    //     }
+                                    // }
                                 }
                             }
                         }
@@ -385,7 +385,7 @@ namespace Apple2Sharp
                             byte chr;
                             if (c % 2 == 0)
                             {
-                                chr = mainBoard.auxRAM[(ushort)(0x400 + (b * 0x28) + (l * 0x80) + c/2)];
+                                chr = mainBoard.auxRAM[0, (ushort)(0x400 + (b * 0x28) + (l * 0x80) + c/2)];
                             }
                             else
                             {
@@ -431,7 +431,7 @@ namespace Apple2Sharp
                 }
             }
 
-            if (!mainBoard.softswitches.LoRes_HiRes && mainBoard.idealized)
+            if (!mainBoard.softswitches.DHiResOn_Off && !mainBoard.softswitches.LoRes_HiRes && mainBoard.idealized)
             {
 
                 for (int l = 0; l < 192 * pixelSize; l++)
@@ -481,6 +481,63 @@ namespace Apple2Sharp
                                             finalPixel = 7; // 
                                             finalPixel2 = 0; //
                                         }
+                                    }
+                                    else if (bmp[nextPixel] == 3 || bmp[nextPixel] == 7) // next white
+                                    {
+                                        finalPixel = 0; // white | white,black | black
+                                        finalPixel2 = 7; //
+                                    }
+                                }
+                            }
+
+                            if (finalPixel != -1)
+                                for (int ps2 = 0; ps2 < pixelSize2; ps2++)
+                                {
+                                    bmp[actualPixel + ps2] = (byte)finalPixel;
+                                    bmp[actualPixel + ps2 + pixelSize2] = (byte)finalPixel2;
+                                }
+                        }
+                    }
+                }
+            }
+            else if (mainBoard.appleIIe && mainBoard.softswitches.DHiResOn_Off && mainBoard.videoColor && mainBoard.idealized)
+            {
+                int lineSize = 0x50 * 2 * pixelSize * 2; 
+                int pixelSize2 = pixelSize * 2;
+
+                for (int l = 0; l < 160 * pixelSize * 2; l++)
+                {
+                    for (int i = 0; i < lineSize; i = i + pixelSize2)
+                    {
+                        if (i >= pixelSize2 && i < lineSize - pixelSize2)
+                        {
+                            int actualPixel = lineSize * l + i;
+                            int lastPixel = actualPixel - pixelSize;
+                            int nextPixel = actualPixel + pixelSize;
+                            int finalPixel = -1;
+                            int finalPixel2 = -1;
+                            if (bmp[actualPixel] == 1 || bmp[actualPixel] == 2 || bmp[actualPixel] == 5 || bmp[actualPixel] == 6) // Color
+                            {
+                                if (bmp[lastPixel] == 0 || bmp[lastPixel] == 4) // last black
+                                {
+                                    if (bmp[nextPixel] == 3 || bmp[nextPixel] == 7) // next white
+                                    {
+                                        finalPixel = 0; // 
+                                        finalPixel2 = 7; //
+                                    }
+                                    else if (bmp[nextPixel] == 0 || bmp[nextPixel] == 4) // next black
+                                    {
+                                        finalPixel = 7; // 
+                                        finalPixel2 = 0; //
+                                    }
+
+                                }
+                                else if (bmp[lastPixel] == 3 || bmp[lastPixel] == 7) // last white
+                                {
+                                    if (bmp[nextPixel] == 0 || bmp[nextPixel] == 4) // next black
+                                    {
+                                        finalPixel = 7; // white | white,black | black
+                                        finalPixel2 = 0; //
                                     }
                                     else if (bmp[nextPixel] == 3 || bmp[nextPixel] == 7) // next white
                                     {

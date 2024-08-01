@@ -37,6 +37,30 @@ namespace Apple2Sharp
                         e.Handled = true;
                         cpu.WarmStart();
                         break;
+                    default:
+                        if (mainBoard.joystick)
+                        {
+                            mainBoard.softswitches.Pb0 = true;
+                            mainBoard.softswitches.Pb1 = true;
+                            switch (e.KeyCode)
+                            {
+                                case Keys.Left:
+                                    mainBoard.timerpdl0 = (int)JoysticPosition.Min;
+                                    break;
+                                case Keys.Right:
+                                    mainBoard.timerpdl0 = (int)JoysticPosition.Max;
+                                    break;
+                                case Keys.Up:
+                                    mainBoard.timerpdl1 = (int)JoysticPosition.Min;
+                                    break;
+                                case Keys.Down:
+                                    mainBoard.timerpdl1 = (int)JoysticPosition.Max;
+                                    break;
+                            }
+
+                        }
+                        break;
+                    
                 }
             }
             else if (e.Control)
@@ -72,7 +96,7 @@ namespace Apple2Sharp
                                 case Keys.Down:
                                     mainBoard.timerpdl1 = (int)JoysticPosition.Max;
                                     break;
-                                case Keys.Menu:
+                                case Keys.ShiftKey:
                                     mainBoard.softswitches.Pb1 = true;
                                     break;
                             }
@@ -81,11 +105,11 @@ namespace Apple2Sharp
                         break;
                 }
             }
-            else if (e.KeyCode == Keys.Menu)
+            else if (e.KeyCode == Keys.ShiftKey)
             {
                 switch (e.KeyCode)
                 {
-                    case Keys.Menu:
+                    case Keys.ShiftKey:
                         mainBoard.softswitches.Pb1 = true;
                         break;
                 }
@@ -128,6 +152,9 @@ namespace Apple2Sharp
                                     break;
                                 case Keys.ControlKey:
                                     mainBoard.softswitches.Pb0 = true;
+                                    break;
+                                case Keys.ShiftKey:
+                                    mainBoard.softswitches.Pb1 = true;
                                     break;
 
                             }
@@ -178,7 +205,7 @@ namespace Apple2Sharp
                     case Keys.ControlKey:
                         mainBoard.softswitches.Pb0 = false;
                         break;
-                    case Keys.Menu:
+                    case Keys.ShiftKey:
                         mainBoard.softswitches.Pb1 = false;
                         break;
                 }
