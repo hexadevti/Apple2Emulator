@@ -46,7 +46,10 @@ namespace Apple2Sharp.CPU6502
         {
             state = new State();
             lastPC = 0;
+            cpuState = CpuState.Paused;
             state.PC = mainBoard.ReadAddressLLHH(0xfffc) ?? 0;
+            cpuState = CpuState.Running;
+
         }
         public void IncrementPC()
         {

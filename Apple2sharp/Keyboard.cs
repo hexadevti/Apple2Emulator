@@ -21,6 +21,8 @@ namespace Apple2Sharp
 
         private List<char> buffer = new List<char>();
 
+        private Dictionary<Keys, JoysticPosition> downKeys = new Dictionary<Keys, JoysticPosition>();
+
         public Keyboard(Apple2Board mainBoard, IProcessor cpu)
         {
             this.mainBoard = mainBoard;
@@ -45,15 +47,19 @@ namespace Apple2Sharp
                             switch (e.KeyCode)
                             {
                                 case Keys.Left:
+                                    AddDownKey(e.KeyCode, JoysticPosition.Min);
                                     mainBoard.timerpdl0 = (int)JoysticPosition.Min;
                                     break;
                                 case Keys.Right:
+                                    AddDownKey(e.KeyCode, JoysticPosition.Max);
                                     mainBoard.timerpdl0 = (int)JoysticPosition.Max;
                                     break;
                                 case Keys.Up:
+                                    AddDownKey(e.KeyCode, JoysticPosition.Min);
                                     mainBoard.timerpdl1 = (int)JoysticPosition.Min;
                                     break;
                                 case Keys.Down:
+                                    AddDownKey(e.KeyCode, JoysticPosition.Max);
                                     mainBoard.timerpdl1 = (int)JoysticPosition.Max;
                                     break;
                             }
@@ -85,15 +91,19 @@ namespace Apple2Sharp
                             switch (e.KeyCode)
                             {
                                 case Keys.Left:
+                                    AddDownKey(e.KeyCode, JoysticPosition.Min);
                                     mainBoard.timerpdl0 = (int)JoysticPosition.Min;
                                     break;
                                 case Keys.Right:
+                                    AddDownKey(e.KeyCode, JoysticPosition.Max);
                                     mainBoard.timerpdl0 = (int)JoysticPosition.Max;
                                     break;
                                 case Keys.Up:
+                                    AddDownKey(e.KeyCode, JoysticPosition.Min);
                                     mainBoard.timerpdl1 = (int)JoysticPosition.Min;
                                     break;
                                 case Keys.Down:
+                                    AddDownKey(e.KeyCode, JoysticPosition.Max);
                                     mainBoard.timerpdl1 = (int)JoysticPosition.Max;
                                     break;
                                 case Keys.ShiftKey:
@@ -135,18 +145,22 @@ namespace Apple2Sharp
                             switch (e.KeyCode)
                             {
                                 case Keys.Left:
+                                    AddDownKey(e.KeyCode, JoysticPosition.Min);
                                     mainBoard.timerpdl0 = (int)JoysticPosition.Min;
                                     mainBoard.KeyPressedBuffer = 0x88;
                                     break;
                                 case Keys.Right:
+                                    AddDownKey(e.KeyCode, JoysticPosition.Max);
                                     mainBoard.timerpdl0 = (int)JoysticPosition.Max;
                                     mainBoard.KeyPressedBuffer = 0x95;
                                     break;
                                 case Keys.Up:
+                                    AddDownKey(e.KeyCode, JoysticPosition.Min);
                                     mainBoard.timerpdl1 = (int)JoysticPosition.Min;
                                     mainBoard.KeyPressedBuffer = 0x8b;
                                     break;
                                 case Keys.Down:
+                                    AddDownKey(e.KeyCode, JoysticPosition.Max);
                                     mainBoard.timerpdl1 = (int)JoysticPosition.Max;
                                     mainBoard.KeyPressedBuffer = 0x8a;
                                     break;
@@ -191,16 +205,16 @@ namespace Apple2Sharp
                 switch (e.KeyCode)
                 {
                     case Keys.Left:
-                        mainBoard.timerpdl0 = (int)JoysticPosition.Middle;
+                        mainBoard.timerpdl0 = (int)KeyLeftDown(e.KeyCode,JoysticPosition.Middle).Value;
                         break;
                     case Keys.Right:
-                        mainBoard.timerpdl0 = (int)JoysticPosition.Middle;
+                        mainBoard.timerpdl0 = (int)KeyLeftDown(e.KeyCode,JoysticPosition.Middle).Value;
                         break;
                     case Keys.Up:
-                        mainBoard.timerpdl1 = (int)JoysticPosition.Middle;
+                        mainBoard.timerpdl1 = (int)KeyLeftDown(e.KeyCode,JoysticPosition.Middle).Value;
                         break;
                     case Keys.Down:
-                        mainBoard.timerpdl1 = (int)JoysticPosition.Middle;
+                        mainBoard.timerpdl1 = (int)KeyLeftDown(e.KeyCode,JoysticPosition.Middle).Value;
                         break;
                     case Keys.ControlKey:
                         mainBoard.softswitches.Pb0 = false;
@@ -239,5 +253,32 @@ namespace Apple2Sharp
 
         }
 
+        private void AddDownKey(Keys keys, JoysticPosition joysticPosition)
+        {
+            if (!downKeys.ContainsKey(keys))
+            {
+                downKeys.Add(keys,joysticPosition);
+            }
+        }
+
+        private KeyValuePair<Keys, JoysticPosition> KeyLeftDown(Keys keys, JoysticPosition joysticPosition)
+        {
+            if (downKeys.ContainsKey(keys))
+            {
+                downKeys.Remove(keys);
+                var leftKey = downKeys.Any() && downKeys.Count == 1 ? downKeys.First() : new KeyValuePair<Keys, JoysticPosition>(keys, joysticPosition);
+                if (((keys == Keys.Left || keys == Keys.Right) && (leftKey.Key == Keys.Up || leftKey.Key == Keys.Down))
+                || ((keys == Keys.Up || keys == Keys.Down) && (leftKey.Key == Keys.Left || leftKey.Key == Keys.Right)))
+                {
+                    return new KeyValuePair<Keys,JoysticPosition>(keys, joysticPosition);        
+                }
+                else
+                {
+                    return leftKey;
+                }
+                
+            }
+            return new KeyValuePair<Keys,JoysticPosition>(keys, joysticPosition);
+        }
     }
 }

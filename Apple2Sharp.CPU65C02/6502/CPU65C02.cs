@@ -28,6 +28,7 @@ namespace Apple2Sharp.CPU65C02
         public void WarmStart()
         {
             cpuState = CpuState.Paused;
+            mainBoard.SetIIeRamWorks();
             mainBoard.ClearBaseRAM();
             mainBoard.softswitches = new Softswitches();
             mainBoard.softswitches.SlotC3RomOn_Off = true;
@@ -64,10 +65,10 @@ namespace Apple2Sharp.CPU65C02
             lastPC = state.PC;
             OpCodePart? opCodePart = OpCodes.GetOpCode(instruction);
             // Break point with lastPC
-            // if (lastPC == 0x29fe)
-            // {
-            //     Thread.Sleep(1);
-            // }
+            if (lastPC == 0x800)
+            {
+                Thread.Sleep(1);
+            }
             ushort? refAddress = OpCodes.ProcessAddressing(opCodePart, state, mainBoard, this);
            
             OpCodes.Process(opCodePart, state, mainBoard, refAddress);

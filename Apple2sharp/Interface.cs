@@ -50,7 +50,7 @@ namespace Apple2Sharp
             this.FormClosing += FormCloseEvent;
             tbSpeed.ValueChanged += tbSpeed_ValueChanged;
 
-            this.WindowState = FormWindowState.Maximized;
+            //this.WindowState = FormWindowState.Maximized;
 
             mainBoard = new Apple2Board();
             LoadCardsCombos();
@@ -58,10 +58,10 @@ namespace Apple2Sharp
             InitSlots();
             LoadCPU();
             LoadKeyboard();
-            StartSpeaker();
             CPUThread();
             cpu.WarmStart();
             LoadThreads();
+            StartSpeaker();
 
 
 
@@ -78,12 +78,18 @@ namespace Apple2Sharp
         }
         private void LoadCPU()
         {
+            cbslot0.Visible = !mainBoard.appleIIe;
+            lblslot0.Visible = !mainBoard.appleIIe;
+            cbAux.Visible = mainBoard.appleIIe;
+            lblAux.Visible = mainBoard.appleIIe;
+
             if (mainBoard.appleIIe)
             {
                 // Apple IIe
                 cpu = new CPU65C02.CPU65C02(stateC, mainBoard);
                 mainBoard.LoadAppleIIeInternalROM(0xc000, File.ReadAllBytes(assemblyPath + "roms/AppleIIeEnhancedC0-FF.bin"));
                 mainBoard.LoadIIeChars(File.ReadAllBytes(assemblyPath + "roms/AppleIIeVideoEnhanced.bin"));
+
             }
             else
             {
@@ -135,6 +141,8 @@ namespace Apple2Sharp
                     cbSlots[i].SelectedValue = Apple2Sharp.Properties.Settings.Default["Slot" + i + "Card"];
             }
 
+            cbAux.SelectedValue = Apple2Sharp.Properties.Settings.Default["AuxCard"];
+
             mainBoard.videoColor = Convert.ToBoolean(Apple2Sharp.Properties.Settings.Default["Color"]);
             mainBoard.adjust1Mhz = Convert.ToBoolean(Apple2Sharp.Properties.Settings.Default["Adjust1mhz"]);
             mainBoard.scanLines = Convert.ToBoolean(Apple2Sharp.Properties.Settings.Default["ScanLines"]);
@@ -162,13 +170,10 @@ namespace Apple2Sharp
                 tbSpeed.Value = 10;
                 tbSpeed.Enabled = true;
             }
-
-            cbslot0.Visible = !mainBoard.appleIIe;
-            lblslot0.Visible = !mainBoard.appleIIe;
         }
         private void LoadCardsCombos()
         {
-            cbSlots = new List<ComboBox>() { cbslot0, cbslot1, cbslot2, cbslot3, cbslot4, cbslot5, cbslot6, cbslot7 };
+            cbSlots = new List<ComboBox>() { cbslot0, cbslot1, cbslot2, cbslot3, cbslot4, cbslot5, cbslot6, cbslot7, cbAux };
             cbDatasource = new List<List<KeyValuePair<string, string>>>() {
                 new List<KeyValuePair<string, string>>() {
                     new KeyValuePair<string, string>("LanguageCard","Language Card"),
@@ -205,6 +210,15 @@ namespace Apple2Sharp
                 new List<KeyValuePair<string, string>>() {
                     new KeyValuePair<string, string>("EmptySlot","Empty"),
                     new KeyValuePair<string, string>("RamCard","Saturn 128k RAM Card")
+                },
+                new List<KeyValuePair<string, string>>() {
+                    new KeyValuePair<string, string>("RAM64k","RamWorks 64kb"),
+                    new KeyValuePair<string, string>("RAM128k","RamWorks 128kb"),
+                    new KeyValuePair<string, string>("RAM256k","RamWorks 256kb"),
+                    new KeyValuePair<string, string>("RAM512k","RamWorks 512kb"),
+                    new KeyValuePair<string, string>("RAM1m","RamWorks 1024kb"),
+                    new KeyValuePair<string, string>("RAM2m","RamWorks 2048kb"),
+                    new KeyValuePair<string, string>("RAM4m","RamWorks 4096kb"),
                 }
             };
 
@@ -216,11 +230,44 @@ namespace Apple2Sharp
                 cbSlots[i].SelectedValueChanged += cbSlot_SelectedValueChanged;
             }
 
+            cbAux.DataSource = cbDatasource[8];
+            cbAux.DisplayMember = "Value";
+            cbAux.ValueMember = "Key";
+            cbAux.SelectedValueChanged += cbSlot_SelectedValueChanged;
         }
         private void InitSlots()
         {
             for (int i = 0; i < 8; i++)
                 mainBoard.slots[i] = (ICard)GetInstance(cbSlots[i].SelectedValue.ToString(), i);
+
+            switch (cbAux.SelectedValue)
+            {
+                case "RAM64k":
+                    mainBoard.IIEAuxBanks = 1;
+                    break;
+                case "RAM128k":
+                    mainBoard.IIEAuxBanks = 2;
+                    break;
+                case "RAM256k":
+                    mainBoard.IIEAuxBanks = 4;
+                    break;
+                case "RAM512k":
+                    mainBoard.IIEAuxBanks = 8;
+                    break;
+                case "RAM1m":
+                    mainBoard.IIEAuxBanks = 16;
+                    break;
+                case "RAM2m":
+                    mainBoard.IIEAuxBanks = 32;
+                    break;
+                case "RAM4m":
+                    mainBoard.IIEAuxBanks = 64;
+                    break;
+
+            }
+
+
+
         }
         public object? GetInstance(string type, int slot)
         {

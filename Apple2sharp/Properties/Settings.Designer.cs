@@ -226,5 +226,17 @@ namespace Apple2Sharp.Properties {
                 this["AppleIIe"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("RAM64k")]
+        public string AuxCard {
+            get {
+                return ((string)(this["AuxCard"]));
+            }
+            set {
+                this["AuxCard"] = value;
+            }
+        }
     }
 }

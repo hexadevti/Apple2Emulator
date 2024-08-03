@@ -55,15 +55,9 @@ namespace Apple2Sharp.Mainboard
 
         public Apple2Board()
         {
-            IIEAuxBanks = 32;
             IIEmemoryBankSwitchedRAM1 = new byte[0x2000];
             IIEmemoryBankSwitchedRAM2_1 = new byte[0x1000];
             IIEmemoryBankSwitchedRAM2_2 = new byte[0x1000];
-            IIEAuxBankSwitchedRAM1 = new byte[IIEAuxBanks, 0x2000];
-            IIEAuxBankSwitchedRAM2_1 = new byte[IIEAuxBanks, 0x1000];
-            IIEAuxBankSwitchedRAM2_2 = new byte[IIEAuxBanks, 0x1000];
-            auxRAM = new byte[IIEAuxBanks, 0xc000];
-            auxZP = new byte[IIEAuxBanks,0x200];
             charSet = new Dictionary<byte, bool[,]>();
             altCharSet = new Dictionary<byte, bool[,]>();
             baseRAM = new byte[0xc000];
@@ -93,6 +87,15 @@ namespace Apple2Sharp.Mainboard
             IIEAuxBankSwitchedRAM2_2 = new byte[IIEAuxBanks, 0x1000];
             baseZP = new byte[0x200];
             auxZP = new byte[IIEAuxBanks,0x200];
+        }
+
+        public void SetIIeRamWorks()
+        {
+            IIEAuxBankSwitchedRAM1 = new byte[IIEAuxBanks, 0x2000];
+            IIEAuxBankSwitchedRAM2_1 = new byte[IIEAuxBanks, 0x1000];
+            IIEAuxBankSwitchedRAM2_2 = new byte[IIEAuxBanks, 0x1000];
+            auxRAM = new byte[IIEAuxBanks, 0xc000];
+            auxZP = new byte[IIEAuxBanks, 0x200];
         }
 
         public void LoadChars(byte[] rom)

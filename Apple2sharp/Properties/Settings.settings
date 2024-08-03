@@ -53,5 +53,8 @@
     <Setting Name="AppleIIe" Type="System.String" Scope="User">
       <Value Profile="(Default)">false</Value>
     </Setting>
+    <Setting Name="AuxCard" Type="System.String" Scope="User">
+      <Value Profile="(Default)">RAM64k</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

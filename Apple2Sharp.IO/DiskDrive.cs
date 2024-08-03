@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks.Dataflow;
@@ -21,12 +22,7 @@ namespace Apple2Sharp.Mainboard
 
         public byte[][] diskRawData = new byte[35][];
 
-        public int offset { get; set; }
-        public int catalog_track { get; set; }
-        public int catalog_sector { get; set; }
         public bool FlagDos_Prodos { get; set; }
-
-        public int offset_to_disk_info { get; set; }
 
         public byte[] translateTable = new byte[] {
                             0x96,0x97,0x9A,0x9B,0x9D,0x9E,0x9F,0xA6,
@@ -59,6 +55,7 @@ namespace Apple2Sharp.Mainboard
         public byte[] start_sequence_1 = new byte[] { 0x31, 0x30, 0x21, 0x20 };
         public byte[] start_sequence_2 = new byte[] { 0x11, 0x10, 0x01, 0x00 };
 
+        public int fileHeaderSize { get; set; }
         public Queue<byte> phaseBuffer = new Queue<byte>(4);
 
         public void AddPhase(byte phase)
@@ -94,20 +91,14 @@ namespace Apple2Sharp.Mainboard
             this._card = card;
 
             if (!string.IsNullOrEmpty(_diskPath))
+            {
                 this.diskImage = File.ReadAllBytes(dskPath);
+                fileHeaderSize = 0;
+            }
             else
                 this.diskImage = new byte[143360];
 
             FlagDos_Prodos = IdentifyDos_Prodos();
-
-            offset_to_disk_info = GetOffset(17, 0);
-            offset = offset_to_disk_info;
-
-
-            catalog_track = diskImage[offset_to_disk_info + 1];
-            catalog_sector = diskImage[offset_to_disk_info + 2];
-
-
         }
 
         public void SaveImage()
@@ -130,7 +121,7 @@ namespace Apple2Sharp.Mainboard
 
         public byte GetVolume()
         {
-            return diskImage[offset + 0x06];
+            return diskImage[GetOffset(17, 0) + 0x06];
         }
 
         // public string DiskInfo()
@@ -177,6 +168,10 @@ namespace Apple2Sharp.Mainboard
                 {
                     output[i] = diskImage[offset + i];
                 }
+            }
+            else
+            {
+
             }
 
             return output;
@@ -442,7 +437,8 @@ namespace Apple2Sharp.Mainboard
 
         public int GetOffset(int track, int sector)
         {
-            return (sector * 256) + (track * (256 * 16));
+            
+            return fileHeaderSize + (sector * 256) + (track * (256 * 16));
         }
 
         public string Print(List<byte> bytes)

@@ -85,6 +85,8 @@ namespace Apple2Sharp
             lblslot6 = new Label();
             lblslot7 = new Label();
             btnAppleIIe = new Button();
+            lblAux = new Label();
+            cbAux = new ComboBox();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)tbSpeed).BeginInit();
             drivePanel1.SuspendLayout();
@@ -122,7 +124,6 @@ namespace Apple2Sharp
             disk1.TabIndex = 1;
             disk1.TextAlign = HorizontalAlignment.Center;
             disk1.Click += disk1_TextChanged;
-            
             // 
             // lbldisk1
             // 
@@ -729,6 +730,35 @@ namespace Apple2Sharp
             btnAppleIIe.UseVisualStyleBackColor = false;
             btnAppleIIe.Click += btnAppleIIe_Click;
             // 
+            // lblAux
+            // 
+            lblAux.AutoSize = true;
+            lblAux.BackColor = Color.Transparent;
+            lblAux.Font = new Font("Lucida Sans Unicode", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblAux.ForeColor = SystemColors.ControlLightLight;
+            lblAux.Location = new Point(1882, 147);
+            lblAux.Margin = new Padding(4, 0, 4, 0);
+            lblAux.Name = "lblAux";
+            lblAux.RightToLeft = RightToLeft.No;
+            lblAux.Size = new Size(82, 39);
+            lblAux.TabIndex = 64;
+            lblAux.Text = "Aux";
+            // 
+            // cbAux
+            // 
+            cbAux.BackColor = Color.FromArgb(90, 64, 70);
+            cbAux.DropDownStyle = ComboBoxStyle.DropDownList;
+            cbAux.FlatStyle = FlatStyle.Flat;
+            cbAux.Font = new Font("Lucida Sans Unicode", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            cbAux.ForeColor = SystemColors.ControlLightLight;
+            cbAux.FormattingEnabled = true;
+            cbAux.IntegralHeight = false;
+            cbAux.Location = new Point(1492, 140);
+            cbAux.Margin = new Padding(0);
+            cbAux.Name = "cbAux";
+            cbAux.Size = new Size(386, 52);
+            cbAux.TabIndex = 63;
+            // 
             // Interface
             // 
             AutoScaleDimensions = new SizeF(144F, 144F);
@@ -736,6 +766,8 @@ namespace Apple2Sharp
             BackgroundImage = (Image)resources.GetObject("$this.BackgroundImage");
             BackgroundImageLayout = ImageLayout.Stretch;
             ClientSize = new Size(1924, 1240);
+            Controls.Add(lblAux);
+            Controls.Add(cbAux);
             Controls.Add(btnAppleIIe);
             Controls.Add(lblslot7);
             Controls.Add(lblslot6);
@@ -846,5 +878,7 @@ namespace Apple2Sharp
         private Label lblslot6;
         private Label lblslot7;
         private Button btnAppleIIe;
+        private Label lblAux;
+        private ComboBox cbAux;
     }
 }
