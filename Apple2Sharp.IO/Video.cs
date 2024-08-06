@@ -411,121 +411,675 @@ namespace Apple2Sharp
             else if (mainBoard.appleIIe && mainBoard.softswitches.DHiResOn_Off && mainBoard.videoColor && mainBoard.idealized)
             {
                 int lineSize = 140 * pixelSize * 2;
-                
-
-                for (int l = 0; l < 192 * pixelSize; l++)
+                for (int l = 0; l < 192 * pixelSize; l = l + 1)
                 {
-                    byte[] finalLine = new byte[lineSize];
-                    for (int i = 0; i < lineSize; i = i + pixelSize)
+                    try
                     {
-                        if (i < lineSize)
+                        byte lastPixel = 0x0;
+                        for (int i = 0; i < lineSize; i = i + pixelSize * 2)
                         {
-                            int actualPixel = lineSize * l + i;
-                            int lastPixel = actualPixel - pixelSize;
-                            int lastPixel2 = actualPixel - pixelSize * 2;
-                            int nextPixel = actualPixel + pixelSize;
-                            int nextPixel2 = actualPixel + pixelSize * 2;
-                            int finalPixel = -1;
-                            int finalPixel2 = -1;
-                            int finalPixel3 = -1;
-                            int finalPixel4 = -1;
-                            int finalPixel5 = -1;
-                            try
+                            if (i < lineSize - pixelSize * 2)
                             {
-                                if (lastPixel >= 0 && bmp[lastPixel] == 0b0011 && bmp[actualPixel] == 0b1100)
+                                int pixelId = lineSize * l + i;
+                                byte actualPixel = bmp[pixelId];
+                                byte nextPixel = bmp[pixelId + pixelSize * 2];
+                                byte[] convertedByte = new byte[4];
+                                if (actualPixel == 0x0)
                                 {
-                                    finalPixel = 0b0000;
-                                    finalPixel2 = 0b1111;
-                                    finalPixel3 = 0b1111;
-                                    finalPixel4 = 0b0000;
-                                    //finalPixel5 = 0b0000;
+                                    convertedByte[0] = 0x0;
+                                    convertedByte[0] = 0x0;
+                                    convertedByte[1] = 0x0;
+                                    convertedByte[1] = 0x0;
+                                    convertedByte[2] = 0x0;
+                                    convertedByte[2] = 0x0;
+                                    convertedByte[3] = 0x0;
+                                    convertedByte[3] = 0x0;
                                 }
-                                else if (lastPixel2 >= 0 && bmp[lastPixel2] == 0b0000 && bmp[lastPixel] == 0b0011 && bmp[actualPixel] == 0b0011 && bmp[nextPixel] == 0b1111)
+                                else if (actualPixel == 0x1)
                                 {
-                                    finalPixel = 0b0000;
-                                    finalPixel2 = 0b0000;
-                                    finalPixel3 = 0b1111;
-                                    finalPixel4 = 0b1111;
-                                    finalPixel5 = 0b1111;
-                                }
-                                else if (lastPixel2 >= 0 && bmp[lastPixel2] == 0b1111 && bmp[lastPixel] == 0b1100 && bmp[actualPixel] == 0b1100 && bmp[nextPixel] == 0b0000)
-                                {
-                                    finalPixel = 0b1111;
-                                    finalPixel2 = 0b1111;
-                                    finalPixel3 = 0b0000;
-                                    finalPixel4 = 0b0000;
-                                    //finalPixel5 = 0b1111;
-                                }
-                                else if (lastPixel2 >= 0 && bmp[lastPixel2] == 0b1111 && bmp[lastPixel] == 0b1111 && bmp[actualPixel] == 0b1100 && bmp[nextPixel] == 0b1100)
-                                {
-                                    finalPixel = 0b1111;
-                                    finalPixel2 = 0b1111;
-                                    finalPixel3 = 0b1111;
-                                    finalPixel4 = 0b0000;
-                                    //finalPixel5 = 0b1111;
-                                }
-                                else if (lastPixel2 >= 0 && bmp[lastPixel] == 0b1111 && bmp[actualPixel] == 0b0011 && bmp[nextPixel] == 0b0011 && bmp[nextPixel2] == 0b1111)
-                                {
-                                    finalPixel = 0b1111;
-                                    finalPixel2 = 0b1111;
-                                    finalPixel3 = 0b0000;
-                                    finalPixel4 = 0b1111;
-                                    finalPixel5 = 0b1111;
-                                }
-                                else if (lastPixel2 >= 0 && bmp[lastPixel] == 0b1111 && bmp[actualPixel] == 0b1100 && bmp[nextPixel] == 0b1100 && bmp[nextPixel2] == 0b1111)
-                                {
-                                    finalPixel = 0b1111;
-                                    finalPixel2 = 0b1111;
-                                    finalPixel3 = 0b1111;
-                                    finalPixel4 = 0b0000;
-                                    finalPixel5 = 0b1111;
-                                }
-
-                                //if (lastPixel >= 0 && bmp[lastPixel] == 0b1111 && bmp[actualPixel] == 0b1100 && bmp[nextPixel] == 0b1100 && bmp[nextPixel2] == 0b0000)
-                                //{
-                                //    finalPixel = 0b1111;
-                                //    finalPixel2 = 0b1111;
-                                //    finalPixel3 = 0b1111;
-                                //    finalPixel4 = 0b0000;
-                                //}
-
-
-
-
-
-                                for (int j = 0; j < pixelSize; j++)
-                                {
-                                    if (finalPixel != -1)
+                                    if (lastPixel % 2 == 0)
                                     {
-                                        bmp[lastPixel2 + j] = (byte)finalPixel;
+                                        convertedByte[0] = 0x0;
+                                        convertedByte[0] = 0x0;
+                                        convertedByte[1] = 0x0;
+                                        convertedByte[1] = 0x0;
+                                        convertedByte[2] = 0x0;
+                                        convertedByte[2] = 0x0;
                                     }
-                                    if (finalPixel2 != -1)
+                                    else
                                     {
-                                        bmp[lastPixel + j] = (byte)finalPixel2;
+                                        convertedByte[0] = 0x1;
+                                        convertedByte[0] = 0x1;
+                                        convertedByte[1] = 0x1;
+                                        convertedByte[1] = 0x1;
+                                        convertedByte[2] = 0x1;
+                                        convertedByte[2] = 0x1;
                                     }
-                                    if (finalPixel3 != -1)
+                                    if (nextPixel >= 0xc)
                                     {
-                                        bmp[actualPixel + j] = (byte)finalPixel3;
+                                        convertedByte[3] = 0xd;
+                                        convertedByte[3] = 0xd;
                                     }
-                                    if (finalPixel4 != -1)
+                                    else if (nextPixel >= 0x8)
                                     {
-                                        bmp[nextPixel + j] = (byte)finalPixel4;
+                                        convertedByte[3] = 0x9;
+                                        convertedByte[3] = 0x9;
                                     }
-                                    if (finalPixel5 != -1)
+                                    else if (nextPixel >= 0x4)
                                     {
-                                        bmp[nextPixel2 + j] = (byte)finalPixel5;
+                                        convertedByte[3] = 0x5;
+                                        convertedByte[3] = 0x5;
+                                    }
+                                    else
+                                    {
+                                        convertedByte[3] = 0x1;
+                                        convertedByte[3] = 0x1;
                                     }
                                 }
+                                else if (actualPixel == 0x2)
+                                {
+                                    if (lastPixel % 2 == 0)
+                                    {
+                                        if (lastPixel % 4 == 0)
+                                        {
+                                            convertedByte[0] = 0x0;
+                                            convertedByte[0] = 0x0;
+                                            convertedByte[1] = 0x0;
+                                            convertedByte[1] = 0x0;
+                                        }
+                                        else
+                                        {
+                                            convertedByte[0] = 0x2;
+                                            convertedByte[0] = 0x2;
+                                            convertedByte[1] = 0x2;
+                                            convertedByte[1] = 0x2;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        convertedByte[0] = 0x3;
+                                        convertedByte[0] = 0x3;
+                                        convertedByte[1] = 0x3;
+                                        convertedByte[1] = 0x3;
+                                    }
+                                    if (nextPixel >= 0xc)
+                                    {
+                                        convertedByte[2] = 0xa;
+                                        convertedByte[2] = 0xa;
+                                        convertedByte[3] = 0xe;
+                                        convertedByte[3] = 0xe;
+                                    }
+                                    else if (nextPixel >= 0x8)
+                                    {
+                                        convertedByte[2] = 0xa;
+                                        convertedByte[2] = 0xa;
+                                        convertedByte[3] = 0xa;
+                                        convertedByte[3] = 0xa;
+                                    }
+                                    else if (nextPixel >= 0x4)
+                                    {
+                                        convertedByte[2] = 0x2;
+                                        convertedByte[2] = 0x2;
+                                        convertedByte[3] = 0x6;
+                                        convertedByte[3] = 0x6;
+                                    }
+                                    else if (nextPixel >= 0x2)
+                                    {
+                                        convertedByte[2] = 0x2;
+                                        convertedByte[2] = 0x2;
+                                        convertedByte[3] = 0x2;
+                                        convertedByte[3] = 0x2;
+                                    }
+                                    else
+                                    {
+                                        convertedByte[2] = 0x2;
+                                        convertedByte[2] = 0x2;
+                                        convertedByte[3] = 0x0;
+                                        convertedByte[3] = 0x0;
+                                    }
+                                }
+                                else if (actualPixel == 0x3)
+                                {
+                                    if (lastPixel % 2 == 0)
+                                    {
+                                        if (lastPixel == 0x0 || lastPixel == 0x4 || lastPixel == 0x8 || lastPixel == 0xc)
+                                        {
+                                            convertedByte[0] = 0x0;
+                                            convertedByte[0] = 0x0;
+                                            convertedByte[1] = 0x0;
+                                            convertedByte[1] = 0x0;
+                                        } 
+                                        else
+                                        {
+                                            convertedByte[0] = 0x2;
+                                            convertedByte[0] = 0x2;
+                                            convertedByte[1] = 0x2;
+                                            convertedByte[1] = 0x2;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        convertedByte[0] = 0x3;
+                                        convertedByte[0] = 0x3;
+                                        convertedByte[1] = 0x3;
+                                        convertedByte[1] = 0x3;
+                                    }
+                                    if (nextPixel >= 0xc)
+                                    {
+                                        convertedByte[2] = 0xf;
+                                        convertedByte[2] = 0xf;
+                                        convertedByte[3] = 0xf;
+                                        convertedByte[3] = 0xf;
+                                    }
+                                    else if (nextPixel >= 0x8)
+                                    {
+                                        convertedByte[2] = 0xb;
+                                        convertedByte[2] = 0xb;
+                                        convertedByte[3] = 0xb;
+                                        convertedByte[3] = 0xb;
+                                    }
+                                    else if (nextPixel >= 0x4)
+                                    {
+                                        convertedByte[2] = 0x3;
+                                        convertedByte[2] = 0x3;
+                                        convertedByte[3] = 0x7;
+                                        convertedByte[3] = 0x7;
+                                    }
+                                    else
+                                    {
+                                        convertedByte[2] = 0x3;
+                                        convertedByte[2] = 0x3;
+                                        convertedByte[3] = 0x3;
+                                        convertedByte[3] = 0x3;
+                                    }
+                                }
+                                else if (actualPixel == 0x4)
+                                {
+                                    if (lastPixel % 2 == 0)
+                                    {
+                                        if (lastPixel % 4 == 0)
+                                        {
+                                            if (lastPixel % 8 == 0)
+                                            {
+                                                convertedByte[0] = 0x0;
+                                                convertedByte[0] = 0x0;
+                                                convertedByte[1] = 0x4;
+                                                convertedByte[1] = 0x4;
+                                            }
+                                            else
+                                            {
+                                                convertedByte[0] = 0x4;
+                                                convertedByte[0] = 0x4;
+                                                convertedByte[1] = 0x4;
+                                                convertedByte[1] = 0x4;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            convertedByte[0] = 0x6;
+                                            convertedByte[0] = 0x6;
+                                            convertedByte[1] = 0x4;
+                                            convertedByte[1] = 0x4;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (lastPixel == 0x1 || lastPixel == 0x5 || lastPixel == 0x9 || lastPixel == 0xd)
+                                        {
+                                            convertedByte[0] = 0x5;
+                                            convertedByte[0] = 0x5;
+                                            convertedByte[1] = 0x5;
+                                            convertedByte[1] = 0x5;
+                                        }
+                                        else
+                                        {
+                                            convertedByte[0] = 0x7;
+                                            convertedByte[0] = 0x7;
+                                            convertedByte[1] = 0x5;
+                                            convertedByte[1] = 0x5;
+                                        }
+                                    }
+                                    if (nextPixel >= 0x8)
+                                    {
+                                        convertedByte[2] = 0xc;
+                                        convertedByte[2] = 0xc;
+                                        convertedByte[3] = 0xc;
+                                        convertedByte[3] = 0xc;
+                                    }
+                                    else if (nextPixel >= 0x4)
+                                    {
+                                        convertedByte[2] = 0x4;
+                                        convertedByte[2] = 0x4;
+                                        convertedByte[3] = 0x4;
+                                        convertedByte[3] = 0x4;
+                                    }
+                                    else
+                                    {
+                                        convertedByte[2] = 0x0;
+                                        convertedByte[2] = 0x0;
+                                        convertedByte[3] = 0x0;
+                                        convertedByte[3] = 0x0;
+                                    }
+                                }
+                                else if (actualPixel == 0x5)
+                                {
+                                    convertedByte[1] = 0x5;
+                                    convertedByte[1] = 0x5;
+                                    if (lastPixel % 2 == 0)
+                                    {
+                                        if (lastPixel % 4 == 0)
+                                        {
+                                            if (lastPixel % 8 == 0)
+                                            {
+                                                convertedByte[0] = 0x0;
+                                                convertedByte[0] = 0x0;
+                                            }
+                                            else
+                                            {
+                                                convertedByte[0] = 0x4;
+                                                convertedByte[0] = 0x4;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            convertedByte[0] = 0x6;
+                                            convertedByte[0] = 0x6;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (lastPixel == 0x1 || lastPixel == 0x5 || lastPixel == 0x9 || lastPixel == 0xd)
+                                        {
+                                            convertedByte[0] = 0x5;
+                                            convertedByte[0] = 0x5;
+                                        }
+                                        else
+                                        {
+                                            convertedByte[0] = 0x7;
+                                            convertedByte[0] = 0x7;
+                                        }
+                                    }
+                                    if (nextPixel >= 0x8)
+                                    {
+                                        convertedByte[2] = 0xd;
+                                        convertedByte[2] = 0xd;
+                                        convertedByte[3] = 0xd;
+                                        convertedByte[3] = 0xd;
+                                    }
+                                    else
+                                    {
+                                        convertedByte[2] = 0x5;
+                                        convertedByte[2] = 0x5;
+                                        convertedByte[3] = 0x5;
+                                        convertedByte[3] = 0x5;
+                                    }
+                                }
+                                else if (actualPixel == 0x6)
+                                {
+                                    if (lastPixel % 2 == 0)
+                                    {
+                                        if (lastPixel % 4 == 0)
+                                        {
+                                            if (lastPixel % 8 == 0)
+                                            {
+                                                convertedByte[0] = 0x0;
+                                                convertedByte[0] = 0x0;
+                                                convertedByte[1] = 0x6;
+                                                convertedByte[1] = 0x6;
+                                            }
+                                            else
+                                            {
+                                                convertedByte[0] = 0x4;
+                                                convertedByte[0] = 0x4;
+                                                convertedByte[1] = 0x6;
+                                                convertedByte[1] = 0x6;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            convertedByte[0] = 0x6;
+                                            convertedByte[0] = 0x6;
+                                            convertedByte[1] = 0x6;
+                                            convertedByte[1] = 0x6;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        convertedByte[0] = 0x7;
+                                        convertedByte[0] = 0x7;
+                                        convertedByte[1] = 0x7;
+                                        convertedByte[1] = 0x7;
+                                    }
+                                    if (nextPixel >= 0x8)
+                                    {
+                                        convertedByte[2] = 0xe;
+                                        convertedByte[2] = 0xe;
+                                        convertedByte[3] = 0xe;
+                                        convertedByte[3] = 0xe;
+                                    } 
+                                    else if (nextPixel >= 0x4)
+                                    {
+                                        convertedByte[2] = 0x6;
+                                        convertedByte[2] = 0x6;
+                                        convertedByte[3] = 0x6;
+                                        convertedByte[3] = 0x6;
+                                    }
+                                    else if (nextPixel >= 0x2)
+                                    {
+                                        convertedByte[2] = 0x6;
+                                        convertedByte[2] = 0x6;
+                                        convertedByte[3] = 0x2;
+                                        convertedByte[3] = 0x2;
+                                    }
+                                    else
+                                    {
+                                        convertedByte[2] = 0x6;
+                                        convertedByte[2] = 0x6;
+                                        convertedByte[3] = 0x0;
+                                        convertedByte[3] = 0x0;
+                                    }
+                                }
+                                else if (actualPixel == 0x7)
+                                {
+                                    convertedByte[1] = 0x7;
+                                    convertedByte[1] = 0x7;
+                                    if (lastPixel % 2 == 0)
+                                    {
+                                        if (lastPixel % 4 == 0)
+                                        {
+                                            if (lastPixel % 8 == 0)
+                                            {
+                                                convertedByte[0] = 0x0;
+                                                convertedByte[0] = 0x0;
+                                            }
+                                            else
+                                            {
+                                                convertedByte[0] = 0x4;
+                                                convertedByte[0] = 0x4;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            convertedByte[0] = 0x6;
+                                            convertedByte[0] = 0x6;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        convertedByte[0] = 0x7;
+                                        convertedByte[0] = 0x7;
+                                    }
+                                    if (nextPixel >= 0x8)
+                                    {
+                                        convertedByte[2] = 0xf;
+                                        convertedByte[2] = 0xf;
+                                        convertedByte[3] = 0xf;
+                                        convertedByte[3] = 0xf;
+                                    }
+                                    else
+                                    {
+                                        convertedByte[2] = 0x7;
+                                        convertedByte[2] = 0x7;
+                                        convertedByte[3] = 0x7;
+                                        convertedByte[3] = 0x7;
+                                    }
+                                }
+                                else if (actualPixel == 0x8)
+                                {
+                                    if (lastPixel % 2 == 0)
+                                    {
+                                        if (lastPixel % 4 == 0)
+                                        {
+                                            convertedByte[0] = 0x8;
+                                            convertedByte[0] = 0x8;
+                                        }
+                                        else
+                                        {
+                                            convertedByte[0] = 0xa;
+                                            convertedByte[0] = 0xa;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (lastPixel == 0x1 || lastPixel == 0x5 || lastPixel == 0x9 || lastPixel == 0xd)
+                                        {
+                                            convertedByte[0] = 0x9;
+                                            convertedByte[0] = 0x9;
+                                        }
+                                        else
+                                        {
+                                            convertedByte[0] = 0xb;
+                                            convertedByte[0] = 0xb;
+                                        }
+                                    }
+                                    if (nextPixel >= 0x8)
+                                    {
+                                        convertedByte[1] = 0x8;
+                                        convertedByte[1] = 0x8;
+                                        convertedByte[2] = 0x8;
+                                        convertedByte[2] = 0x8;
+                                        convertedByte[3] = 0x8;
+                                        convertedByte[3] = 0x8;
+                                    }
+                                    else
+                                    {
+                                        convertedByte[1] = 0x0;
+                                        convertedByte[1] = 0x0;
+                                        convertedByte[2] = 0x0;
+                                        convertedByte[2] = 0x0;
+                                        convertedByte[3] = 0x0;
+                                        convertedByte[3] = 0x0;
+                                    }
+                                }
+                                else if (actualPixel == 0x9)
+                                {
+                                    convertedByte[1] = 0x9;
+                                    convertedByte[1] = 0x9;
+                                    convertedByte[2] = 0x9;
+                                    convertedByte[2] = 0x9;
+                                    if (lastPixel % 2 == 0)
+                                    {
+                                        if (lastPixel % 4 == 0)
+                                        {
+                                            convertedByte[0] = 0x8;
+                                            convertedByte[0] = 0x8;
+                                        }
+                                        else
+                                        {
+                                            convertedByte[0] = 0xa;
+                                            convertedByte[0] = 0xa;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (lastPixel == 0x1 || lastPixel == 0x5 || lastPixel == 0x9 || lastPixel == 0xd)
+                                        {
+                                            convertedByte[0] = 0x9;
+                                            convertedByte[0] = 0x9;
+                                        }
+                                        else
+                                        {
+                                            convertedByte[0] = 0xb;
+                                            convertedByte[0] = 0xb;
+                                        }
+                                    }
+                                    if (nextPixel >= 0xc)
+                                    {
+                                        convertedByte[3] = 0xd;
+                                        convertedByte[3] = 0xd;
+                                    }
+                                    else if (nextPixel >= 0x8)
+                                    {
+                                        convertedByte[3] = 0x9;
+                                        convertedByte[3] = 0x9;
+                                    }
+                                    else if (nextPixel >= 0x4)
+                                    {
+                                        convertedByte[3] = 0x5;
+                                        convertedByte[3] = 0x5;
+                                    }
+                                    else
+                                        convertedByte[3] = 0x1;
+                                }
+                                else if (actualPixel == 0xa)
+                                {
+                                    convertedByte[2] = 0xa;
+                                    if (lastPixel % 2 == 0)
+                                    {
+                                        convertedByte[0] = 0xa;
+                                        convertedByte[1] = 0xa;
+                                    }
+                                    else
+                                    {
+                                        convertedByte[0] = 0xb;
+                                        convertedByte[1] = 0xb;
+                                    }
+                                    if (nextPixel >= 0xc)
+                                        convertedByte[3] = 0xe;
+                                    else if (nextPixel >= 0x8)
+                                        convertedByte[3] = 0xa;
+                                    else if (nextPixel >= 0x4)
+                                        convertedByte[3] = 0x6;
+                                    else if (nextPixel >= 0x2)
+                                        convertedByte[3] = 0x2;
+                                    else
+                                        convertedByte[3] = 0x0;
+                                }
+                                else if (actualPixel == 0xb)
+                                {
+                                    convertedByte[1] = 0xb;
+                                    convertedByte[2] = 0xb;
+                                    if (lastPixel % 2 == 0)
+                                        convertedByte[0] = 0xa;
+                                    else
+                                        convertedByte[0] = 0xb;
+                                    if (nextPixel >= 0xc)
+                                        convertedByte[3] = 0xf;
+                                    else if (nextPixel >= 0x8)
+                                        convertedByte[3] = 0xb;
+                                    else if (nextPixel >= 0x4)
+                                        convertedByte[3] = 0x7;
+                                    else
+                                        convertedByte[3] = 0x3;
+                                }
+                                else if (actualPixel == 0xc)
+                                {
+                                    if (lastPixel % 2 == 0)
+                                    {
+                                        if (lastPixel % 4 == 0)
+                                        {
+                                            convertedByte[0] = 0xc;
+                                            convertedByte[1] = 0xc;
+                                        }
+                                        else
+                                        {
+                                            convertedByte[0] = 0xe;
+                                            convertedByte[1] = 0xc;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (lastPixel == 0x1 || lastPixel == 0x5 || lastPixel == 0x9 || lastPixel == 0xd)
+                                        {
+                                            convertedByte[0] = 0xd;
+                                            convertedByte[1] = 0xd;
+                                        }
+                                        else
+                                        {
+                                            convertedByte[0] = 0xf;
+                                            convertedByte[1] = 0xd;
+                                        }
+                                    }
+                                    if (nextPixel >= 0x8)
+                                    {
+                                        convertedByte[2] = 0xc;
+                                        convertedByte[3] = 0xc;
+                                    }
+                                    else if (nextPixel >= 0x4)
+                                    {
+                                        convertedByte[2] = 0x4;
+                                        convertedByte[3] = 0x4;
+                                    }
+                                    else
+                                    {
+                                        convertedByte[2] = 0x0;
+                                        convertedByte[3] = 0x0;
+                                    }
+                                }
+                                else if (actualPixel == 0xd)
+                                {
+                                    convertedByte[1] = 0xd;
+                                    convertedByte[2] = 0xd;
+                                    if (lastPixel % 2 == 0)
+                                    {
+                                        if (lastPixel % 4 == 0)
+                                            convertedByte[0] = 0xc;
+                                        else
+                                            convertedByte[0] = 0xe;
+                                    }
+                                    else
+                                    {
+                                        if (lastPixel == 0x1 || lastPixel == 0x5 || lastPixel == 0x9 || lastPixel == 0xd)
+                                            convertedByte[0] = 0xd;
+                                        else
+                                            convertedByte[0] = 0xf;
+                                    }
+                                    if (nextPixel >= 0x8)
+                                        convertedByte[3] = 0xd;
+                                    else
+                                        convertedByte[3] = 0x5;
+                                }
+                                else if (actualPixel == 0xe)
+                                {
+                                    convertedByte[2] = 0xe;
+                                    if (lastPixel % 2 == 0)
+                                    {
+                                        convertedByte[0] = 0xe;
+                                        convertedByte[1] = 0xe;
+                                    }
+                                    else
+                                    {
+                                        convertedByte[0] = 0xf;
+                                        convertedByte[1] = 0xf;
+                                    }
+                                    if (nextPixel >= 0x8)
+                                        convertedByte[3] = 0xe;
+                                    else if (nextPixel >= 0x4)
+                                        convertedByte[3] = 0x6;
+                                    else if (nextPixel >= 0x2)
+                                        convertedByte[3] = 0x2;
+                                    else
+                                        convertedByte[3] = 0x0;
+                                }
+                                else if (actualPixel == 0xf)
+                                {
+                                    convertedByte[1] = 0xf;
+                                    convertedByte[2] = 0xf;
+                                    if (lastPixel % 2 == 0)
+                                        convertedByte[0] = 0xe;
+                                    else
+                                        convertedByte[0] = 0xf;
+                                    if (nextPixel >= 0x8)
+                                        convertedByte[3] = 0xf;
+                                    else
+                                        convertedByte[3] = 0x7;
+                                }
 
-                              
+                                lastPixel = actualPixel;
 
-
-                            }
-                            catch (Exception ex)
-                            {
+                                for (int k = 0; k < 4; k++)
+                                {
+                                    bmp[pixelId + k * 2] = convertedByte[k];
+                                    bmp[pixelId + k * 2 + 1] = convertedByte[k];
+                                }
                             }
                         }
+
                     }
+                    catch (Exception ex)
+                    {
+                    }
+
                 }
             }
 

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
     <Content Include="images\AppIcon.ico" />
     <Content Include="roms\ApplesoftD000.bin">
@@ -28,7 +28,9 @@
     <Content Include="roms\AppleIIeEnhancedC0-FF.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    
+    <Content Include="roms\hdROM.bin">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="roms\AppleIIeC0-DF.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -42,6 +44,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="roms\DiskIICardRom.bin">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="roms\hdROM.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="roms\Videx Videoterm ROM 2.4.bin">

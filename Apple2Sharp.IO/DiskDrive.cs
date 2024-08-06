@@ -13,9 +13,6 @@ namespace Apple2Sharp.Mainboard
 {
     public class DiskDrive
     {
-
-        private DiskIICard _card { get; set; }
-
         private string _diskPath { get; set; }
 
         public byte[] diskImage { get; set; }
@@ -78,22 +75,21 @@ namespace Apple2Sharp.Mainboard
         }
 
 
-        public byte[] translateDos33Track = new byte[] {
-        0x00, 0x07, 0x0e, 0x06, 0x0d, 0x05, 0x0c, 0x04, 0x0b, 0x03, 0x0a, 0x02, 0x09, 0x01, 0x08, 0x0f };
+        public byte[] translateDos33Track = new byte[] { 0x00, 0x07, 0x0e, 0x06, 0x0d, 0x05, 0x0c, 0x04, 0x0b, 0x03, 0x0a, 0x02, 0x09, 0x01, 0x08, 0x0f };
 
         ushort[] secoffset = new ushort[] { 0, 0x700, 0xe00, 0x600, 0xd00, 0x500, 0xc00, 0x400, 0xb00, 0x300, 0xa00, 0x200, 0x900, 0x100, 0x800, 0xf00 };
 
 
-        public DiskDrive(string dskPath, DiskIICard card)
+        public DiskDrive(string dskPath)
         {
             track = 0;
             _diskPath = dskPath;
-            this._card = card;
 
             if (!string.IsNullOrEmpty(_diskPath))
             {
                 this.diskImage = File.ReadAllBytes(dskPath);
-                fileHeaderSize = 0;
+                if (diskImage.Length > 143360)
+                    fileHeaderSize = 0x40;
             }
             else
                 this.diskImage = new byte[143360];
@@ -439,6 +435,22 @@ namespace Apple2Sharp.Mainboard
         {
             
             return fileHeaderSize + (sector * 256) + (track * (256 * 16));
+        }
+
+        public byte[] GetBlockData(ushort block)
+        {
+            byte[] ret = new byte[512];
+            int blockStart = block * 0x200 + fileHeaderSize;
+            for (int i = 0; i < 512; i++)
+            {
+                ret[i] = this.diskImage[i+blockStart];
+            }
+            return ret;
+        }
+
+        public ushort GetBlockQty()
+        {
+             return (ushort)((this.diskImage.Length - fileHeaderSize) / 512);
         }
 
         public string Print(List<byte> bytes)

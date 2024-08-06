@@ -49,8 +49,8 @@ namespace Apple2Sharp.Mainboard.Cards
         {
             _slotNumber = slotNumber;
             _c000ROM = c000ROM;
-            this.drive1 = new DiskDrive(disk1, this);
-            this.drive2 = new DiskDrive(disk2, this);
+            this.drive1 = new DiskDrive(disk1);
+            this.drive2 = new DiskDrive(disk2);
         }
 
         public void Write(ushort address, byte b, Apple2Board mainBoard)
@@ -155,7 +155,7 @@ namespace Apple2Sharp.Mainboard.Cards
                     if (Drive1_2)
                     {
                         drive1.TrackRawData(drive1.track);
-                        if (drive1.diskRawData[drive2.track] != null)
+                        if (drive1.diskRawData[drive1.track] != null)
                             return drive1.diskRawData[drive1.track][pointer++];
                         else
                             return 0;

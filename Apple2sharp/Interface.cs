@@ -205,11 +205,13 @@ namespace Apple2Sharp
                 new List<KeyValuePair<string, string>>() {
                     new KeyValuePair<string, string>("DiskIICard","Disk II Card"),
                     new KeyValuePair<string, string>("RamCard","Saturn 128k RAM"),
+                    new KeyValuePair<string, string>("HdCard","Hard Drive Card"),
                     new KeyValuePair<string, string>("EmptySlot","Empty")
                 },
                 new List<KeyValuePair<string, string>>() {
                     new KeyValuePair<string, string>("EmptySlot","Empty"),
-                    new KeyValuePair<string, string>("RamCard","Saturn 128k RAM Card")
+                    new KeyValuePair<string, string>("RamCard","Saturn 128k RAM Card"),
+                    new KeyValuePair<string, string>("HdCard","Hard Drive Card")
                 },
                 new List<KeyValuePair<string, string>>() {
                     new KeyValuePair<string, string>("RAM64k","RamWorks 64kb"),
@@ -281,6 +283,8 @@ namespace Apple2Sharp
                                             Tools.Load80Chars(File.ReadAllBytes(assemblyPath + "roms/Videx Videoterm Character ROM Normal.bin")));
             else if (type == "DiskIICard")
                 return new DiskIICard(slot, File.ReadAllBytes(assemblyPath + "roms/DiskIICardRom.bin"), openFileDialog1.FileName, openFileDialog2.FileName);
+            else if (type == "HdCard")
+                return new HdCard(slot, File.ReadAllBytes(assemblyPath + "roms/hdROM.bin"), openFileDialog1.FileName, openFileDialog2.FileName);
             else
                 return new EmptySlot();
 
@@ -387,8 +391,8 @@ namespace Apple2Sharp
 
             if (actualDiskCard != null)
             {
-                ((DiskIICard)actualDiskCard).drive1 = new DiskDrive(openFileDialog1.FileName, (DiskIICard)actualDiskCard);
-                ((DiskIICard)actualDiskCard).drive2 = new DiskDrive(openFileDialog2.FileName, (DiskIICard)actualDiskCard);
+                ((DiskIICard)actualDiskCard).drive1 = new DiskDrive(openFileDialog1.FileName);
+                ((DiskIICard)actualDiskCard).drive2 = new DiskDrive(openFileDialog2.FileName);
             }
         }
         public static int ReadTrackBar(TrackBar control)

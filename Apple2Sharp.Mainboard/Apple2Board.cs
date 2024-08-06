@@ -69,15 +69,18 @@ namespace Apple2Sharp.Mainboard
             Random rnd = new Random();
             byte[] b = new byte[0xbfff];
             rnd.NextBytes(b);
+            
             for (ushort j = 0; j < IIEAuxBanks; j++)
             {
                 for (ushort i = 0; i < b.Length; i++)
                 {
                     if (j == 0)
                         baseRAM[i] = b[i];
-                    auxRAM[j,i] = b[i];
+                    if (appleIIe)
+                        auxRAM[j,i] = b[i];
                 }
             }
+            
             IIEmemoryBankSwitchedRAM1 = new byte[0x2000];
             IIEmemoryBankSwitchedRAM2_1 = new byte[0x1000];
             IIEmemoryBankSwitchedRAM2_2 = new byte[0x1000];
