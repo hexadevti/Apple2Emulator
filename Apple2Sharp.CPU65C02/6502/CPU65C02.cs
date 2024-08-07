@@ -66,26 +66,22 @@ namespace Apple2Sharp.CPU65C02
             OpCodePart? opCodePart = OpCodes.GetOpCode(instruction);
             ushort? refAddress = OpCodes.ProcessAddressing(opCodePart, state, mainBoard, this);
             // Break point with lastPC
-            if (lastPC == 0xc600)
-            {
-                Thread.Sleep(1);
-            }
-            if (lastPC == 0x801)
-            {
-                Thread.Sleep(1);
-            }
-            if (lastPC == 0xc67a)
-            {
-                Thread.Sleep(1);
-            }
-            if (lastPC == 0xc6e6)
-            {
-                Thread.Sleep(1);
-            }
-            if (lastPC == 0x929)
-            {
-                Thread.Sleep(1);
-            }
+            // if (lastPC == 0xa7a && refAddress != null && refAddress.Value >= 0x0d00)
+            // {
+            //     Thread.Sleep(1);
+            // }
+            // if (lastPC == 0xc67a)
+            // {
+            //     Thread.Sleep(1);
+            // }
+            // if (lastPC == 0xc6e6)
+            // {
+            //     Thread.Sleep(1);
+            // }
+            // if (lastPC == 0x929)
+            // {
+            //     Thread.Sleep(1);
+            // }
            
             OpCodes.Process(opCodePart, state, mainBoard, refAddress);
             EnqueueCycles(opCodePart);

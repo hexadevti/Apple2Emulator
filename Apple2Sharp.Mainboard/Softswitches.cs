@@ -32,6 +32,8 @@ namespace Apple2Sharp.Mainboard
         public bool IntC8RomOn_Off { get; set; }
         public bool AltCharSetOn_Off { get; set; }
         public bool Store80On_Off { get; set; }
+
+        public bool Vertical_blankingOn_Off { get; set;}
         
         public bool IIEMemoryBankBankSelect1_2 { get; set; }
         public bool IIEMemoryBankReadRAM_ROM { get; set; }
@@ -129,6 +131,8 @@ namespace Apple2Sharp.Mainboard
                 return (byte)(mainBoard.softswitches.SlotC3RomOn_Off ? 0xff : 0x00);
             else if (address == 0xc018)
                 return (byte)(mainBoard.softswitches.Store80On_Off ? 0xff : 0x00);
+            else if (address == 0xc019)
+                return (byte)(mainBoard.softswitches.Vertical_blankingOn_Off ? 0xff : 0x00);
             else if (address == 0xc01a)
                 return (byte)(mainBoard.softswitches.Graphics_Text ? 0x00 : 0xff);
             else if (address == 0xc01b)

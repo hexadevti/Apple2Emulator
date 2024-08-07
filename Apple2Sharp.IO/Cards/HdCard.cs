@@ -18,6 +18,7 @@ namespace Apple2Sharp.Mainboard.Cards
         private int _slotNumber = 7;
         private byte[] _c000ROM;
         public DiskDrive drive1 { get; set; }
+        public DiskDrive drive2 { get; set; }
 
         public bool Drive1_2 { get; set; }
 
@@ -26,7 +27,7 @@ namespace Apple2Sharp.Mainboard.Cards
         public bool DriveMotorON_OFF { get; set; }
         public byte Command { get; set; }
         public byte Status { get; set; }
-        public byte UnitNumber { get; set; }
+        public bool UnitNumber1_2 { get; set; }
         public ushort MemoryBuffer { get; set; }
         public ushort BlockNumber { get; set; }
         public ushort DiskImageSize { get; set; }
@@ -49,6 +50,7 @@ namespace Apple2Sharp.Mainboard.Cards
             _slotNumber = slotNumber;
             _c000ROM = c000ROM;
             this.drive1 = new DiskDrive(disk1);
+            this.drive2 = new DiskDrive(disk2);
         }
 
         public void Write(ushort address, byte b, Apple2Board mainBoard)
@@ -95,11 +97,11 @@ namespace Apple2Sharp.Mainboard.Cards
             {
                 if (Read_Write)
                 {
-                    return UnitNumber;
+                    return (byte)((UnitNumber1_2 ? 1 : 0) << 7);
                 }
                 else
                 {
-                    UnitNumber = b;
+                    UnitNumber1_2 = b >> 7 == 0;
                 }
             }
             else if (address == 0xc084 + _slotNumber * 0x10)
@@ -152,14 +154,12 @@ namespace Apple2Sharp.Mainboard.Cards
             }
             else if (address == 0xc089 + _slotNumber * 0x10)
             {
-                return (byte)(this.drive1.GetBlockQty() & 0x00ff);
+                return (byte)((UnitNumber1_2 ? this.drive1.GetBlockQty() : this.drive2.GetBlockQty()) & 0x00ff);
             }
             else if (address == 0xc08a + _slotNumber * 0x10)
             {
-                return (byte)(this.drive1.GetBlockQty() & 0xff00);
+                return (byte)((UnitNumber1_2 ? this.drive1.GetBlockQty() : this.drive2.GetBlockQty()) & 0xff00);
             }
-
-
             return 0;
         }
     
@@ -168,7 +168,7 @@ namespace Apple2Sharp.Mainboard.Cards
             int i = 0;
             try
             {
-                foreach (byte b in this.drive1.GetBlockData(block))
+                foreach (byte b in (UnitNumber1_2 ? this.drive1.GetBlockData(block) : this.drive2.GetBlockData(block)) )
                 {
                     mainBoard.WriteByte((ushort)(address + i), b);
                     i++;

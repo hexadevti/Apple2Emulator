@@ -98,7 +98,7 @@ namespace Apple2Sharp.Mainboard.Cards
                                 Console.WriteLine(drive1.Print(decsecData.ToList()));
 
                                 if (drive1.FlagDos_Prodos)
-                                    drive1.SetSectorData(trk, drive1.translateDos33Track[sec], decsecData); // DOS
+                                    drive1.SetSectorData(trk, drive1.translateDOTrack[sec], decsecData); // DOS
                                 else
                                     drive1.SetBlockData(trk, sec, decsecData); // PRODOS
                                 drive1.SaveImage();
@@ -108,7 +108,7 @@ namespace Apple2Sharp.Mainboard.Cards
                             {
                                 byte[] decsecData = drive2.Decode6_2(cleanData);
                                 if (drive2.FlagDos_Prodos)
-                                    drive2.SetSectorData(trk, drive2.translateDos33Track[sec], decsecData); //  DOS
+                                    drive2.SetSectorData(trk, drive2.translateDOTrack[sec], decsecData); //  DOS
                                 else
                                     drive2.SetBlockData(trk, sec, decsecData); //  PRODOS
                                 drive2.SaveImage();
@@ -135,17 +135,17 @@ namespace Apple2Sharp.Mainboard.Cards
         public byte Read(ushort address, Apple2Board mainBoard)
         {
             int trackSize = 5856;
-            var sec = mainBoard.ReadByte(0x2d);
-            var trk = mainBoard.ReadByte(0x2e);
-            string key = trk + "_" + sec;
-            if (Drive1_2)
-            {
-                drive1.sector = sec;
-            }
-            else
-            {
-                drive2.sector = sec;
-            }
+            //var sec = mainBoard.ReadByte(0x2d);
+            //var trk = mainBoard.ReadByte(0x2e);
+            //string key = trk + "_" + sec;
+            // if (Drive1_2)
+            // {
+            //     drive1.sector = sec;
+            // }
+            // else
+            // {
+            //     drive2.sector = sec;
+            // }
             if (address == 0xc08c + _slotNumber * 0x10)
             {
                 if (DriveQ6H_L == false && DriveQ7H_L == false)

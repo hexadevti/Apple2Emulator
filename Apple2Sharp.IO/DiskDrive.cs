@@ -20,6 +20,7 @@ namespace Apple2Sharp.Mainboard
         public byte[][] diskRawData = new byte[35][];
 
         public bool FlagDos_Prodos { get; set; }
+        public bool FlagDO_PO { get; set; }
 
         public byte[] translateTable = new byte[] {
                             0x96,0x97,0x9A,0x9B,0x9D,0x9E,0x9F,0xA6,
@@ -37,12 +38,6 @@ namespace Apple2Sharp.Mainboard
         public int sector { get; set; }
 
         public bool on { get; set; }
-        /* DO logical order  0 1 2 3 4 5 6 7 8 9 A B C D E F */
-        /*    physical order 0 D B 9 7 5 3 1 E C A 8 6 4 2 F */
-
-        /* PO logical order  0 E D C B A 9 8 7 6 5 4 3 2 1 F */
-        /*    physical order 0 2 4 6 8 A C E 1 3 5 7 9 B D F */
-
 
         public byte[] odd_even_asc = new byte[] { 0x31, 0x20, 0x01, 0x30 };
         public byte[] even_odd_asc = new byte[] { 0x11, 0x00, 0x21, 0x10 };
@@ -75,8 +70,9 @@ namespace Apple2Sharp.Mainboard
         }
 
 
-        public byte[] translateDos33Track = new byte[] { 0x00, 0x07, 0x0e, 0x06, 0x0d, 0x05, 0x0c, 0x04, 0x0b, 0x03, 0x0a, 0x02, 0x09, 0x01, 0x08, 0x0f };
-
+                                                      //0     1     2     3     4     5     6     7     8     9     a     b     c     d     e     f  
+        public byte[] translateDOTrack = new byte[] { 0x00, 0x07, 0x0e, 0x06, 0x0d, 0x05, 0x0c, 0x04, 0x0b, 0x03, 0x0a, 0x02, 0x09, 0x01, 0x08, 0x0f };
+        public byte[] translatePOTrack = new byte[] { 0x00, 0x08, 0x01, 0x09, 0x02, 0x0A, 0x03, 0x0b, 0x04, 0x0C, 0x05, 0x0d, 0x06, 0x0E, 0x07, 0x0f };
         ushort[] secoffset = new ushort[] { 0, 0x700, 0xe00, 0x600, 0xd00, 0x500, 0xc00, 0x400, 0xb00, 0x300, 0xa00, 0x200, 0x900, 0x100, 0x800, 0xf00 };
 
 
@@ -89,12 +85,24 @@ namespace Apple2Sharp.Mainboard
             {
                 this.diskImage = File.ReadAllBytes(dskPath);
                 if (diskImage.Length > 143360)
-                    fileHeaderSize = 0x40;
+                {
+                    if (diskImage.Length == 819264) 
+                        fileHeaderSize = 0x40;
+                    FlagDos_Prodos = false;
+                }
+                else
+                {
+                    FlagDos_Prodos = IdentifyDos_Prodos();
+                    string[] nameParts = _diskPath.Split('.');
+                    FlagDO_PO = nameParts[nameParts.Length-1].ToUpper() == "PO" ? false : true; 
+                }
             }
             else
                 this.diskImage = new byte[143360];
 
-            FlagDos_Prodos = IdentifyDos_Prodos();
+            
+
+
         }
 
         public void SaveImage()
@@ -422,7 +430,7 @@ namespace Apple2Sharp.Mainboard
                         selectedSector.AddRange(b); // Checksum
                         selectedSector.AddRange(new List<byte>() { 0xde, 0xaa, 0xeb }); // Epilogue address
                         selectedSector.AddRange(new List<byte>() { 0xd5, 0xaa, 0xad }); // Prologue data
-                        b = this.Encode6_2(track, this.translateDos33Track[isec]).ToList();
+                        b = this.Encode6_2(track, FlagDO_PO ?  this.translateDOTrack[isec] : this.translatePOTrack[isec]).ToList();
                         selectedSector.AddRange(b); // Data field + checksum
                         selectedSector.AddRange(new List<byte>() { 0xde, 0xaa, 0xeb }); // Epilogue
                     }

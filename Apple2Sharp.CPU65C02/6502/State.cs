@@ -14,6 +14,12 @@ namespace Apple2Sharp.CPU65C02
         public bool V { get; set; }
         public bool N { get; set; }
         public byte S { get; set; }
+        public byte P { 
+            get
+            {
+                return I6502StateExtensions.ReadStateRegister(this, true);
+            }
+         }
         public int extraCycles { get; set; }
 
         public State()
