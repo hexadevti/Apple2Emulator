@@ -43,6 +43,7 @@ namespace Apple2Sharp
             InitializeComponent();
             pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
 
+
             if (assemblyPath != null)
                 assemblyPath += "/";
 
@@ -195,12 +196,14 @@ namespace Apple2Sharp
                 },
                 new List<KeyValuePair<string, string>>() {
                     new KeyValuePair<string, string>("EmptySlot","Empty"),
-                    new KeyValuePair<string, string>("RamCard","Saturn 128k RAM")
+                    new KeyValuePair<string, string>("RamCard","Saturn 128k RAM"),
+                    new KeyValuePair<string, string>("MouseCard","Apple Mouse Card")
                 },
                 new List<KeyValuePair<string, string>>() {
                     new KeyValuePair<string, string>("EmptySlot","Empty"),
                     new KeyValuePair<string, string>("DiskIICard","Disk II Card"),
-                    new KeyValuePair<string, string>("RamCard","Saturn 128k RAM")
+                    new KeyValuePair<string, string>("RamCard","Saturn 128k RAM"),
+                    new KeyValuePair<string, string>("MouseCard","Apple Mouse Card")
                 },
                 new List<KeyValuePair<string, string>>() {
                     new KeyValuePair<string, string>("DiskIICard","Disk II Card"),
@@ -285,6 +288,8 @@ namespace Apple2Sharp
                 return new DiskIICard(slot, File.ReadAllBytes(assemblyPath + "roms/DiskIICardRom.bin"), openFileDialog1.FileName, openFileDialog2.FileName);
             else if (type == "HdCard")
                 return new HdCard(slot, File.ReadAllBytes(assemblyPath + "roms/hdROM.bin"), openFileDialog1.FileName, openFileDialog2.FileName);
+            else if (type == "MouseCard")
+                return new MouseCard(slot, Tools.LoadROM(File.ReadAllBytes(assemblyPath + "roms/MouseCardROM.bin"), 0, 0x100), mainBoard);
             else
                 return new EmptySlot();
 
@@ -355,7 +360,8 @@ namespace Apple2Sharp
                                     pictureBox1.Image = Video.Generate(mainBoard, pixelSize);
                             }
                         }
-                        catch (Exception ex) { 
+                        catch (Exception ex)
+                        {
 
                         }
                     }
@@ -646,5 +652,34 @@ namespace Apple2Sharp
 
         }
 
+        private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
+        {
+            int X = 281 * e.X / pictureBox1.Width;
+            int Y = 191 * e.Y / pictureBox1.Height;
+            mainBoard.mouseXLo = (byte)(X & 0xff);
+            mainBoard.mouseXHi = (byte)((X & 0xff00) >> 8);
+            mainBoard.mouseYLo = (byte)(Y & 0xff);
+            mainBoard.mouseYHi = (byte)((Y & 0xff00) >> 8);
+        }
+
+        private void pictureBox1_MouseEnter(object sender, EventArgs e)
+        {
+            Cursor.Hide();
+        }
+
+        private void pictureBox1_MouseLeave(object sender, EventArgs e)
+        {
+            Cursor.Show();
+        }
+
+        private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
+        {
+            mainBoard.mouseButton = true;
+        }
+
+        private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
+        {
+            mainBoard.mouseButton = false;
+        }
     }
 }

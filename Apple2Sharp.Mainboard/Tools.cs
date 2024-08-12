@@ -18,6 +18,16 @@ namespace Apple2Sharp.Mainboard
             return ret;
         }
 
+        public static byte[] LoadROM(byte[] rom, int offset, int length)
+        {
+            byte[] ret = new byte[length];
+            for (int i = 0; i < length; i++)
+            {
+                ret[i] = rom[i + offset];
+            }
+            return ret;
+        }
+
         public static Dictionary<byte, bool[,]> Load80Chars(byte[] rom)
         {
             Dictionary<byte, bool[,]> ret = new Dictionary<byte, bool[,]>();

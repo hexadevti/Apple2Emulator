@@ -70,10 +70,6 @@ namespace Apple2Sharp.CPU65C02
             // {
             //     Thread.Sleep(1);
             // }
-            // if (lastPC == 0xc67a)
-            // {
-            //     Thread.Sleep(1);
-            // }
             // if (lastPC == 0xc6e6)
             // {
             //     Thread.Sleep(1);

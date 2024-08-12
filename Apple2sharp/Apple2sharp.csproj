@@ -55,6 +55,9 @@
     <Content Include="roms\Videx Videoterm Character ROM Normal.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="roms\MouseCardROM.bin">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="disks\Apple DOS 3.3 January 1983.dsk">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

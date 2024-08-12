@@ -12,8 +12,7 @@ namespace Apple2Sharp.CPU65C02
 
         public static void Process_TXS(State processorState)
         {
-            var value = processorState.X;
-            processorState.S = value;
+            processorState.S = processorState.X;
         }
 
         public static void Process_TXA(State processorState)

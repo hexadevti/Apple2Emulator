@@ -9,10 +9,10 @@ namespace Apple2Sharp.CPU65C02
             sr = (byte)(processorState.I ? sr + 0x04 : sr);
             sr = (byte)(processorState.D ? sr + 0x08 : sr);
             sr = (byte)(br ? sr + (byte)0x10 : sr);
-            // bit 5 - 32 0x20 ignore
+            sr = (byte)(sr + 0x20);// bit 5 - 32 0x20 ignore
             sr = (byte)(processorState.V ? sr + 0x40 : sr);
             sr = (byte)(processorState.N ? sr + 0x80 : sr);
-            return (byte)(sr + 0x20);
+            return sr;
         }
     }
 }

@@ -38,6 +38,12 @@ namespace Apple2Sharp.Mainboard
         public int timerpdl2;
         public int timerpdl3;
 
+        public byte mouseXLo = 0;
+        public byte mouseXHi = 0;
+        public byte mouseYLo = 0;
+        public byte mouseYHi = 0;
+        public bool mouseButton = false;
+
 
         public int IIEAuxBanks;
         private byte[] IIEmemoryBankSwitchedRAM1 = new byte[0x2000];
@@ -62,6 +68,7 @@ namespace Apple2Sharp.Mainboard
             altCharSet = new Dictionary<byte, bool[,]>();
             baseRAM = new byte[0xc000];
             baseZP =  new byte[0x200];
+            auxZP = new byte[0, 0x200];
         }
 
         public void ClearBaseRAM()
@@ -79,17 +86,18 @@ namespace Apple2Sharp.Mainboard
                     if (appleIIe)
                         auxRAM[j,i] = b[i];
                 }
+                IIEAuxBankSwitchedRAM1 = new byte[j, 0x2000];
+                IIEAuxBankSwitchedRAM2_1 = new byte[j, 0x1000];
+                IIEAuxBankSwitchedRAM2_2 = new byte[j, 0x1000];
+                auxZP = new byte[j,0x200];
+
             }
             
             IIEmemoryBankSwitchedRAM1 = new byte[0x2000];
             IIEmemoryBankSwitchedRAM2_1 = new byte[0x1000];
             IIEmemoryBankSwitchedRAM2_2 = new byte[0x1000];
             softswitches.IIeExpansionCardBank = 0;
-            IIEAuxBankSwitchedRAM1 = new byte[IIEAuxBanks, 0x2000];
-            IIEAuxBankSwitchedRAM2_1 = new byte[IIEAuxBanks, 0x1000];
-            IIEAuxBankSwitchedRAM2_2 = new byte[IIEAuxBanks, 0x1000];
             baseZP = new byte[0x200];
-            auxZP = new byte[IIEAuxBanks,0x200];
         }
 
         public void SetIIeRamWorks()
@@ -291,7 +299,6 @@ namespace Apple2Sharp.Mainboard
                                 ret = baseRAM[address];
                         }
                     }
-                
                 }
                 else
                 {

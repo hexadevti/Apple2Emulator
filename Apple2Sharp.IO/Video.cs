@@ -424,57 +424,57 @@ namespace Apple2Sharp
                                 int pixelId = lineSize * l + i;
                                 byte actualPixel = bmp[pixelId];
                                 byte nextPixel = bmp[pixelId + pixelSize * 2];
-                                byte[] convertedByte = new byte[4];
+                                byte[] convertedByte = new byte[8];
                                 if (actualPixel == 0x0)
                                 {
                                     convertedByte[0] = 0x0;
-                                    convertedByte[0] = 0x0;
-                                    convertedByte[1] = 0x0;
                                     convertedByte[1] = 0x0;
                                     convertedByte[2] = 0x0;
-                                    convertedByte[2] = 0x0;
                                     convertedByte[3] = 0x0;
-                                    convertedByte[3] = 0x0;
+                                    convertedByte[4] = 0x0;
+                                    convertedByte[5] = 0x0;
+                                    convertedByte[6] = 0x0;
+                                    convertedByte[7] = 0x0;
                                 }
                                 else if (actualPixel == 0x1)
                                 {
                                     if (lastPixel % 2 == 0)
                                     {
                                         convertedByte[0] = 0x0;
-                                        convertedByte[0] = 0x0;
-                                        convertedByte[1] = 0x0;
                                         convertedByte[1] = 0x0;
                                         convertedByte[2] = 0x0;
-                                        convertedByte[2] = 0x0;
+                                        convertedByte[3] = 0x0;
+                                        convertedByte[4] = 0x0;
+                                        convertedByte[5] = 0x0;
                                     }
                                     else
                                     {
                                         convertedByte[0] = 0x1;
-                                        convertedByte[0] = 0x1;
-                                        convertedByte[1] = 0x1;
                                         convertedByte[1] = 0x1;
                                         convertedByte[2] = 0x1;
-                                        convertedByte[2] = 0x1;
+                                        convertedByte[3] = 0x1;
+                                        convertedByte[4] = 0x1;
+                                        convertedByte[5] = 0x1;
                                     }
                                     if (nextPixel >= 0xc)
                                     {
-                                        convertedByte[3] = 0xd;
-                                        convertedByte[3] = 0xd;
+                                        convertedByte[6] = 0xd;
+                                        convertedByte[7] = 0xd;
                                     }
                                     else if (nextPixel >= 0x8)
                                     {
-                                        convertedByte[3] = 0x9;
-                                        convertedByte[3] = 0x9;
+                                        convertedByte[6] = 0x9;
+                                        convertedByte[7] = 0x9;
                                     }
                                     else if (nextPixel >= 0x4)
                                     {
-                                        convertedByte[3] = 0x5;
-                                        convertedByte[3] = 0x5;
+                                        convertedByte[6] = 0x5;
+                                        convertedByte[7] = 0x5;
                                     }
                                     else
                                     {
-                                        convertedByte[3] = 0x1;
-                                        convertedByte[3] = 0x1;
+                                        convertedByte[6] = 0x1;
+                                        convertedByte[7] = 0x1;
                                     }
                                 }
                                 else if (actualPixel == 0x2)
@@ -484,59 +484,59 @@ namespace Apple2Sharp
                                         if (lastPixel % 4 == 0)
                                         {
                                             convertedByte[0] = 0x0;
-                                            convertedByte[0] = 0x0;
                                             convertedByte[1] = 0x0;
-                                            convertedByte[1] = 0x0;
+                                            convertedByte[2] = 0x0;
+                                            convertedByte[3] = 0x0;
                                         }
                                         else
                                         {
                                             convertedByte[0] = 0x2;
-                                            convertedByte[0] = 0x2;
                                             convertedByte[1] = 0x2;
-                                            convertedByte[1] = 0x2;
+                                            convertedByte[2] = 0x2;
+                                            convertedByte[3] = 0x2;
                                         }
                                     }
                                     else
                                     {
                                         convertedByte[0] = 0x3;
-                                        convertedByte[0] = 0x3;
                                         convertedByte[1] = 0x3;
-                                        convertedByte[1] = 0x3;
+                                        convertedByte[2] = 0x3;
+                                        convertedByte[3] = 0x3;
                                     }
                                     if (nextPixel >= 0xc)
                                     {
-                                        convertedByte[2] = 0xa;
-                                        convertedByte[2] = 0xa;
-                                        convertedByte[3] = 0xe;
-                                        convertedByte[3] = 0xe;
+                                        convertedByte[4] = 0xa;
+                                        convertedByte[5] = 0xa;
+                                        convertedByte[6] = 0xe;
+                                        convertedByte[7] = 0xe;
                                     }
                                     else if (nextPixel >= 0x8)
                                     {
-                                        convertedByte[2] = 0xa;
-                                        convertedByte[2] = 0xa;
-                                        convertedByte[3] = 0xa;
-                                        convertedByte[3] = 0xa;
+                                        convertedByte[4] = 0xa;
+                                        convertedByte[5] = 0xa;
+                                        convertedByte[6] = 0xa;
+                                        convertedByte[7] = 0xa;
                                     }
                                     else if (nextPixel >= 0x4)
                                     {
                                         convertedByte[2] = 0x2;
-                                        convertedByte[2] = 0x2;
-                                        convertedByte[3] = 0x6;
-                                        convertedByte[3] = 0x6;
+                                        convertedByte[5] = 0x2;
+                                        convertedByte[6] = 0x6;
+                                        convertedByte[7] = 0x6;
                                     }
                                     else if (nextPixel >= 0x2)
                                     {
-                                        convertedByte[2] = 0x2;
-                                        convertedByte[2] = 0x2;
-                                        convertedByte[3] = 0x2;
-                                        convertedByte[3] = 0x2;
+                                        convertedByte[4] = 0x2;
+                                        convertedByte[5] = 0x2;
+                                        convertedByte[6] = 0x2;
+                                        convertedByte[7] = 0x2;
                                     }
                                     else
                                     {
-                                        convertedByte[2] = 0x2;
-                                        convertedByte[2] = 0x2;
-                                        convertedByte[3] = 0x0;
-                                        convertedByte[3] = 0x0;
+                                        convertedByte[4] = 0x2;
+                                        convertedByte[5] = 0x2;
+                                        convertedByte[6] = 0x0;
+                                        convertedByte[7] = 0x0;
                                     }
                                 }
                                 else if (actualPixel == 0x3)
@@ -545,53 +545,70 @@ namespace Apple2Sharp
                                     {
                                         if (lastPixel == 0x0 || lastPixel == 0x4 || lastPixel == 0x8 || lastPixel == 0xc)
                                         {
-                                            convertedByte[0] = 0x0;
-                                            convertedByte[0] = 0x0;
+                                            convertedByte[0] = 0x0; 
                                             convertedByte[1] = 0x0;
-                                            convertedByte[1] = 0x0;
+                                            convertedByte[2] = 0x0;
+                                            convertedByte[3] = 0x0;
                                         } 
                                         else
                                         {
                                             convertedByte[0] = 0x2;
-                                            convertedByte[0] = 0x2;
                                             convertedByte[1] = 0x2;
-                                            convertedByte[1] = 0x2;
+                                            convertedByte[2] = 0x2;
+                                            convertedByte[3] = 0x2;
                                         }
+                                    }
+                                    else if (lastPixel == 0xf)
+                                    {
+                                        convertedByte[0] = 0x0;
+                                        convertedByte[1] = 0x0;
+                                        convertedByte[2] = 0x0;
+                                        convertedByte[3] = 0x2;
                                     }
                                     else
                                     {
                                         convertedByte[0] = 0x3;
-                                        convertedByte[0] = 0x3;
                                         convertedByte[1] = 0x3;
-                                        convertedByte[1] = 0x3;
+                                        convertedByte[2] = 0x3;
+                                        convertedByte[3] = 0x3;
                                     }
                                     if (nextPixel >= 0xc)
                                     {
-                                        convertedByte[2] = 0xf;
-                                        convertedByte[2] = 0xf;
-                                        convertedByte[3] = 0xf;
-                                        convertedByte[3] = 0xf;
+                                        convertedByte[4] = 0xb;
+                                        convertedByte[5] = 0xb;
+                                        convertedByte[6] = 0xf;
+                                        convertedByte[7] = 0xf;
                                     }
                                     else if (nextPixel >= 0x8)
                                     {
-                                        convertedByte[2] = 0xb;
-                                        convertedByte[2] = 0xb;
-                                        convertedByte[3] = 0xb;
-                                        convertedByte[3] = 0xb;
+                                        convertedByte[4] = 0xb;
+                                        convertedByte[5] = 0xb;
+                                        convertedByte[6] = 0xb;
+                                        convertedByte[7] = 0xb;
                                     }
                                     else if (nextPixel >= 0x4)
                                     {
-                                        convertedByte[2] = 0x3;
-                                        convertedByte[2] = 0x3;
-                                        convertedByte[3] = 0x7;
-                                        convertedByte[3] = 0x7;
+                                        convertedByte[4] = 0x3;
+                                        convertedByte[5] = 0x3;
+                                        convertedByte[6] = 0x7;
+                                        convertedByte[7] = 0x7;
                                     }
                                     else
                                     {
-                                        convertedByte[2] = 0x3;
-                                        convertedByte[2] = 0x3;
-                                        convertedByte[3] = 0x3;
-                                        convertedByte[3] = 0x3;
+                                        if (lastPixel == 0xf && nextPixel == 0x3)
+                                        {
+                                            convertedByte[4] = 0x2;
+                                            convertedByte[5] = 0xf;
+                                            convertedByte[6] = 0xf;
+                                            convertedByte[7] = 0xf;
+                                        }
+                                        else
+                                        {
+                                            convertedByte[4] = 0x3;
+                                            convertedByte[5] = 0x3;
+                                            convertedByte[6] = 0x3;
+                                            convertedByte[7] = 0x3;
+                                        }
                                     }
                                 }
                                 else if (actualPixel == 0x4)
@@ -603,24 +620,24 @@ namespace Apple2Sharp
                                             if (lastPixel % 8 == 0)
                                             {
                                                 convertedByte[0] = 0x0;
-                                                convertedByte[0] = 0x0;
-                                                convertedByte[1] = 0x4;
-                                                convertedByte[1] = 0x4;
+                                                convertedByte[1] = 0x0;
+                                                convertedByte[2] = 0x4;
+                                                convertedByte[3] = 0x4;
                                             }
                                             else
                                             {
                                                 convertedByte[0] = 0x4;
-                                                convertedByte[0] = 0x4;
                                                 convertedByte[1] = 0x4;
-                                                convertedByte[1] = 0x4;
+                                                convertedByte[2] = 0x4;
+                                                convertedByte[3] = 0x4;
                                             }
                                         }
                                         else
                                         {
                                             convertedByte[0] = 0x6;
-                                            convertedByte[0] = 0x6;
-                                            convertedByte[1] = 0x4;
-                                            convertedByte[1] = 0x4;
+                                            convertedByte[1] = 0x6;
+                                            convertedByte[2] = 0x4;
+                                            convertedByte[3] = 0x4;
                                         }
                                     }
                                     else
@@ -628,44 +645,44 @@ namespace Apple2Sharp
                                         if (lastPixel == 0x1 || lastPixel == 0x5 || lastPixel == 0x9 || lastPixel == 0xd)
                                         {
                                             convertedByte[0] = 0x5;
-                                            convertedByte[0] = 0x5;
                                             convertedByte[1] = 0x5;
-                                            convertedByte[1] = 0x5;
+                                            convertedByte[2] = 0x5;
+                                            convertedByte[3] = 0x5;
                                         }
                                         else
                                         {
                                             convertedByte[0] = 0x7;
-                                            convertedByte[0] = 0x7;
-                                            convertedByte[1] = 0x5;
-                                            convertedByte[1] = 0x5;
+                                            convertedByte[1] = 0x7;
+                                            convertedByte[2] = 0x5;
+                                            convertedByte[3] = 0x5;
                                         }
                                     }
                                     if (nextPixel >= 0x8)
                                     {
-                                        convertedByte[2] = 0xc;
-                                        convertedByte[2] = 0xc;
+                                        convertedByte[4] = 0xc;
                                         convertedByte[3] = 0xc;
-                                        convertedByte[3] = 0xc;
+                                        convertedByte[6] = 0xc;
+                                        convertedByte[7] = 0xc;
                                     }
                                     else if (nextPixel >= 0x4)
                                     {
-                                        convertedByte[2] = 0x4;
-                                        convertedByte[2] = 0x4;
-                                        convertedByte[3] = 0x4;
-                                        convertedByte[3] = 0x4;
+                                        convertedByte[4] = 0x4;
+                                        convertedByte[5] = 0x4;
+                                        convertedByte[6] = 0x4;
+                                        convertedByte[7] = 0x4;
                                     }
                                     else
                                     {
-                                        convertedByte[2] = 0x0;
-                                        convertedByte[2] = 0x0;
-                                        convertedByte[3] = 0x0;
-                                        convertedByte[3] = 0x0;
+                                        convertedByte[4] = 0x0;
+                                        convertedByte[5] = 0x0;
+                                        convertedByte[6] = 0x0;
+                                        convertedByte[7] = 0x0;
                                     }
                                 }
                                 else if (actualPixel == 0x5)
                                 {
-                                    convertedByte[1] = 0x5;
-                                    convertedByte[1] = 0x5;
+                                    convertedByte[2] = 0x5;
+                                    convertedByte[3] = 0x5;
                                     if (lastPixel % 2 == 0)
                                     {
                                         if (lastPixel % 4 == 0)
@@ -673,18 +690,18 @@ namespace Apple2Sharp
                                             if (lastPixel % 8 == 0)
                                             {
                                                 convertedByte[0] = 0x0;
-                                                convertedByte[0] = 0x0;
+                                                convertedByte[1] = 0x0;
                                             }
                                             else
                                             {
                                                 convertedByte[0] = 0x4;
-                                                convertedByte[0] = 0x4;
+                                                convertedByte[1] = 0x4;
                                             }
                                         }
                                         else
                                         {
                                             convertedByte[0] = 0x6;
-                                            convertedByte[0] = 0x6;
+                                            convertedByte[1] = 0x6;
                                         }
                                     }
                                     else
@@ -692,27 +709,27 @@ namespace Apple2Sharp
                                         if (lastPixel == 0x1 || lastPixel == 0x5 || lastPixel == 0x9 || lastPixel == 0xd)
                                         {
                                             convertedByte[0] = 0x5;
-                                            convertedByte[0] = 0x5;
+                                            convertedByte[1] = 0x5;
                                         }
                                         else
                                         {
                                             convertedByte[0] = 0x7;
-                                            convertedByte[0] = 0x7;
+                                            convertedByte[1] = 0x7;
                                         }
                                     }
                                     if (nextPixel >= 0x8)
                                     {
-                                        convertedByte[2] = 0xd;
-                                        convertedByte[2] = 0xd;
-                                        convertedByte[3] = 0xd;
-                                        convertedByte[3] = 0xd;
+                                        convertedByte[4] = 0xd;
+                                        convertedByte[5] = 0xd;
+                                        convertedByte[6] = 0xd;
+                                        convertedByte[7] = 0xd;
                                     }
                                     else
                                     {
-                                        convertedByte[2] = 0x5;
-                                        convertedByte[2] = 0x5;
-                                        convertedByte[3] = 0x5;
-                                        convertedByte[3] = 0x5;
+                                        convertedByte[4] = 0x5;
+                                        convertedByte[5] = 0x5;
+                                        convertedByte[6] = 0x5;
+                                        convertedByte[7] = 0x5;
                                     }
                                 }
                                 else if (actualPixel == 0x6)
@@ -724,66 +741,66 @@ namespace Apple2Sharp
                                             if (lastPixel % 8 == 0)
                                             {
                                                 convertedByte[0] = 0x0;
-                                                convertedByte[0] = 0x0;
-                                                convertedByte[1] = 0x6;
-                                                convertedByte[1] = 0x6;
+                                                convertedByte[1] = 0x0;
+                                                convertedByte[2] = 0x6;
+                                                convertedByte[3] = 0x6;
                                             }
                                             else
                                             {
                                                 convertedByte[0] = 0x4;
-                                                convertedByte[0] = 0x4;
-                                                convertedByte[1] = 0x6;
-                                                convertedByte[1] = 0x6;
+                                                convertedByte[1] = 0x4;
+                                                convertedByte[2] = 0x6;
+                                                convertedByte[3] = 0x6;
                                             }
                                         }
                                         else
                                         {
                                             convertedByte[0] = 0x6;
-                                            convertedByte[0] = 0x6;
                                             convertedByte[1] = 0x6;
-                                            convertedByte[1] = 0x6;
+                                            convertedByte[2] = 0x6;
+                                            convertedByte[3] = 0x6;
                                         }
                                     }
                                     else
                                     {
                                         convertedByte[0] = 0x7;
-                                        convertedByte[0] = 0x7;
                                         convertedByte[1] = 0x7;
-                                        convertedByte[1] = 0x7;
+                                        convertedByte[2] = 0x7;
+                                        convertedByte[3] = 0x7;
                                     }
                                     if (nextPixel >= 0x8)
                                     {
-                                        convertedByte[2] = 0xe;
-                                        convertedByte[2] = 0xe;
-                                        convertedByte[3] = 0xe;
-                                        convertedByte[3] = 0xe;
+                                        convertedByte[4] = 0xe;
+                                        convertedByte[5] = 0xe;
+                                        convertedByte[6] = 0xe;
+                                        convertedByte[7] = 0xe;
                                     } 
                                     else if (nextPixel >= 0x4)
                                     {
-                                        convertedByte[2] = 0x6;
-                                        convertedByte[2] = 0x6;
-                                        convertedByte[3] = 0x6;
-                                        convertedByte[3] = 0x6;
+                                        convertedByte[4] = 0x6;
+                                        convertedByte[5] = 0x6;
+                                        convertedByte[6] = 0x6;
+                                        convertedByte[7] = 0x6;
                                     }
                                     else if (nextPixel >= 0x2)
                                     {
-                                        convertedByte[2] = 0x6;
-                                        convertedByte[2] = 0x6;
-                                        convertedByte[3] = 0x2;
-                                        convertedByte[3] = 0x2;
+                                        convertedByte[4] = 0x6;
+                                        convertedByte[5] = 0x6;
+                                        convertedByte[6] = 0x2;
+                                        convertedByte[7] = 0x2;
                                     }
                                     else
                                     {
-                                        convertedByte[2] = 0x6;
-                                        convertedByte[2] = 0x6;
-                                        convertedByte[3] = 0x0;
-                                        convertedByte[3] = 0x0;
+                                        convertedByte[4] = 0x6;
+                                        convertedByte[5] = 0x6;
+                                        convertedByte[6] = 0x0;
+                                        convertedByte[7] = 0x0;
                                     }
                                 }
                                 else if (actualPixel == 0x7)
                                 {
-                                    convertedByte[1] = 0x7;
-                                    convertedByte[1] = 0x7;
+                                    convertedByte[2] = 0x7;
+                                    convertedByte[3] = 0x7;
                                     if (lastPixel % 2 == 0)
                                     {
                                         if (lastPixel % 4 == 0)
@@ -791,38 +808,38 @@ namespace Apple2Sharp
                                             if (lastPixel % 8 == 0)
                                             {
                                                 convertedByte[0] = 0x0;
-                                                convertedByte[0] = 0x0;
+                                                convertedByte[1] = 0x0;
                                             }
                                             else
                                             {
                                                 convertedByte[0] = 0x4;
-                                                convertedByte[0] = 0x4;
+                                                convertedByte[1] = 0x4;
                                             }
                                         }
                                         else
                                         {
                                             convertedByte[0] = 0x6;
-                                            convertedByte[0] = 0x6;
+                                            convertedByte[1] = 0x6;
                                         }
                                     }
                                     else
                                     {
                                         convertedByte[0] = 0x7;
-                                        convertedByte[0] = 0x7;
+                                        convertedByte[1] = 0x7;
                                     }
                                     if (nextPixel >= 0x8)
                                     {
-                                        convertedByte[2] = 0xf;
-                                        convertedByte[2] = 0xf;
-                                        convertedByte[3] = 0xf;
-                                        convertedByte[3] = 0xf;
+                                        convertedByte[4] = 0xf;
+                                        convertedByte[5] = 0xf;
+                                        convertedByte[6] = 0xf;
+                                        convertedByte[7] = 0xf;
                                     }
                                     else
                                     {
-                                        convertedByte[2] = 0x7;
-                                        convertedByte[2] = 0x7;
-                                        convertedByte[3] = 0x7;
-                                        convertedByte[3] = 0x7;
+                                        convertedByte[4] = 0x7;
+                                        convertedByte[5] = 0x7;
+                                        convertedByte[6] = 0x7;
+                                        convertedByte[7] = 0x7;
                                     }
                                 }
                                 else if (actualPixel == 0x8)
@@ -832,12 +849,12 @@ namespace Apple2Sharp
                                         if (lastPixel % 4 == 0)
                                         {
                                             convertedByte[0] = 0x8;
-                                            convertedByte[0] = 0x8;
+                                            convertedByte[1] = 0x8;
                                         }
                                         else
                                         {
                                             convertedByte[0] = 0xa;
-                                            convertedByte[0] = 0xa;
+                                            convertedByte[1] = 0xa;
                                         }
                                     }
                                     else
@@ -845,50 +862,50 @@ namespace Apple2Sharp
                                         if (lastPixel == 0x1 || lastPixel == 0x5 || lastPixel == 0x9 || lastPixel == 0xd)
                                         {
                                             convertedByte[0] = 0x9;
-                                            convertedByte[0] = 0x9;
+                                            convertedByte[1] = 0x9;
                                         }
                                         else
                                         {
                                             convertedByte[0] = 0xb;
-                                            convertedByte[0] = 0xb;
+                                            convertedByte[1] = 0xb;
                                         }
                                     }
                                     if (nextPixel >= 0x8)
                                     {
-                                        convertedByte[1] = 0x8;
-                                        convertedByte[1] = 0x8;
-                                        convertedByte[2] = 0x8;
                                         convertedByte[2] = 0x8;
                                         convertedByte[3] = 0x8;
-                                        convertedByte[3] = 0x8;
+                                        convertedByte[4] = 0x8;
+                                        convertedByte[5] = 0x8;
+                                        convertedByte[6] = 0x8;
+                                        convertedByte[7] = 0x8;
                                     }
                                     else
                                     {
-                                        convertedByte[1] = 0x0;
-                                        convertedByte[1] = 0x0;
-                                        convertedByte[2] = 0x0;
                                         convertedByte[2] = 0x0;
                                         convertedByte[3] = 0x0;
-                                        convertedByte[3] = 0x0;
+                                        convertedByte[4] = 0x0;
+                                        convertedByte[5] = 0x0;
+                                        convertedByte[6] = 0x0;
+                                        convertedByte[7] = 0x0;
                                     }
                                 }
                                 else if (actualPixel == 0x9)
                                 {
-                                    convertedByte[1] = 0x9;
-                                    convertedByte[1] = 0x9;
                                     convertedByte[2] = 0x9;
-                                    convertedByte[2] = 0x9;
+                                    convertedByte[3] = 0x9;
+                                    convertedByte[4] = 0x9;
+                                    convertedByte[5] = 0x9;
                                     if (lastPixel % 2 == 0)
                                     {
                                         if (lastPixel % 4 == 0)
                                         {
                                             convertedByte[0] = 0x8;
-                                            convertedByte[0] = 0x8;
+                                            convertedByte[1] = 0x8;
                                         }
                                         else
                                         {
                                             convertedByte[0] = 0xa;
-                                            convertedByte[0] = 0xa;
+                                            convertedByte[1] = 0xa;
                                         }
                                     }
                                     else
@@ -896,35 +913,85 @@ namespace Apple2Sharp
                                         if (lastPixel == 0x1 || lastPixel == 0x5 || lastPixel == 0x9 || lastPixel == 0xd)
                                         {
                                             convertedByte[0] = 0x9;
-                                            convertedByte[0] = 0x9;
+                                            convertedByte[1] = 0x9;
                                         }
                                         else
                                         {
                                             convertedByte[0] = 0xb;
-                                            convertedByte[0] = 0xb;
+                                            convertedByte[1] = 0xb;
                                         }
                                     }
                                     if (nextPixel >= 0xc)
                                     {
-                                        convertedByte[3] = 0xd;
-                                        convertedByte[3] = 0xd;
+                                        convertedByte[6] = 0xd;
+                                        convertedByte[7] = 0xd;
                                     }
                                     else if (nextPixel >= 0x8)
                                     {
-                                        convertedByte[3] = 0x9;
-                                        convertedByte[3] = 0x9;
+                                        convertedByte[6] = 0x9;
+                                        convertedByte[7] = 0x9;
                                     }
                                     else if (nextPixel >= 0x4)
                                     {
-                                        convertedByte[3] = 0x5;
-                                        convertedByte[3] = 0x5;
+                                        convertedByte[6] = 0x5;
+                                        convertedByte[7] = 0x5;
                                     }
                                     else
-                                        convertedByte[3] = 0x1;
+                                    {
+                                        convertedByte[6] = 0x1;
+                                        convertedByte[7] = 0x1;
+                                    }
                                 }
                                 else if (actualPixel == 0xa)
                                 {
-                                    convertedByte[2] = 0xa;
+                                    convertedByte[4] = 0xa;
+                                    convertedByte[5] = 0xa;
+                                    if (lastPixel % 2 == 0)
+                                    {
+                                        convertedByte[0] = 0xa;
+                                        convertedByte[1] = 0xa;
+                                        convertedByte[2] = 0xa;
+                                        convertedByte[3] = 0xa;
+                                    }
+                                    else
+                                    {
+                                        convertedByte[0] = 0xb;
+                                        convertedByte[1] = 0xb;
+                                        convertedByte[2] = 0xb;
+                                        convertedByte[3] = 0xb;
+                                    }
+                                    if (nextPixel >= 0xc)
+                                    {
+                                        convertedByte[6] = 0xe;
+                                        convertedByte[7] = 0xe;
+                                    }
+                                    else if (nextPixel >= 0x8)
+                                    {
+                                        convertedByte[6] = 0xa;
+                                        convertedByte[7] = 0xa;
+                                    }
+                                    else if (nextPixel >= 0x4)
+                                    {
+                                        convertedByte[6] = 0x6;
+                                        convertedByte[7] = 0x6;
+                                    }
+                                    else if (nextPixel >= 0x2)
+                                    {
+                                        convertedByte[6] = 0x2;
+                                        convertedByte[7] = 0x2;
+                                    }
+                                    else
+                                    {
+                                        convertedByte[6] = 0x0;
+                                        convertedByte[7] = 0x0;
+                                    }
+                                }
+                                else if (actualPixel == 0xb)
+                                {
+                                    convertedByte[2] = 0xb;
+                                    convertedByte[3] = 0xb;
+                                    convertedByte[4] = 0xb;
+                                    convertedByte[5] = 0xb;
                                     if (lastPixel % 2 == 0)
                                     {
                                         convertedByte[0] = 0xa;
@@ -937,65 +1004,23 @@ namespace Apple2Sharp
                                     }
                                     if (nextPixel >= 0xc)
                                     {
-                                        convertedByte[3] = 0xe;
-                                        convertedByte[3] = 0xe;
+                                        convertedByte[6] = 0xf;
+                                        convertedByte[7] = 0xf;
                                     }
                                     else if (nextPixel >= 0x8)
                                     {
-                                        convertedByte[3] = 0xa;
-                                        convertedByte[3] = 0xa;
+                                        convertedByte[6] = 0xb;
+                                        convertedByte[7] = 0xb;
                                     }
                                     else if (nextPixel >= 0x4)
                                     {
-                                        convertedByte[3] = 0x6;
-                                        convertedByte[3] = 0x6;
-                                    }
-                                    else if (nextPixel >= 0x2)
-                                    {
-                                        convertedByte[3] = 0x2;
-                                        convertedByte[3] = 0x2;
+                                        convertedByte[6] = 0x7;
+                                        convertedByte[7] = 0x7;
                                     }
                                     else
                                     {
-                                        convertedByte[3] = 0x0;
-                                        convertedByte[3] = 0x0;
-                                    }
-                                }
-                                else if (actualPixel == 0xb)
-                                {
-                                    convertedByte[1] = 0xb;
-                                    convertedByte[1] = 0xb;
-                                    convertedByte[2] = 0xb;
-                                    convertedByte[2] = 0xb;
-                                    if (lastPixel % 2 == 0)
-                                    {
-                                        convertedByte[0] = 0xa;
-                                        convertedByte[0] = 0xa;
-                                    }
-                                    else
-                                    {
-                                        convertedByte[0] = 0xb;
-                                        convertedByte[0] = 0xb;
-                                    }
-                                    if (nextPixel >= 0xc)
-                                    {
-                                        convertedByte[3] = 0xf;
-                                        convertedByte[3] = 0xf;
-                                    }
-                                    else if (nextPixel >= 0x8)
-                                    {
-                                        convertedByte[3] = 0xb;
-                                        convertedByte[3] = 0xb;
-                                    }
-                                    else if (nextPixel >= 0x4)
-                                    {
-                                        convertedByte[3] = 0x7;
-                                        convertedByte[3] = 0x7;
-                                    }
-                                    else
-                                    {
-                                        convertedByte[3] = 0x3;
-                                        convertedByte[3] = 0x3;
+                                        convertedByte[6] = 0x3;
+                                        convertedByte[7] = 0x3;
                                     }
                                         
                                 }
@@ -1005,17 +1030,27 @@ namespace Apple2Sharp
                                     {
                                         if (lastPixel % 4 == 0)
                                         {
-                                            convertedByte[0] = 0xc;
-                                            convertedByte[0] = 0xc;
-                                            convertedByte[1] = 0xc;
-                                            convertedByte[1] = 0xc;
+                                            if (lastPixel == 0xc && nextPixel == 0xf)
+                                            {
+                                                convertedByte[0] = 0xc;
+                                                convertedByte[1] = 0xc;
+                                                convertedByte[2] = 0xf;
+                                                convertedByte[3] = 0xf;
+                                            }
+                                            else
+                                            {
+                                                convertedByte[0] = 0xc;
+                                                convertedByte[1] = 0xc;
+                                                convertedByte[2] = 0xc;
+                                                convertedByte[3] = 0xc;
+                                            }
                                         }
                                         else
                                         {
                                             convertedByte[0] = 0xe;
-                                            convertedByte[0] = 0xe;
-                                            convertedByte[1] = 0xc;
-                                            convertedByte[1] = 0xc;
+                                            convertedByte[1] = 0xe;
+                                            convertedByte[2] = 0xc;
+                                            convertedByte[3] = 0xc;
                                         }
                                     }
                                     else
@@ -1023,57 +1058,68 @@ namespace Apple2Sharp
                                         if (lastPixel == 0x1 || lastPixel == 0x5 || lastPixel == 0x9 || lastPixel == 0xd)
                                         {
                                             convertedByte[0] = 0xd;
-                                            convertedByte[0] = 0xd;
                                             convertedByte[1] = 0xd;
-                                            convertedByte[1] = 0xd;
+                                            convertedByte[2] = 0xd;
+                                            convertedByte[3] = 0xd;
                                         }
                                         else
                                         {
                                             convertedByte[0] = 0xf;
-                                            convertedByte[0] = 0xf;
-                                            convertedByte[1] = 0xd;
-                                            convertedByte[1] = 0xd;
+                                            convertedByte[1] = 0xf;
+                                            convertedByte[2] = 0xd;
+                                            convertedByte[3] = 0xd;
                                         }
                                     }
                                     if (nextPixel >= 0x8)
                                     {
-                                        convertedByte[2] = 0xc;
-                                        convertedByte[2] = 0xc;
-                                        convertedByte[3] = 0xc;
-                                        convertedByte[3] = 0xc;
+                                        if (lastPixel == 0xc && nextPixel == 0xf)
+                                        {
+                                            convertedByte[4] = 0xe;
+                                            convertedByte[5] = 0xc;
+                                            convertedByte[6] = 0xc;
+                                            convertedByte[7] = 0xc;
+                                        }
+                                        else
+                                        {
+                                            convertedByte[4] = 0xc;
+                                            convertedByte[5] = 0xc;
+                                            convertedByte[6] = 0xc;
+                                            convertedByte[7] = 0xc;
+
+                                        }
                                     }
                                     else if (nextPixel >= 0x4)
                                     {
-                                        convertedByte[2] = 0x4;
-                                        convertedByte[2] = 0x4;
-                                        convertedByte[3] = 0x4;
-                                        convertedByte[3] = 0x4;
+                                        convertedByte[4] = 0x4;
+                                        convertedByte[5] = 0x4;
+                                        convertedByte[6] = 0x4;
+                                        convertedByte[7] = 0x4;
                                     }
                                     else
                                     {
-                                        convertedByte[2] = 0x0;
-                                        convertedByte[2] = 0x0;
-                                        convertedByte[3] = 0x0;
-                                        convertedByte[3] = 0x0;
+                                        convertedByte[4] = 0x0;
+                                        convertedByte[5] = 0x0;
+                                        convertedByte[6] = 0x0;
+                                        convertedByte[7] = 0x0;
                                     }
                                 }
                                 else if (actualPixel == 0xd)
                                 {
-                                    convertedByte[1] = 0xd;
-                                    convertedByte[1] = 0xd;
                                     convertedByte[2] = 0xd;
-                                    convertedByte[2] = 0xd;
+                                    convertedByte[3] = 0xd;
+                                    convertedByte[4] = 0xd;
+                                    convertedByte[5] = 0xd;
                                     if (lastPixel % 2 == 0)
                                     {
                                         if (lastPixel % 4 == 0)
                                         {
                                             convertedByte[0] = 0xc;
-                                            convertedByte[0] = 0xc;
+                                            convertedByte[1] = 0xc;
                                         }
                                         else
                                         {
                                             convertedByte[0] = 0xe;
-                                            convertedByte[0] = 0xe;
+                                            convertedByte[1] = 0xe;
                                         }
                                     }
                                     else
@@ -1081,97 +1127,97 @@ namespace Apple2Sharp
                                         if (lastPixel == 0x1 || lastPixel == 0x5 || lastPixel == 0x9 || lastPixel == 0xd)
                                         {
                                             convertedByte[0] = 0xd;
-                                            convertedByte[0] = 0xd;
+                                            convertedByte[1] = 0xd;
                                         }
                                         else
                                         {
                                             convertedByte[0] = 0xf;
-                                            convertedByte[0] = 0xf;
+                                            convertedByte[1] = 0xf;
                                         }
                                     }
                                     if (nextPixel >= 0x8)
                                     {
-                                        convertedByte[3] = 0xd;
-                                        convertedByte[3] = 0xd;
+                                        convertedByte[6] = 0xd;
+                                        convertedByte[7] = 0xd;
                                     }
                                     else
                                     {
-                                        convertedByte[3] = 0x5;
-                                        convertedByte[3] = 0x5;
+                                        convertedByte[6] = 0x5;
+                                        convertedByte[7] = 0x5;
                                     }
                                 }
                                 else if (actualPixel == 0xe)
                                 {
-                                    convertedByte[2] = 0xe;
+                                    convertedByte[4] = 0xe;
+                                    convertedByte[5] = 0xe;
                                     if (lastPixel % 2 == 0)
                                     {
                                         convertedByte[0] = 0xe;
-                                        convertedByte[0] = 0xe;
                                         convertedByte[1] = 0xe;
-                                        convertedByte[1] = 0xe;
+                                        convertedByte[2] = 0xe;
+                                        convertedByte[3] = 0xe;
                                     }
                                     else
                                     {
                                         convertedByte[0] = 0xf;
-                                        convertedByte[0] = 0xf;
                                         convertedByte[1] = 0xf;
-                                        convertedByte[1] = 0xf;
+                                        convertedByte[2] = 0xf;
+                                        convertedByte[3] = 0xf;
                                     }
                                     if (nextPixel >= 0x8)
                                     {
-                                        convertedByte[3] = 0xe;
-                                        convertedByte[3] = 0xe;
+                                        convertedByte[6] = 0xe;
+                                        convertedByte[7] = 0xe;
                                     }
                                     else if (nextPixel >= 0x4)
                                     {
-                                        convertedByte[3] = 0x6;
-                                        convertedByte[3] = 0x6;
+                                        convertedByte[6] = 0x6;
+                                        convertedByte[7] = 0x6;
                                     }
                                     else if (nextPixel >= 0x2)
                                     {
-                                        convertedByte[3] = 0x2;
-                                        convertedByte[3] = 0x2;
+                                        convertedByte[6] = 0x2;
+                                        convertedByte[7] = 0x2;
                                     }
                                     else
                                     {
-                                        convertedByte[3] = 0x0;
-                                        convertedByte[3] = 0x0;
+                                        convertedByte[6] = 0x0;
+                                        convertedByte[7] = 0x0;
                                     }
                                 }
                                 else if (actualPixel == 0xf)
                                 {
-                                    convertedByte[1] = 0xf;
-                                    convertedByte[1] = 0xf;
                                     convertedByte[2] = 0xf;
-                                    convertedByte[2] = 0xf;
+                                    convertedByte[3] = 0xf;
+                                    convertedByte[4] = 0xf;
+                                    convertedByte[5] = 0xf;
                                     if (lastPixel % 2 == 0)
                                     {
                                         convertedByte[0] = 0xe;
-                                        convertedByte[0] = 0xe;
+                                        convertedByte[1] = 0xe;
                                     }
                                     else
                                     {
                                         convertedByte[0] = 0xf;
-                                        convertedByte[0] = 0xf;
+                                        convertedByte[1] = 0xf;
                                     }
                                     if (nextPixel >= 0x8)
                                     {
-                                        convertedByte[3] = 0xf;
-                                        convertedByte[3] = 0xf;
+                                        convertedByte[6] = 0xf;
+                                        convertedByte[7] = 0xf;
                                     }
                                     else
                                     {
-                                        convertedByte[3] = 0x7;
-                                        convertedByte[3] = 0x7;
+                                        convertedByte[6] = 0x7;
+                                        convertedByte[7] = 0x7;
                                     }
                                 }
 
                                 lastPixel = actualPixel;
 
-                                for (int k = 0; k < 4; k++)
+                                for (int k = 0; k < 8; k++)
                                 {
-                                    bmp[pixelId + k * 2] = convertedByte[k];
-                                    bmp[pixelId + k * 2 + 1] = convertedByte[k];
+                                    bmp[pixelId + k] = convertedByte[k];
                                 }
                             }
                         }
