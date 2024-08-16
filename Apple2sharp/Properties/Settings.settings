@@ -18,7 +18,7 @@
       <Value Profile="(Default)">EmptySlot</Value>
     </Setting>
     <Setting Name="Slot3Card" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Cols80Card</Value>
+      <Value Profile="(Default)">EmptySlot</Value>
     </Setting>
     <Setting Name="Slot4Card" Type="System.String" Scope="User">
       <Value Profile="(Default)">EmptySlot</Value>

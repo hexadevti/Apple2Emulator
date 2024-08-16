@@ -42,6 +42,15 @@ namespace Apple2Sharp.CPU6502
             Reset();
             cpuState = CpuState.Running;
         }
+        public void PowerUp()
+        {
+            state = new State();
+            lastPC = 0;
+            cpuState = CpuState.Paused;
+            state.PC = mainBoard.ReadAddressLLHH(0xfffc) ?? 0;
+            cpuState = CpuState.Running;
+
+        }
         public void Reset()
         {
             state = new State();

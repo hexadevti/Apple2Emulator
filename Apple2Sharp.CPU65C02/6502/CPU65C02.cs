@@ -46,14 +46,19 @@ namespace Apple2Sharp.CPU65C02
             mainBoard.softswitches.Pb1 = false;
             mainBoard.softswitches.Pb2 = true;
 
-            Reset();
+            PowerUp();
             cpuState = CpuState.Running;
         }
-        public void Reset()
+        public void PowerUp()
         {
             state = new State();
             lastPC = 0;
             state.PC = mainBoard.ReadAddressLLHH(0xfffc) ?? 0;
+        }
+
+        public void Reset()
+        {
+            state.PC = mainBoard.ReadAddressLLHH(0x03f2) ?? 0;
         }
         public void IncrementPC()
         {

@@ -85,7 +85,7 @@ namespace Apple2Sharp.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Cols80Card")]
+        [global::System.Configuration.DefaultSettingValueAttribute("EmptySlot")]
         public string Slot3Card {
             get {
                 return ((string)(this["Slot3Card"]));

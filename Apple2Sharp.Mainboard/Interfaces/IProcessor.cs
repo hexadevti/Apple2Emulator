@@ -10,6 +10,8 @@ public interface IProcessor
 
     void Reset();
 
+    void PowerUp();
+
     void WarmStart();
 
     CpuState cpuState { get; set; }

@@ -190,9 +190,9 @@ namespace Apple2Sharp
                     new KeyValuePair<string, string>("RamCard","Saturn 128k RAM")
                 },
                 new List<KeyValuePair<string, string>>() {
+                    new KeyValuePair<string, string>("EmptySlot","Empty"),
                     new KeyValuePair<string, string>("Cols80Card","Videx 80 Column"),
-                    new KeyValuePair<string, string>("RamCard","Saturn 128,k RAM"),
-                    new KeyValuePair<string, string>("EmptySlot","Empty")
+                    new KeyValuePair<string, string>("RamCard","Saturn 128,k RAM")
                 },
                 new List<KeyValuePair<string, string>>() {
                     new KeyValuePair<string, string>("EmptySlot","Empty"),
