@@ -9,8 +9,50 @@ using Apple2Sharp.Mainboard;
 
 namespace Apple2Sharp
 {
-    public static class Video
+    public class Video
     {
+        public Apple2Board _mainBoard;
+        public int _pixelSize;
+
+        ushort textPage = 0x400;
+        byte[] bmp;
+
+        int b = 0; // 0..2 blocks
+        int l = 0; // 0..7 lines per block
+        int c = 0; // 0..39 or 0..79 columns per line
+
+        byte byteFromColumn;
+        byte characterByte; // 0..7 lines from character
+        int lineFromCharacter; // 0..6 bits from characterLine
+
+        
+        public Video(Apple2Board mainBoard, int pixelSize)
+        {
+            _mainBoard = mainBoard;
+            _pixelSize = pixelSize;
+            bmp = new byte[280 * pixelSize * 192 * pixelSize];
+            textPage = (ushort)(mainBoard.softswitches.Page1_Page2 ? 0x400 : 0x800);
+
+            
+
+        }
+
+        public Bitmap GenerateCycle()
+        {
+            var chr = _mainBoard.baseRAM[(ushort)(textPage + (b * 0x28) + (l * 0x80) + c)];
+            //object? objout = _mainBoard.charSet[chr].GetValue(i, k);
+            c++;
+            if (c > 39)
+                l++;
+            if (l > 7)
+                b++;
+            if (b > 2)
+            {
+                return new Bitmap("");
+            }
+                
+            return null;
+        }
 
         public static Bitmap Generate(Apple2Board mainBoard, int pixelSize)
         {
