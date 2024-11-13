@@ -217,6 +217,7 @@ namespace Apple2Sharp
                     new KeyValuePair<string, string>("HdCard","Hard Drive Card")
                 },
                 new List<KeyValuePair<string, string>>() {
+                    new KeyValuePair<string, string>("EmptySlot","Empty"),
                     new KeyValuePair<string, string>("RAM64k","RamWorks 64kb"),
                     new KeyValuePair<string, string>("RAM128k","RamWorks 128kb"),
                     new KeyValuePair<string, string>("RAM256k","RamWorks 256kb"),
@@ -247,6 +248,9 @@ namespace Apple2Sharp
 
             switch (cbAux.SelectedValue)
             {
+                case "EmptySlot":
+                    mainBoard.IIEAuxBanks = 0;
+                    break;
                 case "RAM64k":
                     mainBoard.IIEAuxBanks = 1;
                     break;
