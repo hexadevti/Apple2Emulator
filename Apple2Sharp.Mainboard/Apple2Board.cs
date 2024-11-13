@@ -192,10 +192,12 @@ namespace Apple2Sharp.Mainboard
                 for (int charLayer = 0; charLayer < 8; charLayer++)
                 {
                     byte charItem = rom[id];
+                    //Console.WriteLine();
                     bool[] bitsLayer = Tools.ConvertByteToBoolArray(charItem, false);
                     for (int charBits = 1; charBits < 8; charBits++)
                     {
-                        charboolItem[charLayer, charBits - 1] = !bitsLayer[charBits];
+                        //Console.Write(!bitsLayer[charBits-1] ? "1, " : "0, ");
+                        charboolItem[charLayer, charBits - 1] = !bitsLayer[charBits-1];
                     }
                     id++;
                 }
@@ -462,6 +464,7 @@ namespace Apple2Sharp.Mainboard
 
         public void WriteByte(ushort address, byte value)
         {
+            
             if (address < 0x0200)
             {
                 if (appleIIe)
