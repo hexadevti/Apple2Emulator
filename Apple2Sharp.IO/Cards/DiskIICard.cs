@@ -44,7 +44,7 @@ namespace Apple2Sharp.Mainboard.Cards
         }
         public byte[] CC00ROM { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        Dictionary<string, List<byte>> output = new Dictionary<string, List<byte>>();
+        List<byte> output = new List<byte>();
         public DiskIICard(int slotNumber, byte[] c000ROM, string disk1, string disk2)
         {
             _slotNumber = slotNumber;
@@ -72,55 +72,37 @@ namespace Apple2Sharp.Mainboard.Cards
             {
                 if (DriveQ6H_L == false && DriveQ7H_L == true)
                 {
-                    if (output.ContainsKey(key))
-                    {
-                        var data = output[key];
-                        data.Add(b);
-                        output[key] = data;
-                    }
-                    else
-                    {
-                        output.Add(key, new List<byte>() { b });
-                    }
+                    output.Add(b);
 
                     Console.WriteLine(DateTime.Now.ToString("HH:mm:ss.ff") + " Save Track: " + trk + " Sector DOS: " + mainBoard.ReadByte(0x2d) + " Sector PRODOS: " + mainBoard.ReadByte(0xd357));
-
-                    List<string> keysToClear = new List<string>();
-                    foreach (var data in output)
+                    
+                    if (output.Count == 354)
                     {
-                        if (data.Value.Count == 354)
+                        byte[] cleanData = output.Skip(7).Take(343).ToArray();
+
+                        if (Drive1_2)
                         {
-                            byte[] cleanData = data.Value.Skip(7).Take(343).ToArray();
+                            byte[] decsecData = drive1.Decode6_2(cleanData);
+                            Console.WriteLine(drive1.Print(decsecData.ToList()));
 
-                            if (Drive1_2)
-                            {
-                                byte[] decsecData = drive1.Decode6_2(cleanData);
-                                Console.WriteLine(drive1.Print(decsecData.ToList()));
-
-                                if (drive1.FlagDos_Prodos)
-                                    drive1.SetSectorData(trk, drive1.translateDOTrack[sec], decsecData); // DOS
-                                else
-                                    drive1.SetBlockData(trk, sec, decsecData); // PRODOS
-                                drive1.SaveImage();
-                                drive1.TrackRawData(trk, true);
-                            }
+                            if (drive1.FlagDos_Prodos)
+                                drive1.SetSectorData(trk, drive1.translateDOTrack[sec], decsecData); // DOS
                             else
-                            {
-                                byte[] decsecData = drive2.Decode6_2(cleanData);
-                                if (drive2.FlagDos_Prodos)
-                                    drive2.SetSectorData(trk, drive2.translateDOTrack[sec], decsecData); //  DOS
-                                else
-                                    drive2.SetBlockData(trk, sec, decsecData); //  PRODOS
-                                drive2.SaveImage();
-                                drive2.TrackRawData(trk, true);
-                            }
-                            keysToClear.Add(key);
+                                drive1.SetBlockData(trk, sec, decsecData); // PRODOS
+                            drive1.SaveImage();
+                            drive1.TrackRawData(trk, true);
                         }
-                    }
-
-                    foreach (var keyd in keysToClear)
-                    {
-                        output.Remove(keyd);
+                        else
+                        {
+                            byte[] decsecData = drive2.Decode6_2(cleanData);
+                            if (drive2.FlagDos_Prodos)
+                                drive2.SetSectorData(trk, drive2.translateDOTrack[sec], decsecData); //  DOS
+                            else
+                                drive2.SetBlockData(trk, sec, decsecData); //  PRODOS
+                            drive2.SaveImage();
+                            drive2.TrackRawData(trk, true);
+                        }
+                        output.Clear();
                     }
                 }
             }

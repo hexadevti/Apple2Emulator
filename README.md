@@ -14,6 +14,11 @@ This emulator brings some features such as:
 - 80 Columns Card
 - Disk II Card DOS/Prodos compatible .dsk, .po, .do image files*
 - Joystick (when activated, use arrows for directions and control/shift for buttons 1/2)
+- Apple IIe (65c02)
+- Hard Disk support
+- Mouse support (beta)
+- 800kb disks
+- Double-High Resolution
 
 
 *.dsk files examples at \disks folder
@@ -39,16 +44,11 @@ Essential books:
 
 Upcoming features:
 
-- 65c02 (Apple //e)
-- Apple //e board
-- Hard Drive
-- Double-High Resolution
-- 800kb disks
-- Mouse
-
+- Apple //e board interface
+- Full mouse support
 
 Compatibility:
 
-reated in dotnet core 8.0 (net8.0) compatible with:
+Created on dotnet core 8.0 (net8.0) compatible with:
 - dotnet core 7.0
 - dotnet core 6.0
