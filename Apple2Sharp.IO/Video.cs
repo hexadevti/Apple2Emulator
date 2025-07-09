@@ -136,11 +136,11 @@ namespace Apple2Sharp
                                         byte chr;
                                         if (c % 2 == 0)
                                         {
-                                            chr = mainBoard.auxRAM[0, (ushort)((0x2000 + (b * 0x28) + (l * 0x80) + c/2) + block * 0x400)];
+                                            chr = mainBoard.auxRAM[0, (ushort)((graphicsPage + (b * 0x28) + (l * 0x80) + c/2) + block * 0x400)];
                                         }
                                         else
                                         {
-                                            chr = mainBoard.baseRAM[(ushort)((0x2000 + (b * 0x28) + (l * 0x80) + (c-1)/2) + block * 0x400)];
+                                            chr = mainBoard.baseRAM[(ushort)((graphicsPage + (b * 0x28) + (l * 0x80) + (c-1)/2) + block * 0x400)];
                                         }
                                         bool[] blockline = Tools.ConvertByteToBoolArray(chr, true);
 
