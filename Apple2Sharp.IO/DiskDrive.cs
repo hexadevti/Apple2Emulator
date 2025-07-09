@@ -81,7 +81,7 @@ namespace Apple2Sharp.Mainboard
             track = 0;
             _diskPath = dskPath;
 
-            if (!string.IsNullOrEmpty(_diskPath))
+            if (!string.IsNullOrEmpty(_diskPath) && File.Exists(_diskPath))
             {
                 this.diskImage = File.ReadAllBytes(dskPath);
                 if (diskImage.Length > 143360)

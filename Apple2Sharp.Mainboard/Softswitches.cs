@@ -119,7 +119,7 @@ namespace Apple2Sharp.Mainboard
                 return (byte)(mainBoard.softswitches.IIEMemoryBankBankSelect1_2 ? 0x00 : 0xff);
             else if (address == 0xc012)
                 return (byte)(mainBoard.softswitches.IIEMemoryBankReadRAM_ROM ? 0xff : 0x00);
-            else if (address == 0xc011)
+            else if (address == 0xc013)
                 return (byte)(mainBoard.softswitches.RAMReadOn_Off ? 0xff : 0x00);
             else if (address == 0xc014)
                 return (byte)(mainBoard.softswitches.RAMWriteOn_Off ? 0xff : 0x00);
