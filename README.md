@@ -1,49 +1,94 @@
-# Apple2sharp - dotnet C# Apple ][+ emulator
+# Apple2sharp
 
-*For Windows only
+A cross-component **Apple ][+ emulator** written in C# / .NET, built around a full **MOS 6502** processor implementation.
 
-This is an Apple II+ emulator with the 6502 processor. Made for pure fun, several challenges and concepts learned with this project. Based on the project https://github.com/AndiPexton/6502, which features an Apple I emulator. I updated the project and fixed some errors in some Opcodes.
+> ⚠️ **Windows only.** The user interface is built with Windows Forms and targets `net8.0-windows`.
 
-This emulator brings some features such as:
+Made for pure fun and as a learning project — lots of challenges and concepts were explored along the way. It is based on [AndiPexton/6502](https://github.com/AndiPexton/6502) (an Apple I emulator), which was extended into a full Apple ][+ machine with several opcode fixes and many new features.
 
-- Color/Monochrome Video (Hires)
-- Sound emulated as Speaker (using NAudio component https://github.com/naudio/NAudio)
-- Clock Accelerator (Up to approximately 50Mhz, depending on the Hardware used)
-- Language card (16kb expansion)
-- Saturn 128kb RAM card
-- 80 Columns Card
-- Disk II Card DOS/Prodos compatible .dsk, .po, .do image files*
+Suggestions are welcome, and any kind of contribution to the project is appreciated.
 
-*.dsk files examples at \disks folder
+## Features
 
-Some points of necessary improvements, such as: greater sound stability and reduction of machine consumption due to clock control. (C# has some Thread.Sleep limitations, minimum of 1ms, with little precision).
+- 🖥️ **Video** — Text (40×24), Low-Res and High-Res graphics, in both color and monochrome
+- 🔊 **Sound** — Speaker emulation powered by [NAudio](https://github.com/naudio/NAudio)
+- ⚡ **Clock accelerator** — Run up to ~50 MHz (depending on host hardware)
+- 💾 **Disk II Card** — Boot and read/write DOS 3.3 and ProDOS disks (`.dsk`, `.po`, `.do` images)
+- 🧩 **Expansion cards:**
+  - **Language Card** — 16 KB RAM expansion
+  - **Saturn 128 KB RAM Card**
+  - **80 Columns Card** (Videx Videoterm compatible)
+- ⌨️ **Keyboard** — Full keyboard mapping, including arrow keys, Reset and Warm Start
 
-Suggestions are welcome and I appreciate any kind of contribution to the project.
+Sample disk images are included in the [`disks/`](Apple2sharp/disks) folder. All required ROMs ship in the [`roms/`](Apple2sharp/roms) folder, so no extra downloads are needed.
 
-Important references:
-Referências importantes:
+## Solution structure
 
-- Videx: https://mirrors.apple2.org.za/Apple%20II%20Documentation%20Project/Interface%20Cards/80%20Column%20Cards/Videx%20Videoterm/ROM%20Images/
-- 6502 Opcodes: https://www.masswerk.at/6502/6502_instruction_set.html#BMI
-- Virtu: https://github.com/digital-jellyfish/Virtu
+The solution is split into four projects:
 
+| Project | Type | Description |
+| --- | --- | --- |
+| **Apple2sharp** | WinForms app (`net8.0-windows`) | UI, entry point, wiring, video rendering and input handling |
+| **Apple2.CPU** | Class library (`net8.0`) | MOS 6502 processor: registers, flags and the full opcode set |
+| **Apple2.Mainboard** | Class library (`net8.0`) | Memory map, soft switches and mainboard logic |
+| **Apple2.IO** | Class library (`net8.0`) | Video, speaker, disk drive and expansion cards |
 
-Essential books:
+```
+Apple2sharp/
+├── Apple2sharp.sln
+├── Apple2sharp/        # WinForms UI + Program.cs entry point
+│   ├── roms/           # Applesoft BASIC, character ROM, Disk II & Videx ROMs
+│   └── disks/          # Bootable disk images (DOS 3.3, ProDOS)
+├── Apple2.CPU/         # 6502 core (Mos6502/, OpCodeProcessors/)
+├── Apple2.Mainboard/   # Memory & soft switches
+└── Apple2.IO/          # Video, Speaker, DiskDrive, Cards/
+```
 
-- Apple II Reference Manual: file:///C:/Users/luciano/OneDrive/%C3%81rea%20de%20Trabalho/Apple/books/Apple%20II%20Reference%20Manual.pdf
-- Guia do programador DOS: https://datassette.s3.us-west-004.backblazeb2.com/livros/guia_do_programador_dos.pdf
-- Beneath Apple DOS/Prodos: https://datassette.s3.us-west-004.backblazeb2.com/livros/beneath_apple_dos_prodos_2020.pdf
-- Videx: file:///C:/Users/luciano/OneDrive/%C3%81rea%20de%20Trabalho/Apple/books/Videx%20Videoterm%20-%20Installation%20and%20Operation%20Manual.pdf
+## Requirements
 
-Upcoming features:
+- Windows
+- [.NET SDK 8.0](https://dotnet.microsoft.com/download) (also compatible with .NET 7.0 and 6.0)
 
-- Joystick
-- 65c02 (Apple //e)
-- Hard Drive
-- Double-High Resolution
+## Build & Run
 
-Compatibility:
+Clone the repository and run from the solution root:
 
-reated in dotnet core 8.0 (net8.0) compatible with:
-- dotnet core 7.0
-- dotnet core 6.0
+```bash
+# Build
+dotnet build Apple2sharp.sln
+
+# Run
+dotnet run --project Apple2sharp/Apple2sharp.csproj
+```
+
+Alternatively, open `Apple2sharp.sln` in Visual Studio and run the **Apple2sharp** project.
+
+## Known limitations
+
+- Sound stability could be improved.
+- Clock control increases CPU usage on the host, because C#'s `Thread.Sleep` has a minimum resolution of ~1 ms with limited precision.
+
+## Roadmap
+
+- Joystick support
+- 65C02 CPU (Apple //e)
+- Hard drive support
+- Double High-Resolution graphics
+
+## References
+
+- **6502 Instruction Set** — https://www.masswerk.at/6502/6502_instruction_set.html
+- **Videx Videoterm ROM images** — https://mirrors.apple2.org.za/Apple%20II%20Documentation%20Project/Interface%20Cards/80%20Column%20Cards/Videx%20Videoterm/ROM%20Images/
+- **Virtu** (reference emulator) — https://github.com/digital-jellyfish/Virtu
+
+### Recommended reading
+
+- *Apple II Reference Manual*
+- *DOS Programmer's Guide*
+- *Beneath Apple DOS / ProDOS* — https://datassette.s3.us-west-004.backblazeb2.com/livros/beneath_apple_dos_prodos_2020.pdf
+- *Videx Videoterm — Installation and Operation Manual*
+
+## Acknowledgements
+
+- [AndiPexton/6502](https://github.com/AndiPexton/6502) — the original 6502 / Apple I emulator this project is based on
+- [NAudio](https://github.com/naudio/NAudio) — audio output
